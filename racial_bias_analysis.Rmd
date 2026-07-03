@@ -1,4 +1,3 @@
-
 LOAD PACKAGES
 
 ```{r}
@@ -47,9 +46,7 @@ data %>% count(first_car_yield)
 data %>% count(did_car_proceed_before_across)
 ```
 
-TIME TO CROSS
-BY RACE 
-DESCRIPTIVE STATS
+TIME TO CROSS BY RACE DESCRIPTIVE STATS
 
 ```{r}
 data %>% 
@@ -61,7 +58,7 @@ data %>%
   )
 ```
 
-ONE-WAY ANOVA
+ONE-WAY ANOVA RACE
 
 ```{r}
 race_model <- aov(
@@ -74,9 +71,20 @@ tidy(race_model)
 TukeyHSD(race_model)
 ```
 
-TIME TO CROSS
-BY GENDER 
-DESCRIPTIVE STATS
+ONE-WAY ANOVA LOCATION
+
+```{r}
+location_model <- aov(
+  time_to_cross_street~location,
+  data = data
+)
+
+tidy(location_model)
+
+TukeyHSD(location_model)
+```
+
+TIME TO CROSS BY GENDER DESCRIPTIVE STATS
 
 ```{r}
 data %>% 
@@ -97,8 +105,7 @@ t.test(
 )
 ```
 
-TIME TO CROSS 
-BY RACE X GENDER
+TIME TO CROSS BY RACE X GENDER
 
 ```{r}
 data %>% 
@@ -122,9 +129,7 @@ time_model <- aov(
 tidy(time_model)
 ```
 
-NUMBER OF CARS PASSED 
-BY GENDER AND/OR RACE
-DESCRIPTIVE STATS
+NUMBER OF CARS PASSED BY GENDER AND/OR RACE DESCRIPTIVE STATS
 
 ```{r}
 data %>% 
@@ -157,6 +162,19 @@ cars_race <- aov(
 tidy(cars_race)
 ```
 
+LOCATION COMPARISON
+
+```{r}
+cars_location <- aov(
+  num_cars_pass_before_yield ~ location, 
+  data = data
+)
+
+tidy(cars_location)
+
+TukeyHSD(cars_location)
+```
+
 RACE AND GENDER COMPARISON
 
 ```{r}
@@ -168,9 +186,7 @@ cars_model <- aov(
 tidy(cars_model)
 ```
 
-FIRST CAR YIELD 
-BY RACE AND/OR GENDER 
-RACE COMPARISON
+FIRST CAR YIELD BY RACE AND/OR GENDER RACE COMPARISON
 
 ```{r}
 data %>% 
@@ -178,6 +194,18 @@ data %>%
 
 chisq.test(
   table(data$ethnicity,
+        data$first_car_yield)
+)
+```
+
+LOCATION COMPARISON
+
+```{r}
+data %>% 
+  count(location, first_car_yield)
+
+chisq.test(
+  table(data$location,
         data$first_car_yield)
 )
 ```
@@ -206,9 +234,7 @@ firstcar_model <- glm(
 tidy(firstcar_model)
 ```
 
-DID CAR PROCEED 
-BY RACE AND/OR GENDER
-RACE COMPARISON
+DID CAR PROCEED BY RACE AND/OR GENDER RACE COMPARISON
 
 ```{r}
 data %>% 
@@ -216,6 +242,18 @@ data %>%
 
 chisq.test(
   table(data$ethnicity,
+        data$did_car_proceed_before_across)
+)
+```
+
+LOCATION COMPARISON
+
+```{r}
+data %>% 
+  count(location, did_car_proceed_before_across)
+
+chisq.test(
+  table(data$location,
         data$did_car_proceed_before_across)
 )
 ```
@@ -244,9 +282,7 @@ proceed_model <- glm(
 tidy(proceed_model)
 ```
 
-DID CAR YIELD CLOSE OR FAR
-BY RACE AND/OR GENDER 
-GENDER COMPARISON
+DID CAR YIELD CLOSE OR FAR BY RACE AND/OR GENDER GENDER COMPARISON
 
 ```{r}
 data %>% 
@@ -259,6 +295,7 @@ chisq.test(
 ```
 
 RACE COMPARISON
+
 ```{r}
 data %>% 
   count(ethnicity, car_stop_close_or_far)
@@ -269,7 +306,20 @@ chisq.test(
 )
 ```
 
+LOCATION COMPARISON
+
+```{r}
+data %>% 
+  count(location, car_stop_close_or_far)
+
+chisq.test(
+  table(data$location,
+        data$car_stop_close_or_far)
+)
+```
+
 LOGISTIC REGRESSION
+
 ```{r}
 data$car_stop_close_or_far_bin <- ifelse(data$car_stop_close_or_far == "far", 1,
                                   ifelse(data$car_stop_close_or_far == "close", 0, NA))
@@ -283,9 +333,7 @@ yield_model <- glm(
 tidy(yield_model)
 ```
 
-
-VISUALIZATIONS 
-TIME BY RACE
+VISUALIZATIONS TIME BY RACE
 
 ```{r}
 data %>% 
@@ -349,8 +397,8 @@ data %>%
   theme_minimal()
 ```
 
-PROPORTION OF FIRST CAR YIELD
-RACE VISUAL
+PROPORTION OF FIRST CAR YIELD RACE VISUAL
+
 ```{r}
 data %>% 
   ggplot(aes(x = ethnicity,
@@ -365,8 +413,8 @@ data %>%
   theme_minimal()
 ```
 
-PROPORTION OF FIRST CAR YIELD 
-GENDER VISUAL
+PROPORTION OF FIRST CAR YIELD GENDER VISUAL
+
 ```{r}
 data %>% 
   ggplot(aes(x = gender,
@@ -380,4 +428,3 @@ data %>%
   ) +
   theme_minimal()
 ```
-
