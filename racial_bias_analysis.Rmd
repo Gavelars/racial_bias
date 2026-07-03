@@ -348,3 +348,36 @@ data %>%
   ) +
   theme_minimal()
 ```
+
+PROPORTION OF FIRST CAR YIELD
+RACE VISUAL
+```{r}
+data %>% 
+  ggplot(aes(x = ethnicity,
+             fill = first_car_yield)
+         ) +
+  geom_bar(position = "fill") +
+  labs (
+    x = "Race",
+    y = "Proportion",
+    fill = "Did the First Car Yield"
+  ) +
+  theme_minimal()
+```
+
+PROPORTION OF FIRST CAR YIELD 
+GENDER VISUAL
+```{r}
+data %>% 
+  ggplot(aes(x = gender,
+             fill = first_car_yield)
+         ) +
+  geom_bar(position = "fill") +
+  labs (
+    x = "Gender",
+    y = "Proportion",
+    fill = "Did the First Car Yield"
+  ) +
+  theme_minimal()
+```
+
