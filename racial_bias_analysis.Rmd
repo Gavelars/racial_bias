@@ -62,6 +62,7 @@ data %>%
 ```
 
 ONE-WAY ANOVA
+RACE
 
 ```{r}
 race_model <- aov(
@@ -72,6 +73,20 @@ race_model <- aov(
 tidy(race_model)
 
 TukeyHSD(race_model)
+```
+
+ONE-WAY ANOVA 
+LOCATION
+
+```{r}
+location_model <- aov(
+  time_to_cross_street~location,
+  data = data
+)
+
+tidy(location_model)
+
+TukeyHSD(location_model)
 ```
 
 TIME TO CROSS
@@ -157,6 +172,19 @@ cars_race <- aov(
 tidy(cars_race)
 ```
 
+LOCATION COMPARISON
+
+```{r}
+cars_location <- aov(
+  num_cars_pass_before_yield ~ location, 
+  data = data
+)
+
+tidy(cars_location)
+
+TukeyHSD(cars_location)
+```
+
 RACE AND GENDER COMPARISON
 
 ```{r}
@@ -181,6 +209,19 @@ chisq.test(
         data$first_car_yield)
 )
 ```
+
+LOCATION COMPARISON
+
+```{r}
+data %>% 
+  count(location, first_car_yield)
+
+chisq.test(
+  table(data$location,
+        data$first_car_yield)
+)
+```
+
 
 GENDER COMPARISON
 
@@ -219,6 +260,19 @@ chisq.test(
         data$did_car_proceed_before_across)
 )
 ```
+
+LOCATION COMPARISON
+
+```{r}
+data %>% 
+  count(location, did_car_proceed_before_across)
+
+chisq.test(
+  table(data$location,
+        data$did_car_proceed_before_across)
+)
+```
+
 
 GENDER COMPARISON
 
@@ -265,6 +319,17 @@ data %>%
 
 chisq.test(
   table(data$ethnicity,
+        data$car_stop_close_or_far)
+)
+```
+
+LOCATION COMPARISON
+```{r}
+data %>% 
+  count(location, car_stop_close_or_far)
+
+chisq.test(
+  table(data$location,
         data$car_stop_close_or_far)
 )
 ```
