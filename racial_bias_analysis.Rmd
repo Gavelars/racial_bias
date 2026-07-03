@@ -22,7 +22,7 @@ data_file <- read_csv("master_file.csv") %>%
 data <- data_file %>% drop_na(valid_trial)
 ```
 
-DESCRIPTIVE STATS
+GENERAL DESCRIPTIVE STATS
 
 ```{r}
 data %>% 
@@ -47,7 +47,9 @@ data %>% count(first_car_yield)
 data %>% count(did_car_proceed_before_across)
 ```
 
-TIME TO CROSS BY RACE DESCRIPTIVE STATS
+TIME TO CROSS
+BY RACE 
+DESCRIPTIVE STATS
 
 ```{r}
 data %>% 
@@ -72,7 +74,9 @@ tidy(race_model)
 TukeyHSD(race_model)
 ```
 
-TIME TO CROSS BY GENDER DESCRIPTIVE STATS
+TIME TO CROSS
+BY GENDER 
+DESCRIPTIVE STATS
 
 ```{r}
 data %>% 
@@ -93,7 +97,8 @@ t.test(
 )
 ```
 
-TIME TO CROSS BY RACE X GENDER
+TIME TO CROSS 
+BY RACE X GENDER
 
 ```{r}
 data %>% 
@@ -117,7 +122,9 @@ time_model <- aov(
 tidy(time_model)
 ```
 
-NUMBER OF CARS PASSED BY GENDER AND/OR RACE DESCRIPTIVE STATS
+NUMBER OF CARS PASSED 
+BY GENDER AND/OR RACE
+DESCRIPTIVE STATS
 
 ```{r}
 data %>% 
@@ -161,7 +168,9 @@ cars_model <- aov(
 tidy(cars_model)
 ```
 
-FIRST CAR YIELD BY RACE AND/OR GENDER RACE COMPARISON
+FIRST CAR YIELD 
+BY RACE AND/OR GENDER 
+RACE COMPARISON
 
 ```{r}
 data %>% 
@@ -197,7 +206,9 @@ firstcar_model <- glm(
 tidy(firstcar_model)
 ```
 
-DID CAR PROCEED BY RACE AND/OR GENDER RACE COMPARISON
+DID CAR PROCEED 
+BY RACE AND/OR GENDER
+RACE COMPARISON
 
 ```{r}
 data %>% 
@@ -233,7 +244,48 @@ proceed_model <- glm(
 tidy(proceed_model)
 ```
 
-VISUALIZATIONS TIME BY RACE
+DID CAR YIELD CLOSE OR FAR
+BY RACE AND/OR GENDER 
+GENDER COMPARISON
+
+```{r}
+data %>% 
+  count(gender, car_stop_close_or_far)
+
+chisq.test(
+  table(data$gender,
+        data$car_stop_close_or_far)
+)
+```
+
+RACE COMPARISON
+```{r}
+data %>% 
+  count(ethnicity, car_stop_close_or_far)
+
+chisq.test(
+  table(data$ethnicity,
+        data$car_stop_close_or_far)
+)
+```
+
+LOGISTIC REGRESSION
+```{r}
+data$car_stop_close_or_far_bin <- ifelse(data$car_stop_close_or_far == "far", 1,
+                                  ifelse(data$car_stop_close_or_far == "close", 0, NA))
+
+yield_model <- glm(
+  car_stop_close_or_far_bin ~ ethnicity + gender,
+  data = data,
+  family = binomial()
+)
+
+tidy(yield_model)
+```
+
+
+VISUALIZATIONS 
+TIME BY RACE
 
 ```{r}
 data %>% 
