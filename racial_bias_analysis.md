@@ -1425,20 +1425,12 @@ data %>%
              y = gender)) +
   geom_violin() +
   geom_jitter(show.legend = FALSE) +
-  geom_smooth(aes(group = 1), method = "lm", se = FALSE, size = 1.2) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, linewidth = 1.2) +
   labs(
     x = "Time to Cross (s)",
     y = "Gender"
   ) + 
   theme_minimal()
-```
-
-```
-## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-## ℹ Please use `linewidth` instead.
-## This warning is displayed once per session.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-## generated.
 ```
 
 ```
@@ -1550,9 +1542,9 @@ data %>%
 ODDS FIRST CAR YIELD
 
 ``` r
-or <- tidy(m3, conf.int = TRUE, exponentiate = TRUE)
+or1 <- tidy(m3, conf.int = TRUE, exponentiate = TRUE)
 
-ggplot(or[-1,], aes(x = estimate,
+ggplot(or1[-1,], aes(x = estimate,
                     y = reorder(term, estimate))) +
   geom_point(size = 3) +
   geom_errorbarh(aes(xmin = conf.low,
@@ -1593,3 +1585,81 @@ ggplot(or[-1,], aes(x = estimate,
 ```
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+
+ODDS CAR PROCEEDED
+
+``` r
+or2 <- tidy(m12, conf.int = TRUE, exponentiate = TRUE)
+
+ggplot(or2[-1,], aes(x = estimate,
+                    y = reorder(term, estimate))) +
+  geom_point(size = 3) +
+  geom_errorbarh(aes(xmin = conf.low,
+                     xmax = conf.high),
+                 height = 0.2) +
+  geom_vline(xintercept = 1,
+             linetype = "dashed",
+             colour = "red") +
+  scale_x_log10() +
+  scale_y_discrete(labels = c(
+    "genderman" = "Male (vs Female)",
+    "genderwoman" = "Female (vs Male)",
+    "ethnicityasian" = "South Asian",
+    "ethnicityblack" = "Black",
+    "ethnicitywhite" = "White",
+    "factor(location)victoria" = "Victoria",
+    "factor(location)bessborough" = "Bessborough",
+    "factor(location)2nd" = "2nd",
+    "factor(location)19th" = "19th")) +
+  labs(
+    x = "Odds Ratio (95% CI)",
+    y = "",
+    title = "Logistic Regression Results"
+  ) +
+  theme_minimal()
+```
+
+```
+## `height` was translated to `width`.
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+
+ODDS CAR CLOSE//FAR
+
+``` r
+or3 <- tidy(m15, conf.int = TRUE, exponentiate = TRUE)
+
+ggplot(or3[-1,], aes(x = estimate,
+                    y = reorder(term, estimate))) +
+  geom_point(size = 3) +
+  geom_errorbarh(aes(xmin = conf.low,
+                     xmax = conf.high),
+                 height = 0.2) +
+  geom_vline(xintercept = 1,
+             linetype = "dashed",
+             colour = "red") +
+  scale_x_log10() +
+  scale_y_discrete(labels = c(
+    "genderman" = "Male (vs Female)",
+    "genderwoman" = "Female (vs Male)",
+    "ethnicityasian" = "South Asian",
+    "ethnicityblack" = "Black",
+    "ethnicitywhite" = "White",
+    "factor(location)victoria" = "Victoria",
+    "factor(location)bessborough" = "Bessborough",
+    "factor(location)2nd" = "2nd",
+    "factor(location)19th" = "19th")) +
+  labs(
+    x = "Odds Ratio (95% CI)",
+    y = "",
+    title = "Logistic Regression Results"
+  ) +
+  theme_minimal()
+```
+
+```
+## `height` was translated to `width`.
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
