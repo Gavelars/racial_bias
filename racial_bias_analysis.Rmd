@@ -146,6 +146,21 @@ data %>%
   )
 ```
 
+
+19th TIMES REMOVED - TIME TO CROSS BY RACE X GENDER
+
+```{r}
+data_19th_rm %>% 
+  group_by(ethnicity, gender) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street),
+    .groups = "drop"
+  )
+```
+
+
 TWO-WAY ANOVA
 
 ```{r}
