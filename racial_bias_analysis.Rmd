@@ -416,7 +416,6 @@ data %>%
   geom_qq() +
   stat_qq_line() +
   facet_wrap(~gender)
-  theme_minimal()
 ```
 
 19TH REMOVED - TIME TO CROSS BY GENDER
