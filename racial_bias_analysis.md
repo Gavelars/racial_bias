@@ -7,7 +7,6 @@ output:
 
 LOAD PACKAGES
 
-
 ``` r
 library(tidyverse)
 ```
@@ -31,7 +30,6 @@ library(snakecase)
 ```
 
 LOAD DATA - REMOVE INVALID TRIALS - TRIALS WITH UNAFFILIATED PEDESTRIANS
-
 
 ``` r
 data_file <- read_csv("master_file.csv") %>% 
@@ -63,7 +61,6 @@ data_19th_rm <- data %>% filter(location != "19th")
 
 GENERAL DESCRIPTIVE STATS
 
-
 ``` r
 data %>% 
   summarise(
@@ -85,7 +82,6 @@ data %>%
 ```
 
 FREQUENCY TABLES
-
 
 ``` r
 data %>% count(ethnicity)
@@ -150,8 +146,76 @@ data %>% count(did_car_proceed_before_across)
 ## 3 <NA>                             17
 ```
 
-FIRST CAR YIELD - LOGISTIC REGRESSION
+FIRST CAR YIELD DESCRIPTIVE STATS
 
+``` r
+data %>% 
+  group_by(gender) %>% 
+  count(first_car_yield) %>% 
+  mutate(percentage = n / sum(n) * 100)
+```
+
+```
+## # A tibble: 4 × 4
+## # Groups:   gender [2]
+##   gender first_car_yield     n percentage
+##   <fct>  <fct>           <int>      <dbl>
+## 1 man    no                 28       31.1
+## 2 man    yes                62       68.9
+## 3 woman  no                 42       35  
+## 4 woman  yes                78       65
+```
+
+``` r
+  .groups = "drop"
+
+data %>% 
+  group_by(ethnicity) %>% 
+  count(first_car_yield) %>% 
+  mutate(percentage = n / sum(n) * 100)
+```
+
+```
+## # A tibble: 4 × 4
+## # Groups:   ethnicity [2]
+##   ethnicity first_car_yield     n percentage
+##   <fct>     <fct>           <int>      <dbl>
+## 1 asian     no                 44       36.7
+## 2 asian     yes                76       63.3
+## 3 white     no                 26       28.9
+## 4 white     yes                64       71.1
+```
+
+``` r
+  .groups = "drop"
+  
+data %>% 
+  group_by(ethnicity, gender) %>% 
+  count(first_car_yield) %>% 
+  mutate(percentage = n / sum(n) * 100)
+```
+
+```
+## # A tibble: 8 × 5
+## # Groups:   ethnicity, gender [4]
+##   ethnicity gender first_car_yield     n percentage
+##   <fct>     <fct>  <fct>           <int>      <dbl>
+## 1 asian     man    no                 16       26.7
+## 2 asian     man    yes                44       73.3
+## 3 asian     woman  no                 28       46.7
+## 4 asian     woman  yes                32       53.3
+## 5 white     man    no                 12       40  
+## 6 white     man    yes                18       60  
+## 7 white     woman  no                 14       23.3
+## 8 white     woman  yes                46       76.7
+```
+
+``` r
+  .groups = "drop"
+```
+
+FIRST CAR YIELD - LOGISTIC REGRESSION
+GENDER - LOCATION FIXED EFFECTS
 
 ``` r
 m1 <- glm(first_car_yield ~ gender + factor(location),
@@ -214,6 +278,7 @@ exp(coef(m1))
 ##                  14.2920406
 ```
 
+ETHNICITY - LOCATION FIXED EFFECTS
 
 ``` r
 m2 <- glm(first_car_yield ~ ethnicity + factor(location),
@@ -276,11 +341,12 @@ exp(coef(m2))
 ##                  14.7315214
 ```
 
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
 
 ``` r
 m3 <- glm(first_car_yield ~ gender + ethnicity + factor(location),
           data = data,
-          family = binomial(link = "logit"))
+          family = binomial())
 
 tidy(m3)
 ```
@@ -305,7 +371,7 @@ summary(m3)
 ## 
 ## Call:
 ## glm(formula = first_car_yield ~ gender + ethnicity + factor(location), 
-##     family = binomial(link = "logit"), data = data)
+##     family = binomial(), data = data)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
@@ -340,168 +406,16 @@ exp(coef(m3))
 ##                  11.0528884                  15.4671069
 ```
 
-TIME TO CROSS BY RACE DESCRIPTIVE STATS
-
-
-``` r
-data %>% 
-  group_by(ethnicity) %>% 
-  summarise(
-    n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street)
-  )
-```
-
-```
-## # A tibble: 2 × 4
-##   ethnicity     n  mean    sd
-##   <fct>     <int> <dbl> <dbl>
-## 1 asian       120  4.75  1.20
-## 2 white        90  6.65  3.88
-```
-
-19th TIMES REMOVED
-
-``` r
-data_19th_rm %>% 
-  group_by(ethnicity) %>% 
-  summarise(
-    n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street)
-  )
-```
-
-```
-## # A tibble: 2 × 4
-##   ethnicity     n  mean    sd
-##   <fct>     <int> <dbl> <dbl>
-## 1 asian        90  4.61  1.06
-## 2 white        60  4.86  1.22
-```
-
-
-ONE-WAY ANOVA RACE
-
-
-``` r
-race_model <- aov(
-  time_to_cross_street~ethnicity,
-  data = data
-)
-
-tidy(race_model)
-```
-
-```
-## # A tibble: 2 × 6
-##   term         df sumsq meansq statistic     p.value
-##   <chr>     <dbl> <dbl>  <dbl>     <dbl>       <dbl>
-## 1 ethnicity     1  184. 184.        25.4  0.00000101
-## 2 Residuals   208 1510.   7.26      NA   NA
-```
-
-``` r
-TukeyHSD(race_model)
-```
-
-```
-##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = time_to_cross_street ~ ethnicity, data = data)
-## 
-## $ethnicity
-##                 diff      lwr     upr p adj
-## white-asian 1.893639 1.152938 2.63434 1e-06
-```
-
-19th REMOVED - ONE-WAY ANOVA RACE
-
-
-``` r
-race_model <- aov(
-  time_to_cross_street~ethnicity,
-  data = data_19th_rm
-)
-
-tidy(race_model)
-```
-
-```
-## # A tibble: 2 × 6
-##   term         df  sumsq meansq statistic p.value
-##   <chr>     <dbl>  <dbl>  <dbl>     <dbl>   <dbl>
-## 1 ethnicity     1   2.27   2.27      1.78   0.184
-## 2 Residuals   148 188.     1.27     NA     NA
-```
-
-``` r
-TukeyHSD(race_model)
-```
-
-```
-##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = time_to_cross_street ~ ethnicity, data = data_19th_rm)
-## 
-## $ethnicity
-##                  diff        lwr       upr     p adj
-## white-asian 0.2510556 -0.1206324 0.6227435 0.1840026
-```
-
-ONE-WAY ANOVA LOCATION
-
-
-``` r
-location_model <- aov(
-  time_to_cross_street~location,
-  data = data
-)
-
-tidy(location_model)
-```
-
-```
-## # A tibble: 2 × 6
-##   term         df sumsq meansq statistic   p.value
-##   <chr>     <dbl> <dbl>  <dbl>     <dbl>     <dbl>
-## 1 location      3  402. 134.        21.3  4.51e-12
-## 2 Residuals   206 1293.   6.28      NA   NA
-```
-
-``` r
-TukeyHSD(location_model)
-```
-
-```
-##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = time_to_cross_street ~ location, data = data)
-## 
-## $location
-##                            diff        lwr        upr     p adj
-## 2nd-19th             -3.0878889 -4.3674969 -1.8082809 0.0000000
-## bessborough-19th     -2.4558889 -3.7354969 -1.1762809 0.0000083
-## victoria-19th        -3.3083333 -4.4930201 -2.1236466 0.0000000
-## bessborough-2nd       0.6320000 -0.7359585  1.9999585 0.6296602
-## victoria-2nd         -0.2204444 -1.5000524  1.0591635 0.9702907
-## victoria-bessborough -0.8524444 -2.1320524  0.4271635 0.3131102
-```
-
-TIME TO CROSS BY GENDER DESCRIPTIVE STATS
-
+MEAN NUMBER OF CARS PASS BEFORE YIELD - DESCRIPTIVE STATS
 
 ``` r
 data %>% 
   group_by(gender) %>% 
   summarise(
     n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street)
+    mean = mean(num_cars_pass_before_yield),
+    sd = sd(num_cars_pass_before_yield),
+    .groups = "drop"
   )
 ```
 
@@ -509,109 +423,28 @@ data %>%
 ## # A tibble: 2 × 4
 ##   gender     n  mean    sd
 ##   <fct>  <int> <dbl> <dbl>
-## 1 man       90  5.04  2.00
-## 2 woman    120  5.96  3.30
+## 1 man       90 0.456 0.781
+## 2 woman    120 0.65  1.16
 ```
-
-
-T-TEST
-
-
-``` r
-t.test(
-  time_to_cross_street ~ gender,
-  data = data
-)
-```
-
-```
-## 
-## 	Welch Two Sample t-test
-## 
-## data:  time_to_cross_street by gender
-## t = -2.4893, df = 199.95, p-value = 0.01362
-## alternative hypothesis: true difference in means between group man and group woman is not equal to 0
-## 95 percent confidence interval:
-##  -1.6400207 -0.1902016
-## sample estimates:
-##   mean in group man mean in group woman 
-##            5.042222            5.957333
-```
-
-TIME TO CROSS BY RACE X GENDER
-
 
 ``` r
 data %>% 
-  group_by(ethnicity, gender) %>% 
+  group_by(ethnicity) %>% 
   summarise(
     n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street),
+    mean = mean(num_cars_pass_before_yield),
+    sd = sd(num_cars_pass_before_yield),
     .groups = "drop"
   )
 ```
 
 ```
-## # A tibble: 4 × 5
-##   ethnicity gender     n  mean    sd
-##   <fct>     <fct>  <int> <dbl> <dbl>
-## 1 asian     man       60  4.27 0.924
-## 2 asian     woman     60  5.24 1.26 
-## 3 white     man       30  6.58 2.62 
-## 4 white     woman     60  6.68 4.40
+## # A tibble: 2 × 4
+##   ethnicity     n  mean    sd
+##   <fct>     <int> <dbl> <dbl>
+## 1 asian       120 0.533 0.829
+## 2 white        90 0.611 1.22
 ```
-
-
-19th TIMES REMOVED - TIME TO CROSS BY RACE X GENDER
-
-
-``` r
-data_19th_rm %>% 
-  group_by(ethnicity, gender) %>% 
-  summarise(
-    n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street),
-    .groups = "drop"
-  )
-```
-
-```
-## # A tibble: 4 × 5
-##   ethnicity gender     n  mean    sd
-##   <fct>     <fct>  <int> <dbl> <dbl>
-## 1 asian     man       45  4.10 0.820
-## 2 asian     woman     45  5.12 1.04 
-## 3 white     man       15  5.08 0.784
-## 4 white     woman     45  4.79 1.33
-```
-
-
-TWO-WAY ANOVA
-
-
-``` r
-time_model <- aov(
-  time_to_cross_street ~ ethnicity*gender,
-  data = data
-)
-
-tidy(time_model)
-```
-
-```
-## # A tibble: 4 × 6
-##   term                df   sumsq meansq statistic      p.value
-##   <chr>            <dbl>   <dbl>  <dbl>     <dbl>        <dbl>
-## 1 ethnicity            1  184.   184.       25.6   0.000000914
-## 2 gender               1   19.0   19.0       2.64  0.106      
-## 3 ethnicity:gender     1    9.01   9.01      1.25  0.264      
-## 4 Residuals          206 1482.     7.19     NA    NA
-```
-
-NUMBER OF CARS PASSED BY GENDER AND/OR RACE DESCRIPTIVE STATS
-
 
 ``` r
 data %>% 
@@ -634,517 +467,1001 @@ data %>%
 ## 4 white     woman     60 0.617 1.37
 ```
 
-GENDER COMPARISON
-
+MEAN NUMBER OF CARS PASS BEFORE YIELD - LINEAR REGRESSION
+GENDER - LOCATION FIXED EFFECTS
 
 ``` r
-t.test(
-  num_cars_pass_before_yield ~ gender,
-  data = data
-)
+m4 <- lm(num_cars_pass_before_yield ~ gender + factor(location),
+         data = data)
+
+tidy(m4)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic  p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                    1.16      0.133      8.70 1.05e-15
+## 2 genderwoman                    0.257     0.127      2.01 4.54e- 2
+## 3 factor(location)2nd           -0.882     0.179     -4.92 1.74e- 6
+## 4 factor(location)bessborough   -1.02      0.179     -5.67 4.82e- 8
+## 5 factor(location)victoria      -1.15      0.165     -6.99 3.84e-11
+```
+
+``` r
+summary(m4)
 ```
 
 ```
 ## 
-## 	Welch Two Sample t-test
+## Call:
+## lm(formula = num_cars_pass_before_yield ~ gender + factor(location), 
+##     data = data)
 ## 
-## data:  num_cars_pass_before_yield by gender
-## t = -1.4518, df = 205.91, p-value = 0.1481
-## alternative hypothesis: true difference in means between group man and group woman is not equal to 0
-## 95 percent confidence interval:
-##  -0.45849447  0.06960558
-## sample estimates:
-##   mean in group man mean in group woman 
-##           0.4555556           0.6500000
-```
-
-RACE COMPARISON
-
-
-``` r
-cars_race <- aov(
-  num_cars_pass_before_yield ~ ethnicity,
-  data = data
-)
-
-tidy(cars_race)
-```
-
-```
-## # A tibble: 2 × 6
-##   term         df   sumsq meansq statistic p.value
-##   <chr>     <dbl>   <dbl>  <dbl>     <dbl>   <dbl>
-## 1 ethnicity     1   0.311  0.311     0.301   0.584
-## 2 Residuals   208 215.     1.03     NA      NA
-```
-
-LOCATION COMPARISON
-
-
-``` r
-cars_location <- aov(
-  num_cars_pass_before_yield ~ location, 
-  data = data
-)
-
-tidy(cars_location)
-```
-
-```
-## # A tibble: 2 × 6
-##   term         df sumsq meansq statistic   p.value
-##   <chr>     <dbl> <dbl>  <dbl>     <dbl>     <dbl>
-## 1 location      3  45.7 15.2        18.5  1.19e-10
-## 2 Residuals   206 170.   0.825      NA   NA
-```
-
-``` r
-TukeyHSD(cars_location)
-```
-
-```
-##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.4117 -0.3967 -0.2617 -0.0050  4.5883 
 ## 
-## Fit: aov(formula = num_cars_pass_before_yield ~ location, data = data)
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                   1.1550     0.1327   8.705 1.05e-15 ***
+## genderwoman                   0.2567     0.1275   2.013   0.0454 *  
+## factor(location)2nd          -0.8817     0.1790  -4.925 1.74e-06 ***
+## factor(location)bessborough  -1.0150     0.1790  -5.669 4.82e-08 ***
+## factor(location)victoria     -1.1500     0.1646  -6.988 3.84e-11 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## $location
-##                            diff        lwr        upr     p adj
-## 2nd-19th             -0.8388889 -1.3027212 -0.3750566 0.0000301
-## bessborough-19th     -0.9722222 -1.4360545 -0.5083899 0.0000009
-## victoria-19th        -1.1500000 -1.5794253 -0.7205747 0.0000000
-## bessborough-2nd      -0.1333333 -0.6291909  0.3625242 0.8983497
-## victoria-2nd         -0.3111111 -0.7749434  0.1527212 0.3070898
-## victoria-bessborough -0.1777778 -0.6416101  0.2860545 0.7537290
+## Residual standard error: 0.9014 on 205 degrees of freedom
+## Multiple R-squared:  0.2273,	Adjusted R-squared:  0.2122 
+## F-statistic: 15.07 on 4 and 205 DF,  p-value: 8.115e-11
 ```
-
-RACE AND GENDER COMPARISON
-
 
 ``` r
-cars_model <- aov(
-  num_cars_pass_before_yield ~ ethnicity * gender,
-  data = data
-)
-
-tidy(cars_model)
+exp(coef(m4))
 ```
 
 ```
-## # A tibble: 4 × 6
-##   term                df   sumsq meansq statistic p.value
-##   <chr>            <dbl>   <dbl>  <dbl>     <dbl>   <dbl>
-## 1 ethnicity            1   0.311  0.311     0.302   0.584
-## 2 gender               1   1.74   1.74      1.69    0.195
-## 3 ethnicity:gender     1   0.963  0.963     0.934   0.335
-## 4 Residuals          206 213.     1.03     NA      NA
+##                 (Intercept)                 genderwoman 
+##                   3.1740234                   1.2926142 
+##         factor(location)2nd factor(location)bessborough 
+##                   0.4140922                   0.3624024 
+##    factor(location)victoria 
+##                   0.3166368
 ```
 
-FIRST CAR YIELD BY RACE AND/OR GENDER RACE COMPARISON
+ETHNICITY - LOCATION FIXED EFFECTS
 
+``` r
+m5 <- lm(num_cars_pass_before_yield ~ ethnicity + factor(location),
+         data = data)
+
+tidy(m5)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic  p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                   1.27       0.134     9.49  6.08e-18
+## 2 ethnicitywhite                0.0233     0.129     0.181 8.56e- 1
+## 3 factor(location)2nd          -0.835      0.181    -4.62  6.81e- 6
+## 4 factor(location)bessborough  -0.968      0.181    -5.36  2.27e- 7
+## 5 factor(location)victoria     -1.15       0.166    -6.92  5.66e-11
+```
+
+``` r
+summary(m5)
+```
+
+```
+## 
+## Call:
+## lm(formula = num_cars_pass_before_yield ~ ethnicity + factor(location), 
+##     data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.2950 -0.3267 -0.2717 -0.1217  4.7050 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                  1.27167    0.13398   9.491  < 2e-16 ***
+## ethnicitywhite               0.02333    0.12873   0.181    0.856    
+## factor(location)2nd         -0.83500    0.18078  -4.619 6.81e-06 ***
+## factor(location)bessborough -0.96833    0.18078  -5.357 2.27e-07 ***
+## factor(location)victoria    -1.15000    0.16618  -6.920 5.66e-11 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.9102 on 205 degrees of freedom
+## Multiple R-squared:  0.2121,	Adjusted R-squared:  0.1967 
+## F-statistic:  13.8 on 4 and 205 DF,  p-value: 5.56e-10
+```
+
+``` r
+exp(coef(m5))
+```
+
+```
+##                 (Intercept)              ethnicitywhite 
+##                   3.5667923                   1.0236077 
+##         factor(location)2nd factor(location)bessborough 
+##                   0.4338745                   0.3797154 
+##    factor(location)victoria 
+##                   0.3166368
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+
+``` r
+m6 <- lm(num_cars_pass_before_yield ~ gender + ethnicity + factor(location),
+         data = data)
+
+tidy(m6)
+```
+
+```
+## # A tibble: 6 × 5
+##   term                        estimate std.error statistic  p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                   1.17       0.143     8.17  3.27e-14
+## 2 genderwoman                   0.262      0.130     2.01  4.54e- 2
+## 3 ethnicitywhite               -0.0292     0.130    -0.224 8.23e- 1
+## 4 factor(location)2nd          -0.887      0.181    -4.89  2.00e- 6
+## 5 factor(location)bessborough  -1.02       0.181    -5.63  5.92e- 8
+## 6 factor(location)victoria     -1.15       0.165    -6.97  4.27e-11
+```
+
+``` r
+summary(m6)
+```
+
+```
+## 
+## Call:
+## lm(formula = num_cars_pass_before_yield ~ gender + ethnicity + 
+##     factor(location), data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.4000 -0.4083 -0.2500  0.0125  4.6000 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                  1.16667    0.14286   8.166 3.27e-14 ***
+## genderwoman                  0.26250    0.13041   2.013   0.0454 *  
+## ethnicitywhite              -0.02917    0.13041  -0.224   0.8233    
+## factor(location)2nd         -0.88750    0.18133  -4.894 2.00e-06 ***
+## factor(location)bessborough -1.02083    0.18133  -5.630 5.92e-08 ***
+## factor(location)victoria    -1.15000    0.16496  -6.971 4.27e-11 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.9035 on 204 degrees of freedom
+## Multiple R-squared:  0.2274,	Adjusted R-squared:  0.2085 
+## F-statistic: 12.01 on 5 and 204 DF,  p-value: 3.332e-10
+```
+
+``` r
+exp(coef(m6))
+```
+
+```
+##                 (Intercept)                 genderwoman 
+##                   3.2112705                   1.3001765 
+##              ethnicitywhite         factor(location)2nd 
+##                   0.9712546                   0.4116837 
+## factor(location)bessborough    factor(location)victoria 
+##                   0.3602946                   0.3166368
+```
+
+TIME TO ENTER INTERSECTION - DESCRIPTIVE STATS
 
 ``` r
 data %>% 
-  count(ethnicity, first_car_yield)
+  group_by(gender) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street),
+    .groups = "drop"
+  )
 ```
 
 ```
-## # A tibble: 4 × 3
-##   ethnicity first_car_yield     n
-##   <fct>     <fct>           <int>
-## 1 asian     no                 44
-## 2 asian     yes                76
-## 3 white     no                 26
-## 4 white     yes                64
+## # A tibble: 2 × 4
+##   gender     n  mean    sd
+##   <fct>  <int> <dbl> <dbl>
+## 1 man       90  5.04  2.00
+## 2 woman    120  5.96  3.30
 ```
-
-``` r
-chisq.test(
-  table(data$ethnicity,
-        data$first_car_yield)
-)
-```
-
-```
-## 
-## 	Pearson's Chi-squared test with Yates' continuity correction
-## 
-## data:  table(data$ethnicity, data$first_car_yield)
-## X-squared = 1.0719, df = 1, p-value = 0.3005
-```
-
-LOCATION COMPARISON
-
 
 ``` r
 data %>% 
-  count(location, first_car_yield)
+  group_by(ethnicity) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street),
+    .groups = "drop"
+  )
 ```
 
 ```
-## # A tibble: 8 × 3
-##   location    first_car_yield     n
-##   <fct>       <fct>           <int>
-## 1 19th        no                 39
-## 2 19th        yes                21
-## 3 2nd         no                 16
-## 4 2nd         yes                29
-## 5 bessborough no                  8
-## 6 bessborough yes                37
-## 7 victoria    no                  7
-## 8 victoria    yes                53
+## # A tibble: 2 × 4
+##   ethnicity     n  mean    sd
+##   <fct>     <int> <dbl> <dbl>
+## 1 asian       120  4.75  1.20
+## 2 white        90  6.65  3.88
 ```
-
-``` r
-chisq.test(
-  table(data$location,
-        data$first_car_yield)
-)
-```
-
-```
-## 
-## 	Pearson's Chi-squared test
-## 
-## data:  table(data$location, data$first_car_yield)
-## X-squared = 44.75, df = 3, p-value = 1.046e-09
-```
-
-GENDER COMPARISON
-
 
 ``` r
 data %>% 
-  count(gender, first_car_yield)
+  group_by(gender, ethnicity) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street),
+    .groups = "drop"
+  )
 ```
 
 ```
-## # A tibble: 4 × 3
-##   gender first_car_yield     n
-##   <fct>  <fct>           <int>
-## 1 man    no                 28
-## 2 man    yes                62
-## 3 woman  no                 42
-## 4 woman  yes                78
+## # A tibble: 4 × 5
+##   gender ethnicity     n  mean    sd
+##   <fct>  <fct>     <int> <dbl> <dbl>
+## 1 man    asian        60  4.27 0.924
+## 2 man    white        30  6.58 2.62 
+## 3 woman  asian        60  5.24 1.26 
+## 4 woman  white        60  6.68 4.40
+```
+
+TIME TO ENTER INTERSECTION - LINEAR REGRESSION
+GENDER - LOCATION FIXED EFFECTS 
+
+``` r
+m7 <- lm(time_to_cross_street ~ gender + factor(location),
+         data = data)
+
+tidy(m7)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic  p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                     7.13     0.360     19.8  1.89e-49
+## 2 genderwoman                     1.13     0.346      3.27 1.25e- 3
+## 3 factor(location)2nd            -3.28     0.486     -6.74 1.58e-10
+## 4 factor(location)bessborough    -2.64     0.486     -5.44 1.52e- 7
+## 5 factor(location)victoria       -3.31     0.447     -7.40 3.41e-12
 ```
 
 ``` r
-chisq.test(
-  table(data$gender,
-        data$first_car_yield)
-)
+summary(m7)
 ```
 
 ```
 ## 
-## 	Pearson's Chi-squared test with Yates' continuity correction
+## Call:
+## lm(formula = time_to_cross_street ~ gender + factor(location), 
+##     data = data)
 ## 
-## data:  table(data$gender, data$first_car_yield)
-## X-squared = 0.19687, df = 1, p-value = 0.6573
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.5548 -1.0519 -0.0991  0.6579 14.4152 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                   7.1319     0.3604  19.791  < 2e-16 ***
+## genderwoman                   1.1329     0.3462   3.272  0.00125 ** 
+## factor(location)2nd          -3.2767     0.4862  -6.739 1.58e-10 ***
+## factor(location)bessborough  -2.6447     0.4862  -5.439 1.52e-07 ***
+## factor(location)victoria     -3.3083     0.4470  -7.402 3.41e-12 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.448 on 205 degrees of freedom
+## Multiple R-squared:  0.2749,	Adjusted R-squared:  0.2607 
+## F-statistic: 19.43 on 4 and 205 DF,  p-value: 1.437e-13
 ```
-
-LOGISTIC REGRESSION
-
 
 ``` r
-firstcar_model <- glm(
-  first_car_yield ~ ethnicity + gender,
-  data = data,
-  family = binomial()
-)
-
-tidy(firstcar_model)
+exp(coef(m7))
 ```
 
 ```
-## # A tibble: 3 × 5
-##   term           estimate std.error statistic p.value
-##   <chr>             <dbl>     <dbl>     <dbl>   <dbl>
-## 1 (Intercept)       0.670     0.246     2.72  0.00646
-## 2 ethnicitywhite    0.396     0.305     1.30  0.195  
-## 3 genderwoman      -0.243     0.303    -0.801 0.423
+##                 (Intercept)                 genderwoman 
+##                1.251252e+03                3.104543e+00 
+##         factor(location)2nd factor(location)bessborough 
+##                3.775264e-02                7.102666e-02 
+##    factor(location)victoria 
+##                3.657708e-02
 ```
 
-DID CAR PROCEED BY RACE AND/OR GENDER RACE COMPARISON
+ETHNICITY - LOCATION FIXED EFFECTS
 
+``` r
+m8 <- lm(time_to_cross_street ~ ethnicity + factor(location),
+         data = data)
+
+tidy(m8)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic  p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                     6.82     0.347     19.7  4.62e-49
+## 2 ethnicitywhite                  1.76     0.333      5.27 3.46e- 7
+## 3 factor(location)2nd            -2.80     0.468     -5.97 1.02e- 8
+## 4 factor(location)bessborough    -2.16     0.468     -4.62 6.73e- 6
+## 5 factor(location)victoria       -3.31     0.430     -7.69 6.09e-13
+```
+
+``` r
+summary(m8)
+```
+
+```
+## 
+## Call:
+## lm(formula = time_to_cross_street ~ ethnicity + factor(location), 
+##     data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.5364 -1.3643 -0.1161  0.8817 14.1036 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                   6.8203     0.3469  19.660  < 2e-16 ***
+## ethnicitywhite                1.7561     0.3333   5.269 3.46e-07 ***
+## factor(location)2nd          -2.7952     0.4681  -5.972 1.02e-08 ***
+## factor(location)bessborough  -2.1632     0.4681  -4.621 6.73e-06 ***
+## factor(location)victoria     -3.3083     0.4303  -7.689 6.09e-13 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.357 on 205 degrees of freedom
+## Multiple R-squared:  0.328,	Adjusted R-squared:  0.3149 
+## F-statistic: 25.02 on 4 and 205 DF,  p-value: < 2.2e-16
+```
+
+``` r
+exp(coef(m8))
+```
+
+```
+##                 (Intercept)              ethnicitywhite 
+##                916.22930532                  5.79000603 
+##         factor(location)2nd factor(location)bessborough 
+##                  0.06110265                  0.11495667 
+##    factor(location)victoria 
+##                  0.03657708
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+
+``` r
+m9 <- lm(time_to_cross_street ~ gender + ethnicity + factor(location),
+         data = data)
+
+tidy(m9)
+```
+
+```
+## # A tibble: 6 × 5
+##   term                        estimate std.error statistic  p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                    6.49      0.368     17.6  6.86e-43
+## 2 genderwoman                    0.814     0.336      2.42 1.63e- 2
+## 3 ethnicitywhite                 1.59      0.336      4.74 4.02e- 6
+## 4 factor(location)2nd           -2.96      0.467     -6.33 1.55e- 9
+## 5 factor(location)bessborough   -2.33      0.467     -4.98 1.38e- 6
+## 6 factor(location)victoria      -3.31      0.425     -7.78 3.56e-13
+```
+
+``` r
+summary(m9)
+```
+
+```
+## 
+## Call:
+## lm(formula = time_to_cross_street ~ gender + ethnicity + factor(location), 
+##     data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.0479 -1.3555  0.0864  1.0172 13.7779 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                   6.4946     0.3683  17.634  < 2e-16 ***
+## genderwoman                   0.8142     0.3362   2.422   0.0163 *  
+## ethnicitywhite                1.5933     0.3362   4.739 4.02e-06 ***
+## factor(location)2nd          -2.9580     0.4675  -6.328 1.55e-09 ***
+## factor(location)bessborough  -2.3260     0.4675  -4.976 1.38e-06 ***
+## factor(location)victoria     -3.3083     0.4253  -7.779 3.56e-13 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.329 on 204 degrees of freedom
+## Multiple R-squared:  0.3468,	Adjusted R-squared:  0.3308 
+## F-statistic: 21.66 on 5 and 204 DF,  p-value: < 2.2e-16
+```
+
+``` r
+exp(coef(m9))
+```
+
+```
+##                 (Intercept)                 genderwoman 
+##                661.54852266                  2.25738787 
+##              ethnicitywhite         factor(location)2nd 
+##                  4.91991703                  0.05192050 
+## factor(location)bessborough    factor(location)victoria 
+##                  0.09768164                  0.03657708
+```
+
+CAR PROCEED THROUGH INTERSECTION - DESCRIPTIVE STATS
 
 ``` r
 data %>% 
-  count(ethnicity, did_car_proceed_before_across)
+  group_by(gender) %>% 
+  count(did_car_proceed_before_across) %>% 
+  mutate(percentage = n / sum(n) * 100)
 ```
 
 ```
-## # A tibble: 6 × 3
-##   ethnicity did_car_proceed_before_across     n
-##   <fct>     <fct>                         <int>
-## 1 asian     no                                7
-## 2 asian     yes                             102
-## 3 asian     <NA>                             11
-## 4 white     no                               11
-## 5 white     yes                              73
-## 6 white     <NA>                              6
+## # A tibble: 6 × 4
+## # Groups:   gender [2]
+##   gender did_car_proceed_before_across     n percentage
+##   <fct>  <fct>                         <int>      <dbl>
+## 1 man    no                                4       4.44
+## 2 man    yes                              78      86.7 
+## 3 man    <NA>                              8       8.89
+## 4 woman  no                               14      11.7 
+## 5 woman  yes                              97      80.8 
+## 6 woman  <NA>                              9       7.5
 ```
 
 ``` r
-chisq.test(
-  table(data$ethnicity,
-        data$did_car_proceed_before_across)
-)
-```
+  .groups = "drop"
 
-```
-## 
-## 	Pearson's Chi-squared test with Yates' continuity correction
-## 
-## data:  table(data$ethnicity, data$did_car_proceed_before_across)
-## X-squared = 1.7714, df = 1, p-value = 0.1832
-```
-
-LOCATION COMPARISON
-
-
-``` r
 data %>% 
-  count(location, did_car_proceed_before_across)
+  group_by(ethnicity) %>% 
+  count(did_car_proceed_before_across) %>% 
+  mutate(percentage = n / sum(n) * 100)
 ```
 
 ```
-## # A tibble: 11 × 3
-##    location    did_car_proceed_before_across     n
-##    <fct>       <fct>                         <int>
-##  1 19th        no                                5
-##  2 19th        yes                              43
-##  3 19th        <NA>                             12
-##  4 2nd         no                                5
-##  5 2nd         yes                              36
-##  6 2nd         <NA>                              4
-##  7 bessborough no                                2
-##  8 bessborough yes                              42
-##  9 bessborough <NA>                              1
-## 10 victoria    no                                6
-## 11 victoria    yes                              54
+## # A tibble: 6 × 4
+## # Groups:   ethnicity [2]
+##   ethnicity did_car_proceed_before_across     n percentage
+##   <fct>     <fct>                         <int>      <dbl>
+## 1 asian     no                                7       5.83
+## 2 asian     yes                             102      85   
+## 3 asian     <NA>                             11       9.17
+## 4 white     no                               11      12.2 
+## 5 white     yes                              73      81.1 
+## 6 white     <NA>                              6       6.67
 ```
 
 ``` r
-chisq.test(
-  table(data$location,
-        data$did_car_proceed_before_across)
-)
-```
-
-```
-## Warning in chisq.test(table(data$location,
-## data$did_car_proceed_before_across)): Chi-squared approximation may be
-## incorrect
-```
-
-```
-## 
-## 	Pearson's Chi-squared test
-## 
-## data:  table(data$location, data$did_car_proceed_before_across)
-## X-squared = 1.6879, df = 3, p-value = 0.6396
-```
-
-GENDER COMPARISON
-
-
-``` r
+  .groups = "drop"
+  
 data %>% 
-  count(gender, did_car_proceed_before_across)
+  group_by(ethnicity, gender) %>% 
+  count(did_car_proceed_before_across) %>% 
+  mutate(percentage = n / sum(n) * 100)
 ```
 
 ```
-## # A tibble: 6 × 3
-##   gender did_car_proceed_before_across     n
-##   <fct>  <fct>                         <int>
-## 1 man    no                                4
-## 2 man    yes                              78
-## 3 man    <NA>                              8
-## 4 woman  no                               14
-## 5 woman  yes                              97
-## 6 woman  <NA>                              9
+## # A tibble: 12 × 5
+## # Groups:   ethnicity, gender [4]
+##    ethnicity gender did_car_proceed_before_across     n percentage
+##    <fct>     <fct>  <fct>                         <int>      <dbl>
+##  1 asian     man    no                                3       5   
+##  2 asian     man    yes                              53      88.3 
+##  3 asian     man    <NA>                              4       6.67
+##  4 asian     woman  no                                4       6.67
+##  5 asian     woman  yes                              49      81.7 
+##  6 asian     woman  <NA>                              7      11.7 
+##  7 white     man    no                                1       3.33
+##  8 white     man    yes                              25      83.3 
+##  9 white     man    <NA>                              4      13.3 
+## 10 white     woman  no                               10      16.7 
+## 11 white     woman  yes                              48      80   
+## 12 white     woman  <NA>                              2       3.33
 ```
 
 ``` r
-chisq.test(
-  table(data$gender,
-        data$did_car_proceed_before_across)
-)
+  .groups = "drop"
+```
+
+CAR PROCEED THROUGH INTERSECTION - LOGISTIC REGRESSION 
+GENDER - LOCATION FIXED EFFECTS
+
+``` r
+m10 <- glm(did_car_proceed_before_across ~ gender + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m10)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic   p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>     <dbl>
+## 1 (Intercept)                   2.84       0.644    4.41   0.0000103
+## 2 genderwoman                  -1.10       0.594   -1.85   0.0643   
+## 3 factor(location)2nd          -0.0469     0.681   -0.0689 0.945    
+## 4 factor(location)bessborough   1.04       0.872    1.19   0.234    
+## 5 factor(location)victoria      0.0249     0.647    0.0385 0.969
+```
+
+``` r
+summary(m10)
 ```
 
 ```
 ## 
-## 	Pearson's Chi-squared test with Yates' continuity correction
+## Call:
+## glm(formula = did_car_proceed_before_across ~ gender + factor(location), 
+##     family = binomial(), data = data)
 ## 
-## data:  table(data$gender, data$did_car_proceed_before_across)
-## X-squared = 2.4843, df = 1, p-value = 0.115
-```
-
-LOGISTIC REGRESSION
-
-
-``` r
-proceed_model <- glm(
-  did_car_proceed_before_across ~ ethnicity + gender,
-  data = data,
-  family = binomial()
-)
-
-tidy(proceed_model)
-```
-
-```
-## # A tibble: 3 × 5
-##   term           estimate std.error statistic      p.value
-##   <chr>             <dbl>     <dbl>     <dbl>        <dbl>
-## 1 (Intercept)       3.21      0.564      5.69 0.0000000125
-## 2 ethnicitywhite   -0.628     0.517     -1.21 0.225       
-## 3 genderwoman      -0.910     0.597     -1.52 0.127
-```
-
-DID CAR YIELD CLOSE OR FAR BY RACE AND/OR GENDER GENDER COMPARISON
-
-
-``` r
-data %>% 
-  count(gender, car_stop_close_or_far)
-```
-
-```
-## # A tibble: 6 × 3
-##   gender car_stop_close_or_far     n
-##   <fct>  <chr>                 <int>
-## 1 man    close                     7
-## 2 man    far                      75
-## 3 man    <NA>                      8
-## 4 woman  close                     8
-## 5 woman  far                     103
-## 6 woman  <NA>                      9
-```
-
-``` r
-chisq.test(
-  table(data$gender,
-        data$car_stop_close_or_far)
-)
-```
-
-```
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  2.83974    0.64370   4.412 1.03e-05 ***
+## genderwoman                 -1.09887    0.59389  -1.850   0.0643 .  
+## factor(location)2nd         -0.04693    0.68148  -0.069   0.9451    
+## factor(location)bessborough  1.03800    0.87238   1.190   0.2341    
+## factor(location)victoria     0.02490    0.64683   0.038   0.9693    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## 	Pearson's Chi-squared test with Yates' continuity correction
+## (Dispersion parameter for binomial family taken to be 1)
 ## 
-## data:  table(data$gender, data$car_stop_close_or_far)
-## X-squared = 0.004767, df = 1, p-value = 0.945
-```
-
-RACE COMPARISON
-
-
-``` r
-data %>% 
-  count(ethnicity, car_stop_close_or_far)
-```
-
-```
-## # A tibble: 6 × 3
-##   ethnicity car_stop_close_or_far     n
-##   <fct>     <chr>                 <int>
-## 1 asian     close                    11
-## 2 asian     far                      98
-## 3 asian     <NA>                     11
-## 4 white     close                     4
-## 5 white     far                      80
-## 6 white     <NA>                      6
+##     Null deviance: 119.67  on 192  degrees of freedom
+## Residual deviance: 113.82  on 188  degrees of freedom
+##   (17 observations deleted due to missingness)
+## AIC: 123.82
+## 
+## Number of Fisher Scoring iterations: 5
 ```
 
 ``` r
-chisq.test(
-  table(data$ethnicity,
-        data$car_stop_close_or_far)
-)
+exp(coef(m10))
+```
+
+```
+##                 (Intercept)                 genderwoman 
+##                  17.1112307                   0.3332482 
+##         factor(location)2nd factor(location)bessborough 
+##                   0.9541508                   2.8235621 
+##    factor(location)victoria 
+##                   1.0252080
+```
+
+ETHNICITY - LOCATION FIXED EFFECTS
+
+``` r
+m11 <- glm(did_car_proceed_before_across ~ ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m11)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic    p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>      <dbl>
+## 1 (Intercept)                   2.59       0.581    4.46   0.00000815
+## 2 ethnicitywhite               -0.764      0.515   -1.48   0.138     
+## 3 factor(location)2nd          -0.285      0.680   -0.419  0.675     
+## 4 factor(location)bessborough   0.777      0.871    0.892  0.372     
+## 5 factor(location)victoria      0.0460     0.643    0.0716 0.943
+```
+
+``` r
+summary(m11)
 ```
 
 ```
 ## 
-## 	Pearson's Chi-squared test with Yates' continuity correction
+## Call:
+## glm(formula = did_car_proceed_before_across ~ ethnicity + factor(location), 
+##     family = binomial(), data = data)
 ## 
-## data:  table(data$ethnicity, data$car_stop_close_or_far)
-## X-squared = 1.2101, df = 1, p-value = 0.2713
-```
-
-LOCATION COMPARISON
-
-
-``` r
-data %>% 
-  count(location, car_stop_close_or_far)
-```
-
-```
-## # A tibble: 11 × 3
-##    location    car_stop_close_or_far     n
-##    <fct>       <chr>                 <int>
-##  1 19th        close                     8
-##  2 19th        far                      40
-##  3 19th        <NA>                     12
-##  4 2nd         close                     3
-##  5 2nd         far                      38
-##  6 2nd         <NA>                      4
-##  7 bessborough close                     1
-##  8 bessborough far                      43
-##  9 bessborough <NA>                      1
-## 10 victoria    close                     3
-## 11 victoria    far                      57
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  2.59092    0.58076   4.461 8.15e-06 ***
+## ethnicitywhite              -0.76402    0.51452  -1.485    0.138    
+## factor(location)2nd         -0.28491    0.68049  -0.419    0.675    
+## factor(location)bessborough  0.77669    0.87089   0.892    0.372    
+## factor(location)victoria     0.04604    0.64313   0.072    0.943    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 119.67  on 192  degrees of freedom
+## Residual deviance: 115.49  on 188  degrees of freedom
+##   (17 observations deleted due to missingness)
+## AIC: 125.49
+## 
+## Number of Fisher Scoring iterations: 5
 ```
 
 ``` r
-chisq.test(
-  table(data$location,
-        data$car_stop_close_or_far)
-)
+exp(coef(m11))
 ```
 
 ```
-## Warning in chisq.test(table(data$location, data$car_stop_close_or_far)):
-## Chi-squared approximation may be incorrect
+##                 (Intercept)              ethnicitywhite 
+##                  13.3420379                   0.4657893 
+##         factor(location)2nd factor(location)bessborough 
+##                   0.7520793                   2.1742534 
+##    factor(location)victoria 
+##                   1.0471130
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+
+``` r
+m12 <- glm(did_car_proceed_before_across ~ gender + ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m12)
+```
+
+```
+## # A tibble: 6 × 5
+##   term                        estimate std.error statistic    p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>      <dbl>
+## 1 (Intercept)                   3.10       0.692    4.48   0.00000754
+## 2 genderwoman                  -0.994      0.607   -1.64   0.102     
+## 3 ethnicitywhite               -0.590      0.520   -1.13   0.257     
+## 4 factor(location)2nd          -0.0931     0.690   -0.135  0.893     
+## 5 factor(location)bessborough   0.985      0.879    1.12   0.263     
+## 6 factor(location)victoria      0.0224     0.649    0.0345 0.972
+```
+
+``` r
+summary(m12)
 ```
 
 ```
 ## 
-## 	Pearson's Chi-squared test
+## Call:
+## glm(formula = did_car_proceed_before_across ~ gender + ethnicity + 
+##     factor(location), family = binomial(), data = data)
 ## 
-## data:  table(data$location, data$car_stop_close_or_far)
-## X-squared = 7.8093, df = 3, p-value = 0.05012
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                   3.0969     0.6916   4.478 7.54e-06 ***
+## genderwoman                  -0.9942     0.6073  -1.637    0.102    
+## ethnicitywhite               -0.5895     0.5198  -1.134    0.257    
+## factor(location)2nd          -0.0931     0.6895  -0.135    0.893    
+## factor(location)bessborough   0.9847     0.8789   1.120    0.263    
+## factor(location)victoria      0.0224     0.6485   0.035    0.972    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 119.67  on 192  degrees of freedom
+## Residual deviance: 112.51  on 187  degrees of freedom
+##   (17 observations deleted due to missingness)
+## AIC: 124.51
+## 
+## Number of Fisher Scoring iterations: 6
 ```
 
-LOGISTIC REGRESSION
+``` r
+exp(coef(m12))
+```
 
+```
+##                 (Intercept)                 genderwoman 
+##                  22.1285215                   0.3700003 
+##              ethnicitywhite         factor(location)2nd 
+##                   0.5545916                   0.9111053 
+## factor(location)bessborough    factor(location)victoria 
+##                   2.6771172                   1.0226502
+```
+
+CARS STOP CLOSE OR FAR BINNING
 
 ``` r
 data$car_stop_close_or_far_bin <- ifelse(data$car_stop_close_or_far == "far", 1,
                                   ifelse(data$car_stop_close_or_far == "close", 0, NA))
+```
 
-yield_model <- glm(
-  car_stop_close_or_far_bin ~ ethnicity + gender,
-  data = data,
-  family = binomial()
+CARS STOP CLOSE OR FAR - DESCRIPTIVE STATS
+
+``` r
+data %>% 
+  group_by(gender) %>% 
+  count(car_stop_close_or_far) %>% 
+  mutate(percentage = n / sum(n) * 100)
+```
+
+```
+## # A tibble: 6 × 4
+## # Groups:   gender [2]
+##   gender car_stop_close_or_far     n percentage
+##   <fct>  <chr>                 <int>      <dbl>
+## 1 man    close                     7       7.78
+## 2 man    far                      75      83.3 
+## 3 man    <NA>                      8       8.89
+## 4 woman  close                     8       6.67
+## 5 woman  far                     103      85.8 
+## 6 woman  <NA>                      9       7.5
+```
+
+``` r
+  .groups = "drop"
+
+data %>% 
+  group_by(ethnicity) %>% 
+  count(car_stop_close_or_far) %>% 
+  mutate(percentage = n / sum(n) * 100)
+```
+
+```
+## # A tibble: 6 × 4
+## # Groups:   ethnicity [2]
+##   ethnicity car_stop_close_or_far     n percentage
+##   <fct>     <chr>                 <int>      <dbl>
+## 1 asian     close                    11       9.17
+## 2 asian     far                      98      81.7 
+## 3 asian     <NA>                     11       9.17
+## 4 white     close                     4       4.44
+## 5 white     far                      80      88.9 
+## 6 white     <NA>                      6       6.67
+```
+
+``` r
+  .groups = "drop"
+  
+data %>% 
+  group_by(ethnicity, gender) %>% 
+  count(car_stop_close_or_far) %>% 
+  mutate(percentage = n / sum(n) * 100)
+```
+
+```
+## # A tibble: 12 × 5
+## # Groups:   ethnicity, gender [4]
+##    ethnicity gender car_stop_close_or_far     n percentage
+##    <fct>     <fct>  <chr>                 <int>      <dbl>
+##  1 asian     man    close                     5       8.33
+##  2 asian     man    far                      51      85   
+##  3 asian     man    <NA>                      4       6.67
+##  4 asian     woman  close                     6      10   
+##  5 asian     woman  far                      47      78.3 
+##  6 asian     woman  <NA>                      7      11.7 
+##  7 white     man    close                     2       6.67
+##  8 white     man    far                      24      80   
+##  9 white     man    <NA>                      4      13.3 
+## 10 white     woman  close                     2       3.33
+## 11 white     woman  far                      56      93.3 
+## 12 white     woman  <NA>                      2       3.33
+```
+
+``` r
+  .groups = "drop"
+```
+
+CARS STOP CLOSE OR FAR - LOGISTIC REGRESSION
+GENDER - LOCATION FIXED EFFECTS
+
+``` r
+m13 <- glm(car_stop_close_or_far_bin ~ gender + factor(location),
+           data = data,
+           family = binomial()
 )
 
-tidy(yield_model)
+tidy(m13)
 ```
 
 ```
-## # A tibble: 3 × 5
-##   term           estimate std.error statistic     p.value
-##   <chr>             <dbl>     <dbl>     <dbl>       <dbl>
-## 1 (Intercept)      2.17       0.413    5.25   0.000000152
-## 2 ethnicitywhite   0.802      0.613    1.31   0.191      
-## 3 genderwoman      0.0336     0.551    0.0610 0.951
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
+## 1 (Intercept)                   1.56       0.478     3.26  0.00110
+## 2 genderwoman                   0.0932     0.555     0.168 0.867  
+## 3 factor(location)2nd           0.917      0.718     1.28  0.202  
+## 4 factor(location)bessborough   2.14       1.09      1.97  0.0488 
+## 5 factor(location)victoria      1.34       0.708     1.89  0.0589
+```
+
+``` r
+summary(m13)
+```
+
+```
+## 
+## Call:
+## glm(formula = car_stop_close_or_far_bin ~ gender + factor(location), 
+##     family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)   
+## (Intercept)                  1.56161    0.47832   3.265   0.0011 **
+## genderwoman                  0.09322    0.55532   0.168   0.8667   
+## factor(location)2nd          0.91682    0.71790   1.277   0.2016   
+## factor(location)bessborough  2.13909    1.08572   1.970   0.0488 * 
+## factor(location)victoria     1.33720    0.70793   1.889   0.0589 . 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 105.442  on 192  degrees of freedom
+## Residual deviance:  98.058  on 188  degrees of freedom
+##   (17 observations deleted due to missingness)
+## AIC: 108.06
+## 
+## Number of Fisher Scoring iterations: 6
+```
+
+``` r
+exp(coef(m13))
+```
+
+```
+##                 (Intercept)                 genderwoman 
+##                    4.766474                    1.097708 
+##         factor(location)2nd factor(location)bessborough 
+##                    2.501312                    8.491709 
+##    factor(location)victoria 
+##                    3.808356
+```
+
+ETHNICITY - LOCATION FIXED EFFECTS
+
+``` r
+m14 <- glm(car_stop_close_or_far_bin ~ ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m14)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
+## 1 (Intercept)                    1.20      0.446      2.69 0.00725
+## 2 ethnicitywhite                 0.985     0.621      1.59 0.113  
+## 3 factor(location)2nd            1.07      0.725      1.47 0.140  
+## 4 factor(location)bessborough    2.32      1.09       2.12 0.0336 
+## 5 factor(location)victoria       1.36      0.714      1.91 0.0567
+```
+
+``` r
+summary(m14)
+```
+
+```
+## 
+## Call:
+## glm(formula = car_stop_close_or_far_bin ~ ethnicity + factor(location), 
+##     family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)   
+## (Intercept)                   1.1973     0.4459   2.685  0.00725 **
+## ethnicitywhite                0.9847     0.6206   1.587  0.11258   
+## factor(location)2nd           1.0698     0.7254   1.475  0.14029   
+## factor(location)bessborough   2.3204     1.0920   2.125  0.03360 * 
+## factor(location)victoria      1.3608     0.7142   1.905  0.05673 . 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 105.442  on 192  degrees of freedom
+## Residual deviance:  95.299  on 188  degrees of freedom
+##   (17 observations deleted due to missingness)
+## AIC: 105.3
+## 
+## Number of Fisher Scoring iterations: 6
+```
+
+``` r
+exp(coef(m14))
+```
+
+```
+##                 (Intercept)              ethnicitywhite 
+##                    3.311189                    2.676983 
+##         factor(location)2nd factor(location)bessborough 
+##                    2.914710                   10.179521 
+##    factor(location)victoria 
+##                    3.899412
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS 
+
+``` r
+m15 <- glm(car_stop_close_or_far_bin ~ gender + ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m15)
+```
+
+```
+## # A tibble: 6 × 5
+##   term                        estimate std.error statistic p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
+## 1 (Intercept)                   1.22       0.519    2.35    0.0189
+## 2 genderwoman                  -0.0457     0.561   -0.0814  0.935 
+## 3 ethnicitywhite                0.991      0.625    1.59    0.113 
+## 4 factor(location)2nd           1.07       0.726    1.48    0.140 
+## 5 factor(location)bessborough   2.32       1.09     2.13    0.0334
+## 6 factor(location)victoria      1.36       0.714    1.90    0.0568
+```
+
+``` r
+summary(m15)
+```
+
+```
+## 
+## Call:
+## glm(formula = car_stop_close_or_far_bin ~ gender + ethnicity + 
+##     factor(location), family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)  
+## (Intercept)                  1.21879    0.51897   2.348   0.0189 *
+## genderwoman                 -0.04568    0.56122  -0.081   0.9351  
+## ethnicitywhite               0.99110    0.62530   1.585   0.1130  
+## factor(location)2nd          1.07313    0.72632   1.477   0.1395  
+## factor(location)bessborough  2.32405    1.09281   2.127   0.0334 *
+## factor(location)victoria     1.36056    0.71429   1.905   0.0568 .
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 105.442  on 192  degrees of freedom
+## Residual deviance:  95.292  on 187  degrees of freedom
+##   (17 observations deleted due to missingness)
+## AIC: 107.29
+## 
+## Number of Fisher Scoring iterations: 6
+```
+
+``` r
+exp(coef(m15))
+```
+
+```
+##                 (Intercept)                 genderwoman 
+##                   3.3830853                   0.9553436 
+##              ethnicitywhite         factor(location)2nd 
+##                   2.6942021                   2.9245088 
+## factor(location)bessborough    factor(location)victoria 
+##                  10.2169722                   3.8983680
 ```
 
 VISUALIZATIONS TIME BY RACE
-
 
 ``` r
 data %>% 
@@ -1160,10 +1477,9 @@ data %>%
   )
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
 
 TIME BY GENDER
-
 
 ``` r
 data %>% 
@@ -1178,7 +1494,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
 
 
 ``` r
@@ -1207,7 +1523,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
 
 ``` r
 data %>% 
@@ -1217,7 +1533,7 @@ data %>%
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
 
 ``` r
   theme_minimal()
@@ -1609,7 +1925,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 TIME BY RACE AND GENDER - GROUPED BY LOCATION
 
@@ -1629,7 +1945,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
 CARS PASSED BY RACE AND GENDER
 
@@ -1648,7 +1964,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
 
 PROPORTION OF FIRST CAR YIELD RACE VISUAL
 
@@ -1667,7 +1983,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
 PROPORTION OF FIRST CAR YIELD GENDER VISUAL
 
@@ -1686,4 +2002,4 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-34-1.png)<!-- -->

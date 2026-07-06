@@ -6,7 +6,6 @@ output:
 ---
 
 LOAD PACKAGES
-
 ```{r}
 library(tidyverse)
 library(broom)
@@ -14,7 +13,6 @@ library(snakecase)
 ```
 
 LOAD DATA - REMOVE INVALID TRIALS - TRIALS WITH UNAFFILIATED PEDESTRIANS
-
 ```{r}
 data_file <- read_csv("master_file.csv") %>% 
   mutate(
@@ -31,7 +29,6 @@ data_19th_rm <- data %>% filter(location != "19th")
 ```
 
 GENERAL DESCRIPTIVE STATS
-
 ```{r}
 data %>% 
   summarise(
@@ -46,7 +43,6 @@ data %>%
 ```
 
 FREQUENCY TABLES
-
 ```{r}
 data %>% count(ethnicity)
 data %>% count(gender)
@@ -55,8 +51,29 @@ data %>% count(first_car_yield)
 data %>% count(did_car_proceed_before_across)
 ```
 
-FIRST CAR YIELD - LOGISTIC REGRESSION
+FIRST CAR YIELD DESCRIPTIVE STATS
+```{r}
+data %>% 
+  group_by(gender) %>% 
+  count(first_car_yield) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
 
+data %>% 
+  group_by(ethnicity) %>% 
+  count(first_car_yield) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
+  
+data %>% 
+  group_by(ethnicity, gender) %>% 
+  count(first_car_yield) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
+```
+
+FIRST CAR YIELD - LOGISTIC REGRESSION
+GENDER - LOCATION FIXED EFFECTS
 ```{r}
 m1 <- glm(first_car_yield ~ gender + factor(location),
           data = data,
@@ -69,6 +86,7 @@ summary(m1)
 exp(coef(m1))
 ```
 
+ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
 m2 <- glm(first_car_yield ~ ethnicity + factor(location),
           data = data,
@@ -81,12 +99,13 @@ summary(m2)
 exp(coef(m2))
 ```
 
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
 
 
 m3 <- glm(first_car_yield ~ gender + ethnicity + factor(location),
           data = data,
-          family = binomial(link = "logit"))
+          family = binomial())
 
 tidy(m3)
 
@@ -95,133 +114,26 @@ summary(m3)
 exp(coef(m3))
 ```
 
-TIME TO CROSS BY RACE DESCRIPTIVE STATS
-
-```{r}
-data %>% 
-  group_by(ethnicity) %>% 
-  summarise(
-    n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street)
-  )
-```
-
-19th TIMES REMOVED
-```{r}
-data_19th_rm %>% 
-  group_by(ethnicity) %>% 
-  summarise(
-    n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street)
-  )
-```
-
-
-ONE-WAY ANOVA RACE
-
-```{r}
-race_model <- aov(
-  time_to_cross_street~ethnicity,
-  data = data
-)
-
-tidy(race_model)
-
-TukeyHSD(race_model)
-```
-
-19th REMOVED - ONE-WAY ANOVA RACE
-
-```{r}
-race_model <- aov(
-  time_to_cross_street~ethnicity,
-  data = data_19th_rm
-)
-
-tidy(race_model)
-
-TukeyHSD(race_model)
-```
-
-ONE-WAY ANOVA LOCATION
-
-```{r}
-location_model <- aov(
-  time_to_cross_street~location,
-  data = data
-)
-
-tidy(location_model)
-
-TukeyHSD(location_model)
-```
-
-TIME TO CROSS BY GENDER DESCRIPTIVE STATS
-
+MEAN NUMBER OF CARS PASS BEFORE YIELD - DESCRIPTIVE STATS
 ```{r}
 data %>% 
   group_by(gender) %>% 
   summarise(
     n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street)
+    mean = mean(num_cars_pass_before_yield),
+    sd = sd(num_cars_pass_before_yield),
+    .groups = "drop"
   )
-```
 
-
-T-TEST
-
-```{r}
-t.test(
-  time_to_cross_street ~ gender,
-  data = data
-)
-```
-
-TIME TO CROSS BY RACE X GENDER
-
-```{r}
 data %>% 
-  group_by(ethnicity, gender) %>% 
+  group_by(ethnicity) %>% 
   summarise(
     n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street),
+    mean = mean(num_cars_pass_before_yield),
+    sd = sd(num_cars_pass_before_yield),
     .groups = "drop"
   )
-```
 
-
-19th TIMES REMOVED - TIME TO CROSS BY RACE X GENDER
-
-```{r}
-data_19th_rm %>% 
-  group_by(ethnicity, gender) %>% 
-  summarise(
-    n = n(),
-    mean = mean(time_to_cross_street),
-    sd = sd(time_to_cross_street),
-    .groups = "drop"
-  )
-```
-
-
-TWO-WAY ANOVA
-
-```{r}
-time_model <- aov(
-  time_to_cross_street ~ ethnicity*gender,
-  data = data
-)
-
-tidy(time_model)
-```
-
-NUMBER OF CARS PASSED BY GENDER AND/OR RACE DESCRIPTIVE STATS
-
-```{r}
 data %>% 
   group_by(ethnicity, gender) %>% 
   summarise(
@@ -232,199 +144,245 @@ data %>%
   )
 ```
 
-GENDER COMPARISON
-
+MEAN NUMBER OF CARS PASS BEFORE YIELD - LINEAR REGRESSION
+GENDER - LOCATION FIXED EFFECTS
 ```{r}
-t.test(
-  num_cars_pass_before_yield ~ gender,
-  data = data
-)
+m4 <- lm(num_cars_pass_before_yield ~ gender + factor(location),
+         data = data)
+
+tidy(m4)
+
+summary(m4)
+
+exp(coef(m4))
 ```
 
-RACE COMPARISON
-
+ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-cars_race <- aov(
-  num_cars_pass_before_yield ~ ethnicity,
-  data = data
-)
+m5 <- lm(num_cars_pass_before_yield ~ ethnicity + factor(location),
+         data = data)
 
-tidy(cars_race)
+tidy(m5)
+
+summary(m5)
+
+exp(coef(m5))
 ```
 
-LOCATION COMPARISON
-
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-cars_location <- aov(
-  num_cars_pass_before_yield ~ location, 
-  data = data
-)
+m6 <- lm(num_cars_pass_before_yield ~ gender + ethnicity + factor(location),
+         data = data)
 
-tidy(cars_location)
+tidy(m6)
 
-TukeyHSD(cars_location)
+summary(m6)
+
+exp(coef(m6))
 ```
 
-RACE AND GENDER COMPARISON
-
-```{r}
-cars_model <- aov(
-  num_cars_pass_before_yield ~ ethnicity * gender,
-  data = data
-)
-
-tidy(cars_model)
-```
-
-FIRST CAR YIELD BY RACE AND/OR GENDER RACE COMPARISON
-
+TIME TO ENTER INTERSECTION - DESCRIPTIVE STATS
 ```{r}
 data %>% 
-  count(ethnicity, first_car_yield)
+  group_by(gender) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street),
+    .groups = "drop"
+  )
 
-chisq.test(
-  table(data$ethnicity,
-        data$first_car_yield)
-)
+data %>% 
+  group_by(ethnicity) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street),
+    .groups = "drop"
+  )
+
+data %>% 
+  group_by(gender, ethnicity) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street),
+    .groups = "drop"
+  )
 ```
 
-LOCATION COMPARISON
+TIME TO ENTER INTERSECTION - LINEAR REGRESSION
+GENDER - LOCATION FIXED EFFECTS 
+```{r}
+m7 <- lm(time_to_cross_street ~ gender + factor(location),
+         data = data)
 
+tidy(m7)
+
+summary(m7)
+
+exp(coef(m7))
+```
+
+ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m8 <- lm(time_to_cross_street ~ ethnicity + factor(location),
+         data = data)
+
+tidy(m8)
+
+summary(m8)
+
+exp(coef(m8))
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m9 <- lm(time_to_cross_street ~ gender + ethnicity + factor(location),
+         data = data)
+
+tidy(m9)
+
+summary(m9)
+
+exp(coef(m9))
+```
+
+CAR PROCEED THROUGH INTERSECTION - DESCRIPTIVE STATS
 ```{r}
 data %>% 
-  count(location, first_car_yield)
+  group_by(gender) %>% 
+  count(did_car_proceed_before_across) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
 
-chisq.test(
-  table(data$location,
-        data$first_car_yield)
-)
-```
-
-GENDER COMPARISON
-
-```{r}
 data %>% 
-  count(gender, first_car_yield)
-
-chisq.test(
-  table(data$gender,
-        data$first_car_yield)
-)
-```
-
-LOGISTIC REGRESSION
-
-```{r}
-firstcar_model <- glm(
-  first_car_yield ~ ethnicity + gender,
-  data = data,
-  family = binomial()
-)
-
-tidy(firstcar_model)
-```
-
-DID CAR PROCEED BY RACE AND/OR GENDER RACE COMPARISON
-
-```{r}
+  group_by(ethnicity) %>% 
+  count(did_car_proceed_before_across) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
+  
 data %>% 
-  count(ethnicity, did_car_proceed_before_across)
-
-chisq.test(
-  table(data$ethnicity,
-        data$did_car_proceed_before_across)
-)
+  group_by(ethnicity, gender) %>% 
+  count(did_car_proceed_before_across) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
 ```
 
-LOCATION COMPARISON
-
+CAR PROCEED THROUGH INTERSECTION - LOGISTIC REGRESSION 
+GENDER - LOCATION FIXED EFFECTS
 ```{r}
-data %>% 
-  count(location, did_car_proceed_before_across)
+m10 <- glm(did_car_proceed_before_across ~ gender + factor(location),
+           data = data,
+           family = binomial()
+           )
 
-chisq.test(
-  table(data$location,
-        data$did_car_proceed_before_across)
-)
+tidy(m10)
+
+summary(m10)
+
+exp(coef(m10))
 ```
 
-GENDER COMPARISON
-
+ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-data %>% 
-  count(gender, did_car_proceed_before_across)
+m11 <- glm(did_car_proceed_before_across ~ ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
 
-chisq.test(
-  table(data$gender,
-        data$did_car_proceed_before_across)
-)
+tidy(m11)
+
+summary(m11)
+
+exp(coef(m11))
 ```
 
-LOGISTIC REGRESSION
-
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-proceed_model <- glm(
-  did_car_proceed_before_across ~ ethnicity + gender,
-  data = data,
-  family = binomial()
-)
+m12 <- glm(did_car_proceed_before_across ~ gender + ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
 
-tidy(proceed_model)
+tidy(m12)
+
+summary(m12)
+
+exp(coef(m12))
 ```
 
-DID CAR YIELD CLOSE OR FAR BY RACE AND/OR GENDER GENDER COMPARISON
-
-```{r}
-data %>% 
-  count(gender, car_stop_close_or_far)
-
-chisq.test(
-  table(data$gender,
-        data$car_stop_close_or_far)
-)
-```
-
-RACE COMPARISON
-
-```{r}
-data %>% 
-  count(ethnicity, car_stop_close_or_far)
-
-chisq.test(
-  table(data$ethnicity,
-        data$car_stop_close_or_far)
-)
-```
-
-LOCATION COMPARISON
-
-```{r}
-data %>% 
-  count(location, car_stop_close_or_far)
-
-chisq.test(
-  table(data$location,
-        data$car_stop_close_or_far)
-)
-```
-
-LOGISTIC REGRESSION
-
+CARS STOP CLOSE OR FAR BINNING
 ```{r}
 data$car_stop_close_or_far_bin <- ifelse(data$car_stop_close_or_far == "far", 1,
                                   ifelse(data$car_stop_close_or_far == "close", 0, NA))
+```
 
-yield_model <- glm(
-  car_stop_close_or_far_bin ~ ethnicity + gender,
-  data = data,
-  family = binomial()
+CARS STOP CLOSE OR FAR - DESCRIPTIVE STATS
+```{r}
+data %>% 
+  group_by(gender) %>% 
+  count(car_stop_close_or_far) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
+
+data %>% 
+  group_by(ethnicity) %>% 
+  count(car_stop_close_or_far) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
+  
+data %>% 
+  group_by(ethnicity, gender) %>% 
+  count(car_stop_close_or_far) %>% 
+  mutate(percentage = n / sum(n) * 100)
+  .groups = "drop"
+```
+
+CARS STOP CLOSE OR FAR - LOGISTIC REGRESSION
+GENDER - LOCATION FIXED EFFECTS
+```{r}
+m13 <- glm(car_stop_close_or_far_bin ~ gender + factor(location),
+           data = data,
+           family = binomial()
 )
 
-tidy(yield_model)
+tidy(m13)
+
+summary(m13)
+
+exp(coef(m13))
+```
+
+ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m14 <- glm(car_stop_close_or_far_bin ~ ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m14)
+
+summary(m14)
+
+exp(coef(m14))
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS 
+```{r}
+m15 <- glm(car_stop_close_or_far_bin ~ gender + ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m15)
+
+summary(m15)
+
+exp(coef(m15))
 ```
 
 VISUALIZATIONS TIME BY RACE
-
 ```{r}
 data %>% 
   ggplot(aes(x = ethnicity,
@@ -440,7 +398,6 @@ data %>%
 ```
 
 TIME BY GENDER
-
 ```{r}
 data %>% 
   ggplot(aes(x = gender,
