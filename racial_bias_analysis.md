@@ -150,6 +150,196 @@ data %>% count(did_car_proceed_before_across)
 ## 3 <NA>                             17
 ```
 
+FIRST CAR YIELD - LOGISTIC REGRESSION
+
+
+``` r
+m1 <- glm(first_car_yield ~ gender + factor(location),
+          data = data,
+          family = binomial())
+
+tidy(m1)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic      p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>        <dbl>
+## 1 (Intercept)                   -0.449     0.317     -1.42 0.157       
+## 2 genderwoman                   -0.350     0.345     -1.01 0.311       
+## 3 factor(location)2nd            1.28      0.421      3.04 0.00233     
+## 4 factor(location)bessborough    2.22      0.483      4.60 0.00000422  
+## 5 factor(location)victoria       2.66      0.487      5.46 0.0000000468
+```
+
+``` r
+summary(m1)
+```
+
+```
+## 
+## Call:
+## glm(formula = first_car_yield ~ gender + factor(location), family = binomial(), 
+##     data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  -0.4488     0.3169  -1.416  0.15670    
+## genderwoman                  -0.3496     0.3447  -1.014  0.31051    
+## factor(location)2nd           1.2807     0.4206   3.045  0.00233 ** 
+## factor(location)bessborough   2.2220     0.4830   4.600 4.22e-06 ***
+## factor(location)victoria      2.6597     0.4868   5.463 4.68e-08 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 267.34  on 209  degrees of freedom
+## Residual deviance: 220.57  on 205  degrees of freedom
+## AIC: 230.57
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+``` r
+exp(coef(m1))
+```
+
+```
+##                 (Intercept)                 genderwoman 
+##                   0.6383743                   0.7049694 
+##         factor(location)2nd factor(location)bessborough 
+##                   3.5992448                   9.2262030 
+##    factor(location)victoria 
+##                  14.2920406
+```
+
+
+``` r
+m2 <- glm(first_car_yield ~ ethnicity + factor(location),
+          data = data,
+          family = binomial())
+
+tidy(m2)
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        estimate std.error statistic      p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>        <dbl>
+## 1 (Intercept)                   -0.928     0.334     -2.78 0.00543     
+## 2 ethnicitywhite                 0.592     0.352      1.68 0.0924      
+## 3 factor(location)2nd            1.34      0.426      3.14 0.00168     
+## 4 factor(location)bessborough    2.29      0.489      4.68 0.00000288  
+## 5 factor(location)victoria       2.69      0.491      5.48 0.0000000424
+```
+
+``` r
+summary(m2)
+```
+
+```
+## 
+## Call:
+## glm(formula = first_car_yield ~ ethnicity + factor(location), 
+##     family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  -0.9281     0.3338  -2.780  0.00543 ** 
+## ethnicitywhite                0.5917     0.3516   1.683  0.09237 .  
+## factor(location)2nd           1.3377     0.4258   3.142  0.00168 ** 
+## factor(location)bessborough   2.2870     0.4888   4.679 2.88e-06 ***
+## factor(location)victoria      2.6900     0.4908   5.481 4.24e-08 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 267.34  on 209  degrees of freedom
+## Residual deviance: 218.69  on 205  degrees of freedom
+## AIC: 228.69
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+``` r
+exp(coef(m2))
+```
+
+```
+##                 (Intercept)              ethnicitywhite 
+##                   0.3953016                   1.8071193 
+##         factor(location)2nd factor(location)bessborough 
+##                   3.8104554                   9.8451747 
+##    factor(location)victoria 
+##                  14.7315214
+```
+
+
+``` r
+m3 <- glm(first_car_yield ~ gender + ethnicity + factor(location),
+          data = data,
+          family = binomial(link = "logit"))
+
+tidy(m3)
+```
+
+```
+## # A tibble: 6 × 5
+##   term                        estimate std.error statistic      p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>        <dbl>
+## 1 (Intercept)                   -0.747     0.359     -2.08 0.0377      
+## 2 genderwoman                   -0.493     0.354     -1.39 0.164       
+## 3 ethnicitywhite                 0.694     0.360      1.93 0.0536      
+## 4 factor(location)2nd            1.45      0.437      3.32 0.000910    
+## 5 factor(location)bessborough    2.40      0.500      4.80 0.00000156  
+## 6 factor(location)victoria       2.74      0.498      5.50 0.0000000390
+```
+
+``` r
+summary(m3)
+```
+
+```
+## 
+## Call:
+## glm(formula = first_car_yield ~ gender + ethnicity + factor(location), 
+##     family = binomial(link = "logit"), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  -0.7465     0.3593  -2.078  0.03772 *  
+## genderwoman                  -0.4928     0.3537  -1.393  0.16356    
+## ethnicitywhite                0.6941     0.3596   1.930  0.05359 .  
+## factor(location)2nd           1.4500     0.4371   3.317  0.00091 ***
+## factor(location)bessborough   2.4027     0.5002   4.804 1.56e-06 ***
+## factor(location)victoria      2.7387     0.4984   5.495 3.90e-08 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 267.34  on 209  degrees of freedom
+## Residual deviance: 216.71  on 204  degrees of freedom
+## AIC: 228.71
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+``` r
+exp(coef(m3))
+```
+
+```
+##                 (Intercept)                 genderwoman 
+##                   0.4740099                   0.6109120 
+##              ethnicitywhite         factor(location)2nd 
+##                   2.0019090                   4.2629448 
+## factor(location)bessborough    factor(location)victoria 
+##                  11.0528884                  15.4671069
+```
+
 TIME TO CROSS BY RACE DESCRIPTIVE STATS
 
 
@@ -970,7 +1160,7 @@ data %>%
   )
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
 TIME BY GENDER
 
@@ -988,7 +1178,422 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+
+
+``` r
+data %>% 
+  ggplot(aes(x = time_to_cross_street,
+             y = gender)) +
+  geom_violin() +
+  geom_jitter(show.legend = FALSE) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, size = 1.2) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Gender"
+  ) + 
+  theme_minimal()
+```
+
+```
+## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once per session.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+
+``` r
+data %>% 
+  ggplot(aes(sample = time_to_cross_street)) +
+  geom_qq() +
+  stat_qq_line() +
+  facet_wrap(~gender)
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+
+``` r
+  theme_minimal()
+```
+
+```
+## <theme> List of 144
+##  $ line                            : <ggplot2::element_line>
+##   ..@ colour       : chr "black"
+##   ..@ linewidth    : num 0.5
+##   ..@ linetype     : num 1
+##   ..@ lineend      : chr "butt"
+##   ..@ linejoin     : chr "round"
+##   ..@ arrow        : logi FALSE
+##   ..@ arrow.fill   : chr "black"
+##   ..@ inherit.blank: logi TRUE
+##  $ rect                            : <ggplot2::element_rect>
+##   ..@ fill         : chr "white"
+##   ..@ colour       : chr "black"
+##   ..@ linewidth    : num 0.5
+##   ..@ linetype     : num 1
+##   ..@ linejoin     : chr "round"
+##   ..@ inherit.blank: logi TRUE
+##  $ text                            : <ggplot2::element_text>
+##   ..@ family       : chr ""
+##   ..@ face         : chr "plain"
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : chr "black"
+##   ..@ size         : num 11
+##   ..@ hjust        : num 0.5
+##   ..@ vjust        : num 0.5
+##   ..@ angle        : num 0
+##   ..@ lineheight   : num 0.9
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 0 0 0
+##   ..@ debug        : logi FALSE
+##   ..@ inherit.blank: logi TRUE
+##  $ title                           : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : NULL
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ point                           : <ggplot2::element_point>
+##   ..@ colour       : chr "black"
+##   ..@ shape        : num 19
+##   ..@ size         : num 1.5
+##   ..@ fill         : chr "white"
+##   ..@ stroke       : num 0.5
+##   ..@ inherit.blank: logi TRUE
+##  $ polygon                         : <ggplot2::element_polygon>
+##   ..@ fill         : chr "white"
+##   ..@ colour       : chr "black"
+##   ..@ linewidth    : num 0.5
+##   ..@ linetype     : num 1
+##   ..@ linejoin     : chr "round"
+##   ..@ inherit.blank: logi TRUE
+##  $ geom                            : <ggplot2::element_geom>
+##   ..@ ink        : chr "black"
+##   ..@ paper      : chr "white"
+##   ..@ accent     : chr "#3366FF"
+##   ..@ linewidth  : num 0.5
+##   ..@ borderwidth: num 0.5
+##   ..@ linetype   : int 1
+##   ..@ bordertype : int 1
+##   ..@ family     : chr ""
+##   ..@ fontsize   : num 3.87
+##   ..@ pointsize  : num 1.5
+##   ..@ pointshape : num 19
+##   ..@ colour     : NULL
+##   ..@ fill       : NULL
+##  $ spacing                         : 'simpleUnit' num 5.5points
+##   ..- attr(*, "unit")= int 8
+##  $ margins                         : <ggplot2::margin> num [1:4] 5.5 5.5 5.5 5.5
+##  $ aspect.ratio                    : NULL
+##  $ axis.title                      : NULL
+##  $ axis.title.x                    : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : num 1
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 2.75 0 0 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.title.x.top                : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : num 0
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 0 2.75 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.title.x.bottom             : NULL
+##  $ axis.title.y                    : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : num 1
+##   ..@ angle        : num 90
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 2.75 0 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.title.y.left               : NULL
+##  $ axis.title.y.right              : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : num 1
+##   ..@ angle        : num -90
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 0 0 2.75
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text                       : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : chr "#4D4D4DFF"
+##   ..@ size         : 'rel' num 0.8
+##   ..@ hjust        : NULL
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : NULL
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text.x                     : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : num 1
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 2.2 0 0 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text.x.top                 : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 0 4.95 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text.x.bottom              : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 4.95 0 0 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text.y                     : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : num 1
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 2.2 0 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text.y.left                : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 4.95 0 0
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text.y.right               : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : NULL
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 0 0 4.95
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.text.theta                 : NULL
+##  $ axis.text.r                     : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : num 0.5
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : <ggplot2::margin> num [1:4] 0 2.2 0 2.2
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ axis.ticks                      : <ggplot2::element_blank>
+##  $ axis.ticks.x                    : NULL
+##  $ axis.ticks.x.top                : NULL
+##  $ axis.ticks.x.bottom             : NULL
+##  $ axis.ticks.y                    : NULL
+##  $ axis.ticks.y.left               : NULL
+##  $ axis.ticks.y.right              : NULL
+##  $ axis.ticks.theta                : NULL
+##  $ axis.ticks.r                    : NULL
+##  $ axis.minor.ticks.x.top          : NULL
+##  $ axis.minor.ticks.x.bottom       : NULL
+##  $ axis.minor.ticks.y.left         : NULL
+##  $ axis.minor.ticks.y.right        : NULL
+##  $ axis.minor.ticks.theta          : NULL
+##  $ axis.minor.ticks.r              : NULL
+##  $ axis.ticks.length               : 'rel' num 0.5
+##  $ axis.ticks.length.x             : NULL
+##  $ axis.ticks.length.x.top         : NULL
+##  $ axis.ticks.length.x.bottom      : NULL
+##  $ axis.ticks.length.y             : NULL
+##  $ axis.ticks.length.y.left        : NULL
+##  $ axis.ticks.length.y.right       : NULL
+##  $ axis.ticks.length.theta         : NULL
+##  $ axis.ticks.length.r             : NULL
+##  $ axis.minor.ticks.length         : 'rel' num 0.75
+##  $ axis.minor.ticks.length.x       : NULL
+##  $ axis.minor.ticks.length.x.top   : NULL
+##  $ axis.minor.ticks.length.x.bottom: NULL
+##  $ axis.minor.ticks.length.y       : NULL
+##  $ axis.minor.ticks.length.y.left  : NULL
+##  $ axis.minor.ticks.length.y.right : NULL
+##  $ axis.minor.ticks.length.theta   : NULL
+##  $ axis.minor.ticks.length.r       : NULL
+##  $ axis.line                       : <ggplot2::element_blank>
+##  $ axis.line.x                     : NULL
+##  $ axis.line.x.top                 : NULL
+##  $ axis.line.x.bottom              : NULL
+##  $ axis.line.y                     : NULL
+##  $ axis.line.y.left                : NULL
+##  $ axis.line.y.right               : NULL
+##  $ axis.line.theta                 : NULL
+##  $ axis.line.r                     : NULL
+##  $ legend.background               : <ggplot2::element_blank>
+##  $ legend.margin                   : NULL
+##  $ legend.spacing                  : 'rel' num 2
+##  $ legend.spacing.x                : NULL
+##  $ legend.spacing.y                : NULL
+##  $ legend.key                      : <ggplot2::element_blank>
+##  $ legend.key.size                 : 'simpleUnit' num 1.2lines
+##   ..- attr(*, "unit")= int 3
+##  $ legend.key.height               : NULL
+##  $ legend.key.width                : NULL
+##  $ legend.key.spacing              : NULL
+##  $ legend.key.spacing.x            : NULL
+##  $ legend.key.spacing.y            : NULL
+##  $ legend.key.justification        : NULL
+##  $ legend.frame                    : NULL
+##  $ legend.ticks                    : NULL
+##  $ legend.ticks.length             : 'rel' num 0.2
+##  $ legend.axis.line                : NULL
+##  $ legend.text                     : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : 'rel' num 0.8
+##   ..@ hjust        : NULL
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : NULL
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ legend.text.position            : NULL
+##  $ legend.title                    : <ggplot2::element_text>
+##   ..@ family       : NULL
+##   ..@ face         : NULL
+##   ..@ italic       : chr NA
+##   ..@ fontweight   : num NA
+##   ..@ fontwidth    : num NA
+##   ..@ colour       : NULL
+##   ..@ size         : NULL
+##   ..@ hjust        : num 0
+##   ..@ vjust        : NULL
+##   ..@ angle        : NULL
+##   ..@ lineheight   : NULL
+##   ..@ margin       : NULL
+##   ..@ debug        : NULL
+##   ..@ inherit.blank: logi TRUE
+##  $ legend.title.position           : NULL
+##  $ legend.position                 : chr "right"
+##  $ legend.position.inside          : NULL
+##  $ legend.direction                : NULL
+##  $ legend.byrow                    : NULL
+##  $ legend.justification            : chr "center"
+##  $ legend.justification.top        : NULL
+##  $ legend.justification.bottom     : NULL
+##  $ legend.justification.left       : NULL
+##  $ legend.justification.right      : NULL
+##  $ legend.justification.inside     : NULL
+##   [list output truncated]
+##  @ complete: logi TRUE
+##  @ validate: logi TRUE
+```
+
 19TH REMOVED - TIME TO CROSS BY GENDER
 
 ``` r
@@ -1004,7 +1609,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
 
 TIME BY RACE AND GENDER - GROUPED BY LOCATION
 
@@ -1024,7 +1629,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
 
 CARS PASSED BY RACE AND GENDER
 
@@ -1043,7 +1648,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
 
 PROPORTION OF FIRST CAR YIELD RACE VISUAL
 
@@ -1062,7 +1667,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 PROPORTION OF FIRST CAR YIELD GENDER VISUAL
 
@@ -1081,4 +1686,4 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->

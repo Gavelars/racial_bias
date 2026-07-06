@@ -1,3 +1,10 @@
+---
+title: "Racial Bias Analysis"
+output: 
+  html_document:
+    keep_md: yes
+---
+
 LOAD PACKAGES
 
 ```{r}
@@ -46,6 +53,46 @@ data %>% count(gender)
 data %>% count(location)
 data %>% count(first_car_yield)
 data %>% count(did_car_proceed_before_across)
+```
+
+FIRST CAR YIELD - LOGISTIC REGRESSION
+
+```{r}
+m1 <- glm(first_car_yield ~ gender + factor(location),
+          data = data,
+          family = binomial())
+
+tidy(m1)
+
+summary(m1)
+
+exp(coef(m1))
+```
+
+```{r}
+m2 <- glm(first_car_yield ~ ethnicity + factor(location),
+          data = data,
+          family = binomial())
+
+tidy(m2)
+
+summary(m2)
+
+exp(coef(m2))
+```
+
+```{r}
+
+
+m3 <- glm(first_car_yield ~ gender + ethnicity + factor(location),
+          data = data,
+          family = binomial(link = "logit"))
+
+tidy(m3)
+
+summary(m3)
+
+exp(coef(m3))
 ```
 
 TIME TO CROSS BY RACE DESCRIPTIVE STATS
@@ -407,10 +454,46 @@ data %>%
   theme_minimal()
 ```
 
+```{r}
+data %>% 
+  ggplot(aes(x = time_to_cross_street,
+             y = gender)) +
+  geom_violin() +
+  geom_jitter(show.legend = FALSE) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, size = 1.2) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Gender"
+  ) + 
+  theme_minimal()
+```
+```{r}
+data %>% 
+  ggplot(aes(sample = time_to_cross_street)) +
+  geom_qq() +
+  stat_qq_line() +
+  facet_wrap(~gender)
+  theme_minimal()
+```
+
+19TH REMOVED - TIME TO CROSS BY GENDER
+```{r}
+data_19th_rm %>% 
+  ggplot(aes(x = gender,
+         y = time_to_cross_street,
+         fill = gender)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(
+    x = "Gender",
+    y = "Time to Cross (s)"
+  ) + 
+  theme_minimal()
+```
+
 TIME BY RACE AND GENDER - GROUPED BY LOCATION
 
 ```{r}
-data %>% 
+data%>% 
   ggplot(aes(x = ethnicity,
              y = time_to_cross_street,
                fill = gender)) +
