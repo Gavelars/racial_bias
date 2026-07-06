@@ -1439,6 +1439,39 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
 
+
+``` r
+data %>% 
+  ggplot(aes(x = time_to_cross_street,
+             y = ethnicity)) +
+  geom_violin() +
+  geom_jitter(show.legend = FALSE) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, linewidth = 1.2) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Gender"
+  ) + 
+  theme_minimal()
+```
+
+```
+## `geom_smooth()` using formula = 'y ~ x'
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+
+
+``` r
+data %>% 
+  ggplot(aes(sample = time_to_cross_street)) +
+  geom_qq() +
+  stat_qq_line() +
+  facet_wrap(~ethnicity)
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+
+
 ``` r
 data %>% 
   ggplot(aes(sample = time_to_cross_street)) +
@@ -1447,7 +1480,7 @@ data %>%
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
 19TH REMOVED - TIME TO CROSS BY GENDER
 
@@ -1464,7 +1497,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
 
 TIME BY RACE AND GENDER - GROUPED BY LOCATION
 
@@ -1483,7 +1516,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
 CARS PASSED BY RACE AND GENDER
 
@@ -1501,7 +1534,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
 PROPORTION OF FIRST CAR YIELD RACE VISUAL
 
@@ -1519,7 +1552,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
 PROPORTION OF FIRST CAR YIELD GENDER VISUAL
 
@@ -1537,7 +1570,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 
 ODDS FIRST CAR YIELD
 
@@ -1584,7 +1617,7 @@ ggplot(or1[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
 
 ODDS CAR PROCEEDED
 
@@ -1623,7 +1656,7 @@ ggplot(or2[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
 ODDS CAR CLOSE//FAR
 
@@ -1662,4 +1695,4 @@ ggplot(or3[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->

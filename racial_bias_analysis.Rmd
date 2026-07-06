@@ -410,6 +410,29 @@ data %>%
   ) + 
   theme_minimal()
 ```
+
+```{r}
+data %>% 
+  ggplot(aes(x = time_to_cross_street,
+             y = ethnicity)) +
+  geom_violin() +
+  geom_jitter(show.legend = FALSE) +
+  geom_smooth(aes(group = 1), method = "lm", se = FALSE, linewidth = 1.2) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Gender"
+  ) + 
+  theme_minimal()
+```
+
+```{r}
+data %>% 
+  ggplot(aes(sample = time_to_cross_street)) +
+  geom_qq() +
+  stat_qq_line() +
+  facet_wrap(~ethnicity)
+```
+
 ```{r}
 data %>% 
   ggplot(aes(sample = time_to_cross_street)) +
