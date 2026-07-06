@@ -517,19 +517,6 @@ summary(m4)
 ## F-statistic: 15.07 on 4 and 205 DF,  p-value: 8.115e-11
 ```
 
-``` r
-exp(coef(m4))
-```
-
-```
-##                 (Intercept)                 genderwoman 
-##                   3.1740234                   1.2926142 
-##         factor(location)2nd factor(location)bessborough 
-##                   0.4140922                   0.3624024 
-##    factor(location)victoria 
-##                   0.3166368
-```
-
 ETHNICITY - LOCATION FIXED EFFECTS
 
 ``` r
@@ -577,19 +564,6 @@ summary(m5)
 ## Residual standard error: 0.9102 on 205 degrees of freedom
 ## Multiple R-squared:  0.2121,	Adjusted R-squared:  0.1967 
 ## F-statistic:  13.8 on 4 and 205 DF,  p-value: 5.56e-10
-```
-
-``` r
-exp(coef(m5))
-```
-
-```
-##                 (Intercept)              ethnicitywhite 
-##                   3.5667923                   1.0236077 
-##         factor(location)2nd factor(location)bessborough 
-##                   0.4338745                   0.3797154 
-##    factor(location)victoria 
-##                   0.3166368
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -641,19 +615,6 @@ summary(m6)
 ## Residual standard error: 0.9035 on 204 degrees of freedom
 ## Multiple R-squared:  0.2274,	Adjusted R-squared:  0.2085 
 ## F-statistic: 12.01 on 5 and 204 DF,  p-value: 3.332e-10
-```
-
-``` r
-exp(coef(m6))
-```
-
-```
-##                 (Intercept)                 genderwoman 
-##                   3.2112705                   1.3001765 
-##              ethnicitywhite         factor(location)2nd 
-##                   0.9712546                   0.4116837 
-## factor(location)bessborough    factor(location)victoria 
-##                   0.3602946                   0.3166368
 ```
 
 TIME TO ENTER INTERSECTION - DESCRIPTIVE STATS
@@ -767,19 +728,6 @@ summary(m7)
 ## F-statistic: 19.43 on 4 and 205 DF,  p-value: 1.437e-13
 ```
 
-``` r
-exp(coef(m7))
-```
-
-```
-##                 (Intercept)                 genderwoman 
-##                1.251252e+03                3.104543e+00 
-##         factor(location)2nd factor(location)bessborough 
-##                3.775264e-02                7.102666e-02 
-##    factor(location)victoria 
-##                3.657708e-02
-```
-
 ETHNICITY - LOCATION FIXED EFFECTS
 
 ``` r
@@ -827,19 +775,6 @@ summary(m8)
 ## Residual standard error: 2.357 on 205 degrees of freedom
 ## Multiple R-squared:  0.328,	Adjusted R-squared:  0.3149 
 ## F-statistic: 25.02 on 4 and 205 DF,  p-value: < 2.2e-16
-```
-
-``` r
-exp(coef(m8))
-```
-
-```
-##                 (Intercept)              ethnicitywhite 
-##                916.22930532                  5.79000603 
-##         factor(location)2nd factor(location)bessborough 
-##                  0.06110265                  0.11495667 
-##    factor(location)victoria 
-##                  0.03657708
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -891,19 +826,6 @@ summary(m9)
 ## Residual standard error: 2.329 on 204 degrees of freedom
 ## Multiple R-squared:  0.3468,	Adjusted R-squared:  0.3308 
 ## F-statistic: 21.66 on 5 and 204 DF,  p-value: < 2.2e-16
-```
-
-``` r
-exp(coef(m9))
-```
-
-```
-##                 (Intercept)                 genderwoman 
-##                661.54852266                  2.25738787 
-##              ethnicitywhite         factor(location)2nd 
-##                  4.91991703                  0.05192050 
-## factor(location)bessborough    factor(location)victoria 
-##                  0.09768164                  0.03657708
 ```
 
 CAR PROCEED THROUGH INTERSECTION - DESCRIPTIVE STATS
@@ -1929,7 +1851,6 @@ data_19th_rm %>%
 
 TIME BY RACE AND GENDER - GROUPED BY LOCATION
 
-
 ``` r
 data%>% 
   ggplot(aes(x = ethnicity,
@@ -1949,7 +1870,6 @@ data%>%
 
 CARS PASSED BY RACE AND GENDER
 
-
 ``` r
 data %>% 
   ggplot(aes(x = ethnicity,
@@ -1967,7 +1887,6 @@ data %>%
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
 
 PROPORTION OF FIRST CAR YIELD RACE VISUAL
-
 
 ``` r
 data %>% 
@@ -1987,7 +1906,6 @@ data %>%
 
 PROPORTION OF FIRST CAR YIELD GENDER VISUAL
 
-
 ``` r
 data %>% 
   ggplot(aes(x = gender,
@@ -2003,3 +1921,50 @@ data %>%
 ```
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+
+ODDS FIRST CAR YIELD
+
+``` r
+or <- tidy(m3, conf.int = TRUE, exponentiate = TRUE)
+
+ggplot(or[-1,], aes(x = estimate,
+                    y = reorder(term, estimate))) +
+  geom_point(size = 3) +
+  geom_errorbarh(aes(xmin = conf.low,
+                     xmax = conf.high),
+                 height = 0.2) +
+  geom_vline(xintercept = 1,
+             linetype = "dashed",
+             colour = "red") +
+  scale_x_log10() +
+  scale_y_discrete(labels = c(
+    "genderman" = "Male (vs Female)",
+    "genderwoman" = "Female (vs Male)",
+    "ethnicityasian" = "South Asian",
+    "ethnicityblack" = "Black",
+    "ethnicitywhite" = "White",
+    "factor(location)victoria" = "Victoria",
+    "factor(location)bessborough" = "Bessborough",
+    "factor(location)2nd" = "2nd",
+    "factor(location)19th" = "19th")) +
+  labs(
+    x = "Odds Ratio (95% CI)",
+    y = "",
+    title = "Logistic Regression Results"
+  ) +
+  theme_minimal()
+```
+
+```
+## Warning: `geom_errorbarh()` was deprecated in ggplot2 4.0.0.
+## ℹ Please use the `orientation` argument of `geom_errorbar()` instead.
+## This warning is displayed once per session.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
+```
+
+```
+## `height` was translated to `width`.
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->

@@ -101,8 +101,6 @@ exp(coef(m2))
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-
-
 m3 <- glm(first_car_yield ~ gender + ethnicity + factor(location),
           data = data,
           family = binomial())
@@ -153,8 +151,6 @@ m4 <- lm(num_cars_pass_before_yield ~ gender + factor(location),
 tidy(m4)
 
 summary(m4)
-
-exp(coef(m4))
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
@@ -165,8 +161,6 @@ m5 <- lm(num_cars_pass_before_yield ~ ethnicity + factor(location),
 tidy(m5)
 
 summary(m5)
-
-exp(coef(m5))
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -177,8 +171,6 @@ m6 <- lm(num_cars_pass_before_yield ~ gender + ethnicity + factor(location),
 tidy(m6)
 
 summary(m6)
-
-exp(coef(m6))
 ```
 
 TIME TO ENTER INTERSECTION - DESCRIPTIVE STATS
@@ -220,8 +212,6 @@ m7 <- lm(time_to_cross_street ~ gender + factor(location),
 tidy(m7)
 
 summary(m7)
-
-exp(coef(m7))
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
@@ -232,8 +222,6 @@ m8 <- lm(time_to_cross_street ~ ethnicity + factor(location),
 tidy(m8)
 
 summary(m8)
-
-exp(coef(m8))
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -244,8 +232,6 @@ m9 <- lm(time_to_cross_street ~ gender + ethnicity + factor(location),
 tidy(m9)
 
 summary(m9)
-
-exp(coef(m9))
 ```
 
 CAR PROCEED THROUGH INTERSECTION - DESCRIPTIVE STATS
@@ -448,7 +434,6 @@ data_19th_rm %>%
 ```
 
 TIME BY RACE AND GENDER - GROUPED BY LOCATION
-
 ```{r}
 data%>% 
   ggplot(aes(x = ethnicity,
@@ -465,7 +450,6 @@ data%>%
 ```
 
 CARS PASSED BY RACE AND GENDER
-
 ```{r}
 data %>% 
   ggplot(aes(x = ethnicity,
@@ -481,7 +465,6 @@ data %>%
 ```
 
 PROPORTION OF FIRST CAR YIELD RACE VISUAL
-
 ```{r}
 data %>% 
   ggplot(aes(x = ethnicity,
@@ -497,7 +480,6 @@ data %>%
 ```
 
 PROPORTION OF FIRST CAR YIELD GENDER VISUAL
-
 ```{r}
 data %>% 
   ggplot(aes(x = gender,
@@ -508,6 +490,38 @@ data %>%
     x = "Gender",
     y = "Proportion",
     fill = "Did the First Car Yield"
+  ) +
+  theme_minimal()
+```
+
+ODDS FIRST CAR YIELD
+```{r}
+or <- tidy(m3, conf.int = TRUE, exponentiate = TRUE)
+
+ggplot(or[-1,], aes(x = estimate,
+                    y = reorder(term, estimate))) +
+  geom_point(size = 3) +
+  geom_errorbarh(aes(xmin = conf.low,
+                     xmax = conf.high),
+                 height = 0.2) +
+  geom_vline(xintercept = 1,
+             linetype = "dashed",
+             colour = "red") +
+  scale_x_log10() +
+  scale_y_discrete(labels = c(
+    "genderman" = "Male (vs Female)",
+    "genderwoman" = "Female (vs Male)",
+    "ethnicityasian" = "South Asian",
+    "ethnicityblack" = "Black",
+    "ethnicitywhite" = "White",
+    "factor(location)victoria" = "Victoria",
+    "factor(location)bessborough" = "Bessborough",
+    "factor(location)2nd" = "2nd",
+    "factor(location)19th" = "19th")) +
+  labs(
+    x = "Odds Ratio (95% CI)",
+    y = "",
+    title = "Logistic Regression Results"
   ) +
   theme_minimal()
 ```
