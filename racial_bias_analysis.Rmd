@@ -19,6 +19,8 @@ data_file <- read_csv("master_file.csv") %>%
   )
 
 data <- data_file %>% drop_na(valid_trial)
+
+data_19th_rm <- data %>% filter(location != "19th")
 ```
 
 GENERAL DESCRIPTIVE STATS
@@ -58,6 +60,18 @@ data %>%
   )
 ```
 
+19th TIMES REMOVED
+```{r}
+data_19th_rm %>% 
+  group_by(ethnicity) %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street)
+  )
+```
+
+
 ONE-WAY ANOVA RACE
 
 ```{r}
@@ -95,6 +109,7 @@ data %>%
     sd = sd(time_to_cross_street)
   )
 ```
+
 
 T-TEST
 
