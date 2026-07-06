@@ -85,6 +85,19 @@ tidy(race_model)
 TukeyHSD(race_model)
 ```
 
+19th REMOVED - ONE-WAY ANOVA RACE
+
+```{r}
+race_model <- aov(
+  time_to_cross_street~ethnicity,
+  data = data_19th_rm
+)
+
+tidy(race_model)
+
+TukeyHSD(race_model)
+```
+
 ONE-WAY ANOVA LOCATION
 
 ```{r}
