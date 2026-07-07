@@ -43,11 +43,11 @@ data_file <- read_csv("master_file.csv") %>%
 ```
 
 ```
-## Rows: 255 Columns: 12
+## Rows: 363 Columns: 13
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## chr (9): ethnicity, gender, location, date, time_of_day, first_car_yield, di...
-## dbl (3): trial_number, num_cars_pass_before_yield, time_to_cross_street
+## dbl (4): order, trial_number, num_cars_pass_before_yield, time_to_cross_street
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -78,7 +78,7 @@ data %>%
 ## # A tibble: 1 × 7
 ##       n mean_time sd_time min_time max_time mean_cars sd_cars
 ##   <int>     <dbl>   <dbl>    <dbl>    <dbl>     <dbl>   <dbl>
-## 1   210      5.57    2.85     2.07     22.7     0.567    1.02
+## 1   240      5.62    2.72     2.07     22.7     0.617   0.995
 ```
 
 FREQUENCY TABLES
@@ -92,7 +92,7 @@ data %>% count(ethnicity)
 ##   ethnicity     n
 ##   <fct>     <int>
 ## 1 asian       120
-## 2 white        90
+## 2 white       120
 ```
 
 ``` r
@@ -103,7 +103,7 @@ data %>% count(gender)
 ## # A tibble: 2 × 2
 ##   gender     n
 ##   <fct>  <int>
-## 1 man       90
+## 1 man      120
 ## 2 woman    120
 ```
 
@@ -116,8 +116,8 @@ data %>% count(location)
 ##   location        n
 ##   <fct>       <int>
 ## 1 19th           60
-## 2 2nd            45
-## 3 bessborough    45
+## 2 2nd            60
+## 3 bessborough    60
 ## 4 victoria       60
 ```
 
@@ -129,8 +129,8 @@ data %>% count(first_car_yield)
 ## # A tibble: 2 × 2
 ##   first_car_yield     n
 ##   <fct>           <int>
-## 1 no                 70
-## 2 yes               140
+## 1 no                 92
+## 2 yes               148
 ```
 
 ``` r
@@ -141,9 +141,9 @@ data %>% count(did_car_proceed_before_across)
 ## # A tibble: 3 × 2
 ##   did_car_proceed_before_across     n
 ##   <fct>                         <int>
-## 1 no                               18
-## 2 yes                             175
-## 3 <NA>                             17
+## 1 no                               20
+## 2 yes                             199
+## 3 <NA>                             21
 ```
 
 FIRST CAR YIELD DESCRIPTIVE STATS
@@ -160,8 +160,8 @@ data %>%
 ## # Groups:   gender [2]
 ##   gender first_car_yield     n percentage
 ##   <fct>  <fct>           <int>      <dbl>
-## 1 man    no                 28       31.1
-## 2 man    yes                62       68.9
+## 1 man    no                 50       41.7
+## 2 man    yes                70       58.3
 ## 3 woman  no                 42       35  
 ## 4 woman  yes                78       65
 ```
@@ -182,8 +182,8 @@ data %>%
 ##   <fct>     <fct>           <int>      <dbl>
 ## 1 asian     no                 44       36.7
 ## 2 asian     yes                76       63.3
-## 3 white     no                 26       28.9
-## 4 white     yes                64       71.1
+## 3 white     no                 48       40  
+## 4 white     yes                72       60
 ```
 
 ``` r
@@ -204,8 +204,8 @@ data %>%
 ## 2 asian     man    yes                44       73.3
 ## 3 asian     woman  no                 28       46.7
 ## 4 asian     woman  yes                32       53.3
-## 5 white     man    no                 12       40  
-## 6 white     man    yes                18       60  
+## 5 white     man    no                 34       56.7
+## 6 white     man    yes                26       43.3
 ## 7 white     woman  no                 14       23.3
 ## 8 white     woman  yes                46       76.7
 ```
@@ -229,11 +229,11 @@ tidy(m1)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic      p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>        <dbl>
-## 1 (Intercept)                   -0.449     0.317     -1.42 0.157       
-## 2 genderwoman                   -0.350     0.345     -1.01 0.311       
-## 3 factor(location)2nd            1.28      0.421      3.04 0.00233     
-## 4 factor(location)bessborough    2.22      0.483      4.60 0.00000422  
-## 5 factor(location)victoria       2.66      0.487      5.46 0.0000000468
+## 1 (Intercept)                   -0.793     0.312     -2.54 0.0110      
+## 2 genderwoman                    0.339     0.292      1.16 0.246       
+## 3 factor(location)2nd            0.758     0.376      2.02 0.0438      
+## 4 factor(location)bessborough    1.48      0.392      3.76 0.000167    
+## 5 factor(location)victoria       2.66      0.486      5.47 0.0000000461
 ```
 
 ``` r
@@ -248,19 +248,19 @@ summary(m1)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                  -0.4488     0.3169  -1.416  0.15670    
-## genderwoman                  -0.3496     0.3447  -1.014  0.31051    
-## factor(location)2nd           1.2807     0.4206   3.045  0.00233 ** 
-## factor(location)bessborough   2.2220     0.4830   4.600 4.22e-06 ***
-## factor(location)victoria      2.6597     0.4868   5.463 4.68e-08 ***
+## (Intercept)                  -0.7928     0.3119  -2.542 0.011032 *  
+## genderwoman                   0.3390     0.2921   1.160 0.245889    
+## factor(location)2nd           0.7578     0.3759   2.016 0.043765 *  
+## factor(location)bessborough   1.4764     0.3923   3.764 0.000167 ***
+## factor(location)victoria      2.6587     0.4864   5.466 4.61e-08 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 267.34  on 209  degrees of freedom
-## Residual deviance: 220.57  on 205  degrees of freedom
-## AIC: 230.57
+##     Null deviance: 319.52  on 239  degrees of freedom
+## Residual deviance: 275.78  on 235  degrees of freedom
+## AIC: 285.78
 ## 
 ## Number of Fisher Scoring iterations: 4
 ```
@@ -271,11 +271,11 @@ exp(coef(m1))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                   0.6383743                   0.7049694 
+##                   0.4525612                   1.4034791 
 ##         factor(location)2nd factor(location)bessborough 
-##                   3.5992448                   9.2262030 
+##                   2.1336757                   4.3771795 
 ##    factor(location)victoria 
-##                  14.2920406
+##                  14.2781016
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
@@ -292,11 +292,11 @@ tidy(m2)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic      p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>        <dbl>
-## 1 (Intercept)                   -0.928     0.334     -2.78 0.00543     
-## 2 ethnicitywhite                 0.592     0.352      1.68 0.0924      
-## 3 factor(location)2nd            1.34      0.426      3.14 0.00168     
-## 4 factor(location)bessborough    2.29      0.489      4.68 0.00000288  
-## 5 factor(location)victoria       2.69      0.491      5.48 0.0000000424
+## 1 (Intercept)                   -0.536     0.306    -1.75  0.0798      
+## 2 ethnicitywhite                -0.169     0.291    -0.581 0.561       
+## 3 factor(location)2nd            0.754     0.375     2.01  0.0443      
+## 4 factor(location)bessborough    1.47      0.391     3.76  0.000173    
+## 5 factor(location)victoria       2.65      0.485     5.46  0.0000000486
 ```
 
 ``` r
@@ -311,19 +311,19 @@ summary(m2)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                  -0.9281     0.3338  -2.780  0.00543 ** 
-## ethnicitywhite                0.5917     0.3516   1.683  0.09237 .  
-## factor(location)2nd           1.3377     0.4258   3.142  0.00168 ** 
-## factor(location)bessborough   2.2870     0.4888   4.679 2.88e-06 ***
-## factor(location)victoria      2.6900     0.4908   5.481 4.24e-08 ***
+## (Intercept)                  -0.5356     0.3058  -1.752 0.079823 .  
+## ethnicitywhite               -0.1690     0.2910  -0.581 0.561275    
+## factor(location)2nd           0.7539     0.3748   2.011 0.044287 *  
+## factor(location)bessborough   1.4688     0.3911   3.756 0.000173 ***
+## factor(location)victoria      2.6472     0.4852   5.456 4.86e-08 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 267.34  on 209  degrees of freedom
-## Residual deviance: 218.69  on 205  degrees of freedom
-## AIC: 228.69
+##     Null deviance: 319.52  on 239  degrees of freedom
+## Residual deviance: 276.80  on 235  degrees of freedom
+## AIC: 286.8
 ## 
 ## Number of Fisher Scoring iterations: 4
 ```
@@ -334,11 +334,11 @@ exp(coef(m2))
 
 ```
 ##                 (Intercept)              ethnicitywhite 
-##                   0.3953016                   1.8071193 
+##                   0.5853231                   0.8444752 
 ##         factor(location)2nd factor(location)bessborough 
-##                   3.8104554                   9.8451747 
+##                   2.1252318                   4.3441853 
 ##    factor(location)victoria 
-##                  14.7315214
+##                  14.1148880
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -355,12 +355,12 @@ tidy(m3)
 ## # A tibble: 6 × 5
 ##   term                        estimate std.error statistic      p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>        <dbl>
-## 1 (Intercept)                   -0.747     0.359     -2.08 0.0377      
-## 2 genderwoman                   -0.493     0.354     -1.39 0.164       
-## 3 ethnicitywhite                 0.694     0.360      1.93 0.0536      
-## 4 factor(location)2nd            1.45      0.437      3.32 0.000910    
-## 5 factor(location)bessborough    2.40      0.500      4.80 0.00000156  
-## 6 factor(location)victoria       2.74      0.498      5.50 0.0000000390
+## 1 (Intercept)                   -0.709     0.343    -2.07  0.0385      
+## 2 genderwoman                    0.339     0.292     1.16  0.246       
+## 3 ethnicitywhite                -0.170     0.292    -0.583 0.560       
+## 4 factor(location)2nd            0.759     0.376     2.02  0.0436      
+## 5 factor(location)bessborough    1.48      0.393     3.77  0.000166    
+## 6 factor(location)victoria       2.66      0.487     5.47  0.0000000453
 ```
 
 ``` r
@@ -375,20 +375,20 @@ summary(m3)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                  -0.7465     0.3593  -2.078  0.03772 *  
-## genderwoman                  -0.4928     0.3537  -1.393  0.16356    
-## ethnicitywhite                0.6941     0.3596   1.930  0.05359 .  
-## factor(location)2nd           1.4500     0.4371   3.317  0.00091 ***
-## factor(location)bessborough   2.4027     0.5002   4.804 1.56e-06 ***
-## factor(location)victoria      2.7387     0.4984   5.495 3.90e-08 ***
+## (Intercept)                  -0.7091     0.3427  -2.069 0.038506 *  
+## genderwoman                   0.3395     0.2923   1.161 0.245533    
+## ethnicitywhite               -0.1701     0.2919  -0.583 0.560081    
+## factor(location)2nd           0.7592     0.3762   2.018 0.043592 *  
+## factor(location)bessborough   1.4789     0.3927   3.766 0.000166 ***
+## factor(location)victoria      2.6626     0.4869   5.469 4.53e-08 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 267.34  on 209  degrees of freedom
-## Residual deviance: 216.71  on 204  degrees of freedom
-## AIC: 228.71
+##     Null deviance: 319.52  on 239  degrees of freedom
+## Residual deviance: 275.44  on 234  degrees of freedom
+## AIC: 287.44
 ## 
 ## Number of Fisher Scoring iterations: 4
 ```
@@ -399,11 +399,11 @@ exp(coef(m3))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                   0.4740099                   0.6109120 
+##                   0.4920680                   1.4042115 
 ##              ethnicitywhite         factor(location)2nd 
-##                   2.0019090                   4.2629448 
+##                   0.8435989                   2.1365047 
 ## factor(location)bessborough    factor(location)victoria 
-##                  11.0528884                  15.4671069
+##                   4.3882738                  14.3335038
 ```
 
 GENDER*ETHNICITY - LOCATION FIXED EFFECTS
@@ -420,13 +420,13 @@ tidy(m4)
 ## # A tibble: 7 × 5
 ##   term                        estimate std.error statistic      p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>        <dbl>
-## 1 (Intercept)                   -0.327     0.399    -0.819 0.413       
-## 2 genderwoman                   -1.12      0.445    -2.51  0.0120      
-## 3 ethnicitywhite                -0.441     0.591    -0.746 0.456       
-## 4 factor(location)2nd            1.26      0.450     2.80  0.00503     
-## 5 factor(location)bessborough    2.27      0.515     4.41  0.0000104   
-## 6 factor(location)victoria       2.79      0.502     5.55  0.0000000281
-## 7 genderwoman:ethnicitywhite     1.78      0.738     2.41  0.0160
+## 1 (Intercept)                  -0.0906     0.385    -0.235 0.814       
+## 2 genderwoman                  -1.08       0.436    -2.48  0.0131      
+## 3 ethnicitywhite               -1.59       0.444    -3.59  0.000330    
+## 4 factor(location)2nd           0.855      0.401     2.13  0.0329      
+## 5 factor(location)bessborough   1.66       0.422     3.94  0.0000812   
+## 6 factor(location)victoria      2.94       0.518     5.68  0.0000000138
+## 7 genderwoman:ethnicitywhite    2.88       0.640     4.51  0.00000653
 ```
 
 ``` r
@@ -441,21 +441,21 @@ summary(m4)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                  -0.3269     0.3992  -0.819  0.41283    
-## genderwoman                  -1.1185     0.4451  -2.513  0.01198 *  
-## ethnicitywhite               -0.4406     0.5906  -0.746  0.45561    
-## factor(location)2nd           1.2628     0.4502   2.805  0.00503 ** 
-## factor(location)bessborough   2.2697     0.5148   4.409 1.04e-05 ***
-## factor(location)victoria      2.7886     0.5022   5.553 2.81e-08 ***
-## genderwoman:ethnicitywhite    1.7791     0.7383   2.410  0.01597 *  
+## (Intercept)                  -0.0906     0.3848  -0.235  0.81385    
+## genderwoman                  -1.0809     0.4357  -2.481  0.01311 *  
+## ethnicitywhite               -1.5943     0.4440  -3.591  0.00033 ***
+## factor(location)2nd           0.8550     0.4009   2.133  0.03295 *  
+## factor(location)bessborough   1.6643     0.4223   3.941 8.12e-05 ***
+## factor(location)victoria      2.9411     0.5182   5.676 1.38e-08 ***
+## genderwoman:ethnicitywhite    2.8843     0.6397   4.509 6.53e-06 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 267.34  on 209  degrees of freedom
-## Residual deviance: 210.78  on 203  degrees of freedom
-## AIC: 224.78
+##     Null deviance: 319.52  on 239  degrees of freedom
+## Residual deviance: 253.13  on 233  degrees of freedom
+## AIC: 267.13
 ## 
 ## Number of Fisher Scoring iterations: 4
 ```
@@ -466,13 +466,13 @@ exp(coef(m4))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                   0.7211434                   0.3267650 
+##                   0.9133814                   0.3393063 
 ##              ethnicitywhite         factor(location)2nd 
-##                   0.6436395                   3.5354055 
+##                   0.2030472                   2.3513765 
 ## factor(location)bessborough    factor(location)victoria 
-##                   9.6767831                  16.2575998 
+##                   5.2821285                  18.9371865 
 ##  genderwoman:ethnicitywhite 
-##                   5.9245704
+##                  17.8910219
 ```
 
 MEAN NUMBER OF CARS PASS BEFORE YIELD - DESCRIPTIVE STATS
@@ -492,7 +492,7 @@ data %>%
 ## # A tibble: 2 × 4
 ##   gender     n  mean    sd
 ##   <fct>  <int> <dbl> <dbl>
-## 1 man       90 0.456 0.781
+## 1 man      120 0.583 0.805
 ## 2 woman    120 0.65  1.16
 ```
 
@@ -512,7 +512,7 @@ data %>%
 ##   ethnicity     n  mean    sd
 ##   <fct>     <int> <dbl> <dbl>
 ## 1 asian       120 0.533 0.829
-## 2 white        90 0.611 1.22
+## 2 white       120 0.7   1.13
 ```
 
 ``` r
@@ -532,7 +532,7 @@ data %>%
 ##   <fct>     <fct>  <int> <dbl> <dbl>
 ## 1 asian     man       60 0.383 0.715
 ## 2 asian     woman     60 0.683 0.911
-## 3 white     man       30 0.6   0.894
+## 3 white     man       60 0.783 0.846
 ## 4 white     woman     60 0.617 1.37
 ```
 
@@ -550,11 +550,11 @@ tidy(m5)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                    1.16      0.133      8.70 1.05e-15
-## 2 genderwoman                    0.257     0.127      2.01 4.54e- 2
-## 3 factor(location)2nd           -0.882     0.179     -4.92 1.74e- 6
-## 4 factor(location)bessborough   -1.02      0.179     -5.67 4.82e- 8
-## 5 factor(location)victoria      -1.15      0.165     -6.99 3.84e-11
+## 1 (Intercept)                   1.25       0.131     9.54  1.96e-18
+## 2 genderwoman                   0.0667     0.117     0.569 5.70e- 1
+## 3 factor(location)2nd          -0.667      0.166    -4.02  7.80e- 5
+## 4 factor(location)bessborough  -0.850      0.166    -5.13  6.15e- 7
+## 5 factor(location)victoria     -1.15       0.166    -6.94  3.86e-11
 ```
 
 ``` r
@@ -569,21 +569,21 @@ summary(m5)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -1.4117 -0.3967 -0.2617 -0.0050  4.5883 
+## -1.3167 -0.4667 -0.1667  0.4167  4.6833 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                   1.1550     0.1327   8.705 1.05e-15 ***
-## genderwoman                   0.2567     0.1275   2.013   0.0454 *  
-## factor(location)2nd          -0.8817     0.1790  -4.925 1.74e-06 ***
-## factor(location)bessborough  -1.0150     0.1790  -5.669 4.82e-08 ***
-## factor(location)victoria     -1.1500     0.1646  -6.988 3.84e-11 ***
+## (Intercept)                  1.25000    0.13106   9.537  < 2e-16 ***
+## genderwoman                  0.06667    0.11723   0.569     0.57    
+## factor(location)2nd         -0.66667    0.16578  -4.021 7.80e-05 ***
+## factor(location)bessborough -0.85000    0.16578  -5.127 6.15e-07 ***
+## factor(location)victoria    -1.15000    0.16578  -6.937 3.86e-11 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.9014 on 205 degrees of freedom
-## Multiple R-squared:  0.2273,	Adjusted R-squared:  0.2122 
-## F-statistic: 15.07 on 4 and 205 DF,  p-value: 8.115e-11
+## Residual standard error: 0.908 on 235 degrees of freedom
+## Multiple R-squared:  0.1815,	Adjusted R-squared:  0.1676 
+## F-statistic: 13.03 on 4 and 235 DF,  p-value: 1.345e-09
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
@@ -599,11 +599,11 @@ tidy(m6)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                   1.27       0.134     9.49  6.08e-18
-## 2 ethnicitywhite                0.0233     0.129     0.181 8.56e- 1
-## 3 factor(location)2nd          -0.835      0.181    -4.62  6.81e- 6
-## 4 factor(location)bessborough  -0.968      0.181    -5.36  2.27e- 7
-## 5 factor(location)victoria     -1.15       0.166    -6.92  5.66e-11
+## 1 (Intercept)                    1.2       0.131      9.19 2.16e-17
+## 2 ethnicitywhite                 0.167     0.117      1.43 1.55e- 1
+## 3 factor(location)2nd           -0.667     0.165     -4.04 7.36e- 5
+## 4 factor(location)bessborough   -0.850     0.165     -5.15 5.62e- 7
+## 5 factor(location)victoria      -1.15      0.165     -6.96 3.33e-11
 ```
 
 ``` r
@@ -618,21 +618,21 @@ summary(m6)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -1.2950 -0.3267 -0.2717 -0.1217  4.7050 
+## -1.3667 -0.5167 -0.2167  0.4667  4.6333 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                  1.27167    0.13398   9.491  < 2e-16 ***
-## ethnicitywhite               0.02333    0.12873   0.181    0.856    
-## factor(location)2nd         -0.83500    0.18078  -4.619 6.81e-06 ***
-## factor(location)bessborough -0.96833    0.18078  -5.357 2.27e-07 ***
-## factor(location)victoria    -1.15000    0.16618  -6.920 5.66e-11 ***
+## (Intercept)                   1.2000     0.1306   9.189  < 2e-16 ***
+## ethnicitywhite                0.1667     0.1168   1.427    0.155    
+## factor(location)2nd          -0.6667     0.1652  -4.036 7.36e-05 ***
+## factor(location)bessborough  -0.8500     0.1652  -5.146 5.62e-07 ***
+## factor(location)victoria     -1.1500     0.1652  -6.962 3.33e-11 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.9102 on 205 degrees of freedom
-## Multiple R-squared:  0.2121,	Adjusted R-squared:  0.1967 
-## F-statistic:  13.8 on 4 and 205 DF,  p-value: 5.56e-10
+## Residual standard error: 0.9048 on 235 degrees of freedom
+## Multiple R-squared:  0.1874,	Adjusted R-squared:  0.1736 
+## F-statistic: 13.55 on 4 and 235 DF,  p-value: 5.914e-10
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -648,12 +648,12 @@ tidy(m7)
 ## # A tibble: 6 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                   1.17       0.143     8.17  3.27e-14
-## 2 genderwoman                   0.262      0.130     2.01  4.54e- 2
-## 3 ethnicitywhite               -0.0292     0.130    -0.224 8.23e- 1
-## 4 factor(location)2nd          -0.887      0.181    -4.89  2.00e- 6
-## 5 factor(location)bessborough  -1.02       0.181    -5.63  5.92e- 8
-## 6 factor(location)victoria     -1.15       0.165    -6.97  4.27e-11
+## 1 (Intercept)                   1.17       0.143     8.14  2.29e-14
+## 2 genderwoman                   0.0667     0.117     0.570 5.69e- 1
+## 3 ethnicitywhite                0.167      0.117     1.42  1.56e- 1
+## 4 factor(location)2nd          -0.667      0.165    -4.03  7.54e- 5
+## 5 factor(location)bessborough  -0.850      0.165    -5.14  5.84e- 7
+## 6 factor(location)victoria     -1.15       0.165    -6.95  3.56e-11
 ```
 
 ``` r
@@ -668,22 +668,22 @@ summary(m7)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -1.4000 -0.4083 -0.2500  0.0125  4.6000 
+## -1.4000 -0.5000 -0.2333  0.4333  4.6000 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                  1.16667    0.14286   8.166 3.27e-14 ***
-## genderwoman                  0.26250    0.13041   2.013   0.0454 *  
-## ethnicitywhite              -0.02917    0.13041  -0.224   0.8233    
-## factor(location)2nd         -0.88750    0.18133  -4.894 2.00e-06 ***
-## factor(location)bessborough -1.02083    0.18133  -5.630 5.92e-08 ***
-## factor(location)victoria    -1.15000    0.16496  -6.971 4.27e-11 ***
+## (Intercept)                  1.16667    0.14326   8.144 2.29e-14 ***
+## genderwoman                  0.06667    0.11697   0.570    0.569    
+## ethnicitywhite               0.16667    0.11697   1.425    0.156    
+## factor(location)2nd         -0.66667    0.16542  -4.030 7.54e-05 ***
+## factor(location)bessborough -0.85000    0.16542  -5.138 5.84e-07 ***
+## factor(location)victoria    -1.15000    0.16542  -6.952 3.56e-11 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.9035 on 204 degrees of freedom
-## Multiple R-squared:  0.2274,	Adjusted R-squared:  0.2085 
-## F-statistic: 12.01 on 5 and 204 DF,  p-value: 3.332e-10
+## Residual standard error: 0.9061 on 234 degrees of freedom
+## Multiple R-squared:  0.1885,	Adjusted R-squared:  0.1712 
+## F-statistic: 10.87 on 5 and 234 DF,  p-value: 2.026e-09
 ```
 
 GENDER*ETHNICITY - LOCATION FIXED EFFECTS
@@ -699,13 +699,13 @@ tidy(m8)
 ## # A tibble: 7 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                   1.14       0.158     7.21  1.06e-11
-## 2 genderwoman                   0.300      0.165     1.81  7.10e- 2
-## 3 ethnicitywhite                0.0333     0.213     0.156 8.76e- 1
-## 4 factor(location)2nd          -0.875      0.185    -4.73  4.12e- 6
-## 5 factor(location)bessborough  -1.01       0.185    -5.46  1.41e- 7
-## 6 factor(location)victoria     -1.15       0.165    -6.96  4.70e-11
-## 7 genderwoman:ethnicitywhite   -0.1000     0.270    -0.370 7.11e- 1
+## 1 (Intercept)                    1.05      0.154      6.83 7.34e-11
+## 2 genderwoman                    0.300     0.164      1.83 6.92e- 2
+## 3 ethnicitywhite                 0.400     0.164      2.43 1.57e- 2
+## 4 factor(location)2nd           -0.667     0.164     -4.06 6.81e- 5
+## 5 factor(location)bessborough   -0.850     0.164     -5.17 5.00e- 7
+## 6 factor(location)victoria      -1.15      0.164     -7.00 2.76e-11
+## 7 genderwoman:ethnicitywhite    -0.467     0.232     -2.01 4.58e- 2
 ```
 
 ``` r
@@ -720,23 +720,23 @@ summary(m8)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -1.3750 -0.4333 -0.2250  0.0083  4.6250 
+## -1.4500 -0.4500 -0.2000  0.3167  4.7167 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                  1.14167    0.15827   7.213 1.06e-11 ***
-## genderwoman                  0.30000    0.16531   1.815    0.071 .  
-## ethnicitywhite               0.03333    0.21342   0.156    0.876    
-## factor(location)2nd         -0.87500    0.18482  -4.734 4.12e-06 ***
-## factor(location)bessborough -1.00833    0.18482  -5.456 1.41e-07 ***
-## factor(location)victoria    -1.15000    0.16531  -6.957 4.70e-11 ***
-## genderwoman:ethnicitywhite  -0.10000    0.26995  -0.370    0.711    
+## (Intercept)                   1.0500     0.1537   6.829 7.34e-11 ***
+## genderwoman                   0.3000     0.1644   1.825   0.0692 .  
+## ethnicitywhite                0.4000     0.1644   2.434   0.0157 *  
+## factor(location)2nd          -0.6667     0.1644  -4.056 6.81e-05 ***
+## factor(location)bessborough  -0.8500     0.1644  -5.172 5.00e-07 ***
+## factor(location)victoria     -1.1500     0.1644  -6.997 2.76e-11 ***
+## genderwoman:ethnicitywhite   -0.4667     0.2324  -2.008   0.0458 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.9054 on 203 degrees of freedom
-## Multiple R-squared:  0.228,	Adjusted R-squared:  0.2051 
-## F-statistic:  9.99 on 6 and 203 DF,  p-value: 1.159e-09
+## Residual standard error: 0.9002 on 233 degrees of freedom
+## Multiple R-squared:  0.2023,	Adjusted R-squared:  0.1818 
+## F-statistic: 9.851 on 6 and 233 DF,  p-value: 1.112e-09
 ```
 
 TIME TO ENTER INTERSECTION - DESCRIPTIVE STATS
@@ -756,7 +756,7 @@ data %>%
 ## # A tibble: 2 × 4
 ##   gender     n  mean    sd
 ##   <fct>  <int> <dbl> <dbl>
-## 1 man       90  5.04  2.00
+## 1 man      120  5.29  1.93
 ## 2 woman    120  5.96  3.30
 ```
 
@@ -776,7 +776,7 @@ data %>%
 ##   ethnicity     n  mean    sd
 ##   <fct>     <int> <dbl> <dbl>
 ## 1 asian       120  4.75  1.20
-## 2 white        90  6.65  3.88
+## 2 white       120  6.49  3.45
 ```
 
 ``` r
@@ -795,7 +795,7 @@ data %>%
 ##   gender ethnicity     n  mean    sd
 ##   <fct>  <fct>     <int> <dbl> <dbl>
 ## 1 man    asian        60  4.27 0.924
-## 2 man    white        30  6.58 2.62 
+## 2 man    white        60  6.30 2.13 
 ## 3 woman  asian        60  5.24 1.26 
 ## 4 woman  white        60  6.68 4.40
 ```
@@ -814,11 +814,11 @@ tidy(m9)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                     7.13     0.360     19.8  1.89e-49
-## 2 genderwoman                     1.13     0.346      3.27 1.25e- 3
-## 3 factor(location)2nd            -3.28     0.486     -6.74 1.58e-10
-## 4 factor(location)bessborough    -2.64     0.486     -5.44 1.52e- 7
-## 5 factor(location)victoria       -3.31     0.447     -7.40 3.41e-12
+## 1 (Intercept)                    7.36      0.348     21.2  2.41e-56
+## 2 genderwoman                    0.669     0.311      2.15 3.27e- 2
+## 3 factor(location)2nd           -2.61      0.440     -5.92 1.12e- 8
+## 4 factor(location)bessborough   -2.39      0.440     -5.42 1.46e- 7
+## 5 factor(location)victoria      -3.31      0.440     -7.52 1.18e-12
 ```
 
 ``` r
@@ -833,21 +833,21 @@ summary(m9)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -4.5548 -1.0519 -0.0991  0.6579 14.4152 
+## -4.3228 -1.0260 -0.2792  0.7078 14.6472 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                   7.1319     0.3604  19.791  < 2e-16 ***
-## genderwoman                   1.1329     0.3462   3.272  0.00125 ** 
-## factor(location)2nd          -3.2767     0.4862  -6.739 1.58e-10 ***
-## factor(location)bessborough  -2.6447     0.4862  -5.439 1.52e-07 ***
-## factor(location)victoria     -3.3083     0.4470  -7.402 3.41e-12 ***
+## (Intercept)                   7.3639     0.3480  21.160  < 2e-16 ***
+## genderwoman                   0.6689     0.3113   2.149   0.0327 *  
+## factor(location)2nd          -2.6067     0.4402  -5.922 1.12e-08 ***
+## factor(location)bessborough  -2.3868     0.4402  -5.422 1.46e-07 ***
+## factor(location)victoria     -3.3083     0.4402  -7.515 1.18e-12 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 2.448 on 205 degrees of freedom
-## Multiple R-squared:  0.2749,	Adjusted R-squared:  0.2607 
-## F-statistic: 19.43 on 4 and 205 DF,  p-value: 1.437e-13
+## Residual standard error: 2.411 on 235 degrees of freedom
+## Multiple R-squared:  0.2262,	Adjusted R-squared:  0.213 
+## F-statistic: 17.17 on 4 and 235 DF,  p-value: 2.277e-12
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
@@ -863,11 +863,11 @@ tidy(m10)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                     6.82     0.347     19.7  4.62e-49
-## 2 ethnicitywhite                  1.76     0.333      5.27 3.46e- 7
-## 3 factor(location)2nd            -2.80     0.468     -5.97 1.02e- 8
-## 4 factor(location)bessborough    -2.16     0.468     -4.62 6.73e- 6
-## 5 factor(location)victoria       -3.31     0.430     -7.69 6.09e-13
+## 1 (Intercept)                     6.83     0.328     20.8  2.56e-55
+## 2 ethnicitywhite                  1.74     0.293      5.93 1.07e- 8
+## 3 factor(location)2nd            -2.61     0.415     -6.29 1.55e- 9
+## 4 factor(location)bessborough    -2.39     0.415     -5.76 2.65e- 8
+## 5 factor(location)victoria       -3.31     0.415     -7.98 6.42e-14
 ```
 
 ``` r
@@ -881,22 +881,22 @@ summary(m10)
 ##     data = data)
 ## 
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -4.5364 -1.3643 -0.1161  0.8817 14.1036 
+##    Min     1Q Median     3Q    Max 
+## -4.528 -1.375 -0.165  0.838 14.112 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                   6.8203     0.3469  19.660  < 2e-16 ***
-## ethnicitywhite                1.7561     0.3333   5.269 3.46e-07 ***
-## factor(location)2nd          -2.7952     0.4681  -5.972 1.02e-08 ***
-## factor(location)bessborough  -2.1632     0.4681  -4.621 6.73e-06 ***
-## factor(location)victoria     -3.3083     0.4303  -7.689 6.09e-13 ***
+## (Intercept)                   6.8290     0.3277  20.837  < 2e-16 ***
+## ethnicitywhite                1.7386     0.2931   5.931 1.07e-08 ***
+## factor(location)2nd          -2.6067     0.4146  -6.288 1.55e-09 ***
+## factor(location)bessborough  -2.3868     0.4146  -5.758 2.65e-08 ***
+## factor(location)victoria     -3.3083     0.4146  -7.980 6.42e-14 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 2.357 on 205 degrees of freedom
-## Multiple R-squared:  0.328,	Adjusted R-squared:  0.3149 
-## F-statistic: 25.02 on 4 and 205 DF,  p-value: < 2.2e-16
+## Residual standard error: 2.271 on 235 degrees of freedom
+## Multiple R-squared:  0.3137,	Adjusted R-squared:  0.302 
+## F-statistic: 26.85 on 4 and 235 DF,  p-value: < 2.2e-16
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -912,12 +912,12 @@ tidy(m11)
 ## # A tibble: 6 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                    6.49      0.368     17.6  6.86e-43
-## 2 genderwoman                    0.814     0.336      2.42 1.63e- 2
-## 3 ethnicitywhite                 1.59      0.336      4.74 4.02e- 6
-## 4 factor(location)2nd           -2.96      0.467     -6.33 1.55e- 9
-## 5 factor(location)bessborough   -2.33      0.467     -4.98 1.38e- 6
-## 6 factor(location)victoria      -3.31      0.425     -7.78 3.56e-13
+## 1 (Intercept)                    6.49      0.356     18.3  6.91e-47
+## 2 genderwoman                    0.669     0.290      2.30 2.22e- 2
+## 3 ethnicitywhite                 1.74      0.290      5.98 8.07e- 9
+## 4 factor(location)2nd           -2.61      0.411     -6.35 1.14e- 9
+## 5 factor(location)bessborough   -2.39      0.411     -5.81 2.03e- 8
+## 6 factor(location)victoria      -3.31      0.411     -8.05 4.09e-14
 ```
 
 ``` r
@@ -932,22 +932,22 @@ summary(m11)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -4.0479 -1.3555  0.0864  1.0172 13.7779 
+## -4.1932 -1.3005 -0.0771  0.9372 13.7779 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                   6.4946     0.3683  17.634  < 2e-16 ***
-## genderwoman                   0.8142     0.3362   2.422   0.0163 *  
-## ethnicitywhite                1.5933     0.3362   4.739 4.02e-06 ***
-## factor(location)2nd          -2.9580     0.4675  -6.328 1.55e-09 ***
-## factor(location)bessborough  -2.3260     0.4675  -4.976 1.38e-06 ***
-## factor(location)victoria     -3.3083     0.4253  -7.779 3.56e-13 ***
+## (Intercept)                   6.4946     0.3558  18.255  < 2e-16 ***
+## genderwoman                   0.6689     0.2905   2.303   0.0222 *  
+## ethnicitywhite                1.7386     0.2905   5.985 8.07e-09 ***
+## factor(location)2nd          -2.6067     0.4108  -6.345 1.14e-09 ***
+## factor(location)bessborough  -2.3868     0.4108  -5.810 2.03e-08 ***
+## factor(location)victoria     -3.3083     0.4108  -8.053 4.09e-14 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 2.329 on 204 degrees of freedom
-## Multiple R-squared:  0.3468,	Adjusted R-squared:  0.3308 
-## F-statistic: 21.66 on 5 and 204 DF,  p-value: < 2.2e-16
+## Residual standard error: 2.25 on 234 degrees of freedom
+## Multiple R-squared:  0.3289,	Adjusted R-squared:  0.3145 
+## F-statistic: 22.93 on 5 and 234 DF,  p-value: < 2.2e-16
 ```
 
 GENDER*ETHNICITY - LOCATION FIXED EFFECTS
@@ -963,13 +963,13 @@ tidy(m12)
 ## # A tibble: 7 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                    6.40      0.408    15.7   7.86e-37
-## 2 genderwoman                    0.963     0.426     2.26  2.48e- 2
-## 3 ethnicitywhite                 1.84      0.550     3.35  9.68e- 4
-## 4 factor(location)2nd           -2.91      0.476    -6.11  5.09e- 9
-## 5 factor(location)bessborough   -2.28      0.476    -4.78  3.36e- 6
-## 6 factor(location)victoria      -3.31      0.426    -7.77  3.92e-13
-## 7 genderwoman:ethnicitywhite    -0.397     0.696    -0.571 5.69e- 1
+## 1 (Intercept)                    6.35      0.384     16.5  4.24e-41
+## 2 genderwoman                    0.963     0.411      2.34 1.99e- 2
+## 3 ethnicitywhite                 2.03      0.411      4.95 1.43e- 6
+## 4 factor(location)2nd           -2.61      0.411     -6.35 1.14e- 9
+## 5 factor(location)bessborough   -2.39      0.411     -5.81 2.04e- 8
+## 6 factor(location)victoria      -3.31      0.411     -8.05 4.14e-14
+## 7 genderwoman:ethnicitywhite    -0.589     0.581     -1.01 3.12e- 1
 ```
 
 ``` r
@@ -984,23 +984,23 @@ summary(m12)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -4.1968 -1.3142  0.0595  0.9179 13.8772 
+## -4.3403 -1.2607 -0.0653  0.9408 13.9250 
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)                   6.3953     0.4078  15.681  < 2e-16 ***
-## genderwoman                   0.9632     0.4260   2.261 0.024815 *  
-## ethnicitywhite                1.8416     0.5499   3.349 0.000968 ***
-## factor(location)2nd          -2.9084     0.4763  -6.107 5.09e-09 ***
-## factor(location)bessborough  -2.2764     0.4763  -4.780 3.36e-06 ***
-## factor(location)victoria     -3.3083     0.4260  -7.766 3.92e-13 ***
-## genderwoman:ethnicitywhite   -0.3972     0.6956  -0.571 0.568608    
+## (Intercept)                   6.3475     0.3843  16.519  < 2e-16 ***
+## genderwoman                   0.9632     0.4108   2.345   0.0199 *  
+## ethnicitywhite                2.0328     0.4108   4.949 1.43e-06 ***
+## factor(location)2nd          -2.6067     0.4108  -6.345 1.14e-09 ***
+## factor(location)bessborough  -2.3868     0.4108  -5.810 2.04e-08 ***
+## factor(location)victoria     -3.3083     0.4108  -8.054 4.14e-14 ***
+## genderwoman:ethnicitywhite   -0.5885     0.5810  -1.013   0.3121    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 2.333 on 203 degrees of freedom
-## Multiple R-squared:  0.3478,	Adjusted R-squared:  0.3286 
-## F-statistic: 18.04 on 6 and 203 DF,  p-value: < 2.2e-16
+## Residual standard error: 2.25 on 233 degrees of freedom
+## Multiple R-squared:  0.3318,	Adjusted R-squared:  0.3146 
+## F-statistic: 19.29 on 6 and 233 DF,  p-value: < 2.2e-16
 ```
 
 CAR PROCEED THROUGH INTERSECTION - DESCRIPTIVE STATS
@@ -1017,12 +1017,12 @@ data %>%
 ## # Groups:   gender [2]
 ##   gender did_car_proceed_before_across     n percentage
 ##   <fct>  <fct>                         <int>      <dbl>
-## 1 man    no                                4       4.44
-## 2 man    yes                              78      86.7 
-## 3 man    <NA>                              8       8.89
-## 4 woman  no                               14      11.7 
-## 5 woman  yes                              97      80.8 
-## 6 woman  <NA>                              9       7.5
+## 1 man    no                                6        5  
+## 2 man    yes                             102       85  
+## 3 man    <NA>                             12       10  
+## 4 woman  no                               14       11.7
+## 5 woman  yes                              97       80.8
+## 6 woman  <NA>                              9        7.5
 ```
 
 ``` r
@@ -1042,9 +1042,9 @@ data %>%
 ## 1 asian     no                                7       5.83
 ## 2 asian     yes                             102      85   
 ## 3 asian     <NA>                             11       9.17
-## 4 white     no                               11      12.2 
-## 5 white     yes                              73      81.1 
-## 6 white     <NA>                              6       6.67
+## 4 white     no                               13      10.8 
+## 5 white     yes                              97      80.8 
+## 6 white     <NA>                             10       8.33
 ```
 
 ``` r
@@ -1067,9 +1067,9 @@ data %>%
 ##  4 asian     woman  no                                4       6.67
 ##  5 asian     woman  yes                              49      81.7 
 ##  6 asian     woman  <NA>                              7      11.7 
-##  7 white     man    no                                1       3.33
-##  8 white     man    yes                              25      83.3 
-##  9 white     man    <NA>                              4      13.3 
+##  7 white     man    no                                3       5   
+##  8 white     man    yes                              49      81.7 
+##  9 white     man    <NA>                              8      13.3 
 ## 10 white     woman  no                               10      16.7 
 ## 11 white     woman  yes                              48      80   
 ## 12 white     woman  <NA>                              2       3.33
@@ -1093,13 +1093,13 @@ tidy(m13)
 
 ```
 ## # A tibble: 5 × 5
-##   term                        estimate std.error statistic   p.value
-##   <chr>                          <dbl>     <dbl>     <dbl>     <dbl>
-## 1 (Intercept)                   2.84       0.644    4.41   0.0000103
-## 2 genderwoman                  -1.10       0.594   -1.85   0.0643   
-## 3 factor(location)2nd          -0.0469     0.681   -0.0689 0.945    
-## 4 factor(location)bessborough   1.04       0.872    1.19   0.234    
-## 5 factor(location)victoria      0.0249     0.647    0.0385 0.969
+##   term                        estimate std.error statistic    p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>      <dbl>
+## 1 (Intercept)                   2.70       0.594    4.55   0.00000537
+## 2 genderwoman                  -0.904      0.512   -1.77   0.0773    
+## 3 factor(location)2nd          -0.284      0.629   -0.452  0.651     
+## 4 factor(location)bessborough   1.18       0.865    1.36   0.174     
+## 5 factor(location)victoria      0.0281     0.645    0.0436 0.965
 ```
 
 ``` r
@@ -1114,22 +1114,22 @@ summary(m13)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                  2.83974    0.64370   4.412 1.03e-05 ***
-## genderwoman                 -1.09887    0.59389  -1.850   0.0643 .  
-## factor(location)2nd         -0.04693    0.68148  -0.069   0.9451    
-## factor(location)bessborough  1.03800    0.87238   1.190   0.2341    
-## factor(location)victoria     0.02490    0.64683   0.038   0.9693    
+## (Intercept)                  2.70164    0.59379   4.550 5.37e-06 ***
+## genderwoman                 -0.90412    0.51178  -1.767   0.0773 .  
+## factor(location)2nd         -0.28416    0.62877  -0.452   0.6513    
+## factor(location)bessborough  1.17526    0.86492   1.359   0.1742    
+## factor(location)victoria     0.02811    0.64458   0.044   0.9652    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 119.67  on 192  degrees of freedom
-## Residual deviance: 113.82  on 188  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 123.82
+##     Null deviance: 133.85  on 218  degrees of freedom
+## Residual deviance: 126.49  on 214  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 136.49
 ## 
-## Number of Fisher Scoring iterations: 5
+## Number of Fisher Scoring iterations: 6
 ```
 
 ``` r
@@ -1138,11 +1138,11 @@ exp(coef(m13))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                  17.1112307                   0.3332482 
+##                  14.9041495                   0.4048974 
 ##         factor(location)2nd factor(location)bessborough 
-##                   0.9541508                   2.8235621 
+##                   0.7526476                   3.2389832 
 ##    factor(location)victoria 
-##                   1.0252080
+##                   1.0285116
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
@@ -1160,11 +1160,11 @@ tidy(m14)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic    p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>      <dbl>
-## 1 (Intercept)                   2.59       0.581    4.46   0.00000815
-## 2 ethnicitywhite               -0.764      0.515   -1.48   0.138     
-## 3 factor(location)2nd          -0.285      0.680   -0.419  0.675     
-## 4 factor(location)bessborough   0.777      0.871    0.892  0.372     
-## 5 factor(location)victoria      0.0460     0.643    0.0716 0.943
+## 1 (Intercept)                   2.53       0.568    4.46   0.00000813
+## 2 ethnicitywhite               -0.675      0.493   -1.37   0.171     
+## 3 factor(location)2nd          -0.266      0.626   -0.424  0.671     
+## 4 factor(location)bessborough   1.19       0.863    1.38   0.169     
+## 5 factor(location)victoria      0.0459     0.642    0.0715 0.943
 ```
 
 ``` r
@@ -1179,22 +1179,22 @@ summary(m14)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                  2.59092    0.58076   4.461 8.15e-06 ***
-## ethnicitywhite              -0.76402    0.51452  -1.485    0.138    
-## factor(location)2nd         -0.28491    0.68049  -0.419    0.675    
-## factor(location)bessborough  0.77669    0.87089   0.892    0.372    
-## factor(location)victoria     0.04604    0.64313   0.072    0.943    
+## (Intercept)                  2.53414    0.56798   4.462 8.13e-06 ***
+## ethnicitywhite              -0.67526    0.49345  -1.368    0.171    
+## factor(location)2nd         -0.26581    0.62624  -0.424    0.671    
+## factor(location)bessborough  1.18797    0.86333   1.376    0.169    
+## factor(location)victoria     0.04592    0.64229   0.071    0.943    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 119.67  on 192  degrees of freedom
-## Residual deviance: 115.49  on 188  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 125.49
+##     Null deviance: 133.85  on 218  degrees of freedom
+## Residual deviance: 127.91  on 214  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 137.91
 ## 
-## Number of Fisher Scoring iterations: 5
+## Number of Fisher Scoring iterations: 6
 ```
 
 ``` r
@@ -1203,11 +1203,11 @@ exp(coef(m14))
 
 ```
 ##                 (Intercept)              ethnicitywhite 
-##                  13.3420379                   0.4657893 
+##                  12.6055692                   0.5090231 
 ##         factor(location)2nd factor(location)bessborough 
-##                   0.7520793                   2.1742534 
+##                   0.7665862                   3.2804249 
 ##    factor(location)victoria 
-##                   1.0471130
+##                   1.0469872
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
@@ -1225,12 +1225,12 @@ tidy(m15)
 ## # A tibble: 6 × 5
 ##   term                        estimate std.error statistic    p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>      <dbl>
-## 1 (Intercept)                   3.10       0.692    4.48   0.00000754
-## 2 genderwoman                  -0.994      0.607   -1.64   0.102     
-## 3 ethnicitywhite               -0.590      0.520   -1.13   0.257     
-## 4 factor(location)2nd          -0.0931     0.690   -0.135  0.893     
-## 5 factor(location)bessborough   0.985      0.879    1.12   0.263     
-## 6 factor(location)victoria      0.0224     0.649    0.0345 0.972
+## 1 (Intercept)                   3.05       0.670    4.56   0.00000512
+## 2 genderwoman                  -0.883      0.514   -1.72   0.0858    
+## 3 ethnicitywhite               -0.647      0.497   -1.30   0.193     
+## 4 factor(location)2nd          -0.276      0.632   -0.436  0.663     
+## 5 factor(location)bessborough   1.18       0.867    1.36   0.173     
+## 6 factor(location)victoria      0.0244     0.648    0.0377 0.970
 ```
 
 ``` r
@@ -1245,21 +1245,21 @@ summary(m15)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                   3.0969     0.6916   4.478 7.54e-06 ***
-## genderwoman                  -0.9942     0.6073  -1.637    0.102    
-## ethnicitywhite               -0.5895     0.5198  -1.134    0.257    
-## factor(location)2nd          -0.0931     0.6895  -0.135    0.893    
-## factor(location)bessborough   0.9847     0.8789   1.120    0.263    
-## factor(location)victoria      0.0224     0.6485   0.035    0.972    
+## (Intercept)                  3.05468    0.66993   4.560 5.12e-06 ***
+## genderwoman                 -0.88282    0.51389  -1.718   0.0858 .  
+## ethnicitywhite              -0.64697    0.49731  -1.301   0.1933    
+## factor(location)2nd         -0.27569    0.63236  -0.436   0.6629    
+## factor(location)bessborough  1.18260    0.86744   1.363   0.1728    
+## factor(location)victoria     0.02444    0.64771   0.038   0.9699    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 119.67  on 192  degrees of freedom
-## Residual deviance: 112.51  on 187  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 124.51
+##     Null deviance: 133.85  on 218  degrees of freedom
+## Residual deviance: 124.73  on 213  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 136.73
 ## 
 ## Number of Fisher Scoring iterations: 6
 ```
@@ -1270,11 +1270,11 @@ exp(coef(m15))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                  22.1285215                   0.3700003 
+##                  21.2143403                   0.4136137 
 ##              ethnicitywhite         factor(location)2nd 
-##                   0.5545916                   0.9111053 
+##                   0.5236280                   0.7590474 
 ## factor(location)bessborough    factor(location)victoria 
-##                   2.6771172                   1.0226502
+##                   3.2628473                   1.0247388
 ```
 
 GENDER*ETHNICITY - LOCATION FIXED EFFECTS
@@ -1292,13 +1292,13 @@ tidy(m16)
 ## # A tibble: 7 × 5
 ##   term                        estimate std.error statistic  p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)                  2.66        0.730    3.64   0.000272
-## 2 genderwoman                 -0.365       0.792   -0.461  0.645   
-## 3 ethnicitywhite               0.557       1.20     0.464  0.643   
-## 4 factor(location)2nd          0.0280      0.693    0.0403 0.968   
-## 5 factor(location)bessborough  1.10        0.881    1.25   0.213   
-## 6 factor(location)victoria     0.00772     0.654    0.0118 0.991   
-## 7 genderwoman:ethnicitywhite  -1.50        1.36    -1.11   0.269
+## 1 (Intercept)                   2.74       0.730    3.76   0.000172
+## 2 genderwoman                  -0.376      0.794   -0.473  0.636   
+## 3 ethnicitywhite               -0.0874     0.845   -0.103  0.918   
+## 4 factor(location)2nd          -0.268      0.634   -0.423  0.673   
+## 5 factor(location)bessborough   1.19       0.869    1.37   0.172   
+## 6 factor(location)victoria      0.0171     0.650    0.0263 0.979   
+## 7 genderwoman:ethnicitywhite   -0.853      1.05    -0.809  0.419
 ```
 
 ``` r
@@ -1312,23 +1312,23 @@ summary(m16)
 ##     factor(location), family = binomial(), data = data)
 ## 
 ## Coefficients:
-##                              Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                  2.657122   0.729804   3.641 0.000272 ***
-## genderwoman                 -0.365326   0.792406  -0.461 0.644775    
-## ethnicitywhite               0.557305   1.201539   0.464 0.642772    
-## factor(location)2nd          0.027966   0.693500   0.040 0.967834    
-## factor(location)bessborough  1.097351   0.881139   1.245 0.212993    
-## factor(location)victoria     0.007722   0.654254   0.012 0.990583    
-## genderwoman:ethnicitywhite  -1.504046   1.360913  -1.105 0.269084    
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  2.74112    0.72958   3.757 0.000172 ***
+## genderwoman                 -0.37556    0.79366  -0.473 0.636071    
+## ethnicitywhite              -0.08738    0.84451  -0.103 0.917587    
+## factor(location)2nd         -0.26819    0.63450  -0.423 0.672527    
+## factor(location)bessborough  1.18645    0.86916   1.365 0.172237    
+## factor(location)victoria     0.01709    0.64986   0.026 0.979019    
+## genderwoman:ethnicitywhite  -0.85274    1.05470  -0.809 0.418795    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 119.67  on 192  degrees of freedom
-## Residual deviance: 111.15  on 186  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 125.15
+##     Null deviance: 133.85  on 218  degrees of freedom
+## Residual deviance: 124.07  on 212  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 138.07
 ## 
 ## Number of Fisher Scoring iterations: 6
 ```
@@ -1339,13 +1339,13 @@ exp(coef(m16))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                  14.2552072                   0.6939707 
+##                  15.5043836                   0.6869039 
 ##              ethnicitywhite         factor(location)2nd 
-##                   1.7459613                   1.0283605 
+##                   0.9163251                   0.7647626 
 ## factor(location)bessborough    factor(location)victoria 
-##                   2.9962185                   1.0077519 
+##                   3.2754325                   1.0172375 
 ##  genderwoman:ethnicitywhite 
-##                   0.2222292
+##                   0.4262466
 ```
 
 CARS STOP CLOSE OR FAR BINNING
@@ -1369,9 +1369,9 @@ data %>%
 ## # Groups:   gender [2]
 ##   gender car_stop_close_or_far     n percentage
 ##   <fct>  <chr>                 <int>      <dbl>
-## 1 man    close                     7       7.78
-## 2 man    far                      75      83.3 
-## 3 man    <NA>                      8       8.89
+## 1 man    close                     7       5.83
+## 2 man    far                     101      84.2 
+## 3 man    <NA>                     12      10   
 ## 4 woman  close                     8       6.67
 ## 5 woman  far                     103      85.8 
 ## 6 woman  <NA>                      9       7.5
@@ -1394,9 +1394,9 @@ data %>%
 ## 1 asian     close                    11       9.17
 ## 2 asian     far                      98      81.7 
 ## 3 asian     <NA>                     11       9.17
-## 4 white     close                     4       4.44
-## 5 white     far                      80      88.9 
-## 6 white     <NA>                      6       6.67
+## 4 white     close                     4       3.33
+## 5 white     far                     106      88.3 
+## 6 white     <NA>                     10       8.33
 ```
 
 ``` r
@@ -1419,9 +1419,9 @@ data %>%
 ##  4 asian     woman  close                     6      10   
 ##  5 asian     woman  far                      47      78.3 
 ##  6 asian     woman  <NA>                      7      11.7 
-##  7 white     man    close                     2       6.67
-##  8 white     man    far                      24      80   
-##  9 white     man    <NA>                      4      13.3 
+##  7 white     man    close                     2       3.33
+##  8 white     man    far                      50      83.3 
+##  9 white     man    <NA>                      8      13.3 
 ## 10 white     woman  close                     2       3.33
 ## 11 white     woman  far                      56      93.3 
 ## 12 white     woman  <NA>                      2       3.33
@@ -1445,13 +1445,13 @@ tidy(m17)
 
 ```
 ## # A tibble: 5 × 5
-##   term                        estimate std.error statistic p.value
-##   <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
-## 1 (Intercept)                   1.56       0.478     3.26  0.00110
-## 2 genderwoman                   0.0932     0.555     0.168 0.867  
-## 3 factor(location)2nd           0.917      0.718     1.28  0.202  
-## 4 factor(location)bessborough   2.14       1.09      1.97  0.0488 
-## 5 factor(location)victoria      1.34       0.708     1.89  0.0589
+##   term                        estimate std.error statistic  p.value
+##   <chr>                          <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                   1.66       0.486     3.41  0.000654
+## 2 genderwoman                  -0.0917     0.549    -0.167 0.867   
+## 3 factor(location)2nd           1.20       0.710     1.70  0.0899  
+## 4 factor(location)bessborough   2.43       1.08      2.25  0.0244  
+## 5 factor(location)victoria      1.33       0.708     1.88  0.0596
 ```
 
 ``` r
@@ -1465,21 +1465,21 @@ summary(m17)
 ##     family = binomial(), data = data)
 ## 
 ## Coefficients:
-##                             Estimate Std. Error z value Pr(>|z|)   
-## (Intercept)                  1.56161    0.47832   3.265   0.0011 **
-## genderwoman                  0.09322    0.55532   0.168   0.8667   
-## factor(location)2nd          0.91682    0.71790   1.277   0.2016   
-## factor(location)bessborough  2.13909    1.08572   1.970   0.0488 * 
-## factor(location)victoria     1.33720    0.70793   1.889   0.0589 . 
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  1.65792    0.48645   3.408 0.000654 ***
+## genderwoman                 -0.09174    0.54891  -0.167 0.867264    
+## factor(location)2nd          1.20316    0.70953   1.696 0.089939 .  
+## factor(location)bessborough  2.43202    1.08044   2.251 0.024388 *  
+## factor(location)victoria     1.33334    0.70783   1.884 0.059607 .  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 105.442  on 192  degrees of freedom
-## Residual deviance:  98.058  on 188  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 108.06
+##     Null deviance: 109.38  on 218  degrees of freedom
+## Residual deviance: 100.21  on 214  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 110.21
 ## 
 ## Number of Fisher Scoring iterations: 6
 ```
@@ -1490,11 +1490,11 @@ exp(coef(m17))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                    4.766474                    1.097708 
+##                   5.2483813                   0.9123412 
 ##         factor(location)2nd factor(location)bessborough 
-##                    2.501312                    8.491709 
+##                   3.3306221                  11.3818228 
 ##    factor(location)victoria 
-##                    3.808356
+##                   3.7936800
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
@@ -1512,11 +1512,11 @@ tidy(m18)
 ## # A tibble: 5 × 5
 ##   term                        estimate std.error statistic p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
-## 1 (Intercept)                    1.20      0.446      2.69 0.00725
-## 2 ethnicitywhite                 0.985     0.621      1.59 0.113  
-## 3 factor(location)2nd            1.07      0.725      1.47 0.140  
-## 4 factor(location)bessborough    2.32      1.09       2.12 0.0336 
-## 5 factor(location)victoria       1.36      0.714      1.91 0.0567
+## 1 (Intercept)                     1.15     0.440      2.61 0.00909
+## 2 ethnicitywhite                  1.14     0.613      1.86 0.0633 
+## 3 factor(location)2nd             1.23     0.718      1.71 0.0878 
+## 4 factor(location)bessborough     2.48     1.09       2.28 0.0226 
+## 5 factor(location)victoria        1.37     0.716      1.91 0.0560
 ```
 
 ``` r
@@ -1531,20 +1531,20 @@ summary(m18)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)   
-## (Intercept)                   1.1973     0.4459   2.685  0.00725 **
-## ethnicitywhite                0.9847     0.6206   1.587  0.11258   
-## factor(location)2nd           1.0698     0.7254   1.475  0.14029   
-## factor(location)bessborough   2.3204     1.0920   2.125  0.03360 * 
-## factor(location)victoria      1.3608     0.7142   1.905  0.05673 . 
+## (Intercept)                   1.1470     0.4397   2.609  0.00909 **
+## ethnicitywhite                1.1390     0.6132   1.857  0.06326 . 
+## factor(location)2nd           1.2256     0.7180   1.707  0.08782 . 
+## factor(location)bessborough   2.4761     1.0860   2.280  0.02261 * 
+## factor(location)victoria      1.3685     0.7160   1.911  0.05597 . 
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 105.442  on 192  degrees of freedom
-## Residual deviance:  95.299  on 188  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 105.3
+##     Null deviance: 109.379  on 218  degrees of freedom
+## Residual deviance:  96.367  on 214  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 106.37
 ## 
 ## Number of Fisher Scoring iterations: 6
 ```
@@ -1555,11 +1555,11 @@ exp(coef(m18))
 
 ```
 ##                 (Intercept)              ethnicitywhite 
-##                    3.311189                    2.676983 
+##                    3.148652                    3.123645 
 ##         factor(location)2nd factor(location)bessborough 
-##                    2.914710                   10.179521 
+##                    3.406303                   11.894337 
 ##    factor(location)victoria 
-##                    3.899412
+##                    3.929574
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS 
@@ -1577,12 +1577,12 @@ tidy(m19)
 ## # A tibble: 6 × 5
 ##   term                        estimate std.error statistic p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
-## 1 (Intercept)                   1.22       0.519    2.35    0.0189
-## 2 genderwoman                  -0.0457     0.561   -0.0814  0.935 
-## 3 ethnicitywhite                0.991      0.625    1.59    0.113 
-## 4 factor(location)2nd           1.07       0.726    1.48    0.140 
-## 5 factor(location)bessborough   2.32       1.09     2.13    0.0334
-## 6 factor(location)victoria      1.36       0.714    1.90    0.0568
+## 1 (Intercept)                    1.22      0.526     2.32   0.0205
+## 2 genderwoman                   -0.142     0.557    -0.255  0.799 
+## 3 ethnicitywhite                 1.15      0.614     1.87   0.0621
+## 4 factor(location)2nd            1.22      0.718     1.70   0.0886
+## 5 factor(location)bessborough    2.47      1.09      2.28   0.0227
+## 6 factor(location)victoria       1.37      0.716     1.91   0.0562
 ```
 
 ``` r
@@ -1597,21 +1597,21 @@ summary(m19)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)  
-## (Intercept)                  1.21879    0.51897   2.348   0.0189 *
-## genderwoman                 -0.04568    0.56122  -0.081   0.9351  
-## ethnicitywhite               0.99110    0.62530   1.585   0.1130  
-## factor(location)2nd          1.07313    0.72632   1.477   0.1395  
-## factor(location)bessborough  2.32405    1.09281   2.127   0.0334 *
-## factor(location)victoria     1.36056    0.71429   1.905   0.0568 .
+## (Intercept)                   1.2191     0.5263   2.317   0.0205 *
+## genderwoman                  -0.1417     0.5568  -0.255   0.7991  
+## ethnicitywhite                1.1457     0.6140   1.866   0.0621 .
+## factor(location)2nd           1.2228     0.7181   1.703   0.0886 .
+## factor(location)bessborough   2.4743     1.0862   2.278   0.0227 *
+## factor(location)victoria      1.3677     0.7163   1.910   0.0562 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 105.442  on 192  degrees of freedom
-## Residual deviance:  95.292  on 187  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 107.29
+##     Null deviance: 109.379  on 218  degrees of freedom
+## Residual deviance:  96.302  on 213  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 108.3
 ## 
 ## Number of Fisher Scoring iterations: 6
 ```
@@ -1622,11 +1622,11 @@ exp(coef(m19))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                   3.3830853                   0.9553436 
+##                   3.3842418                   0.8678586 
 ##              ethnicitywhite         factor(location)2nd 
-##                   2.6942021                   2.9245088 
+##                   3.1445132                   3.3968473 
 ## factor(location)bessborough    factor(location)victoria 
-##                  10.2169722                   3.8983680
+##                  11.8732114                   3.9262930
 ```
 
 GENDER*ETHNICITY - LOCATION FIXED EFFECTS 
@@ -1644,13 +1644,13 @@ tidy(m20)
 ## # A tibble: 7 × 5
 ##   term                        estimate std.error statistic p.value
 ##   <chr>                          <dbl>     <dbl>     <dbl>   <dbl>
-## 1 (Intercept)                    1.35      0.572     2.36   0.0183
-## 2 genderwoman                   -0.263     0.658    -0.401  0.689 
-## 3 ethnicitywhite                 0.539     0.916     0.589  0.556 
-## 4 factor(location)2nd            1.01      0.740     1.36   0.174 
-## 5 factor(location)bessborough    2.27      1.10      2.06   0.0392
-## 6 factor(location)victoria       1.37      0.714     1.92   0.0554
-## 7 genderwoman:ethnicitywhite     0.795     1.25      0.636  0.525
+## 1 (Intercept)                    1.28      0.564     2.27   0.0232
+## 2 genderwoman                   -0.260     0.661    -0.393  0.694 
+## 3 ethnicitywhite                 0.928     0.877     1.06   0.290 
+## 4 factor(location)2nd            1.22      0.719     1.70   0.0896
+## 5 factor(location)bessborough    2.48      1.09      2.28   0.0226
+## 6 factor(location)victoria       1.37      0.717     1.91   0.0555
+## 7 genderwoman:ethnicitywhite     0.410     1.23      0.334  0.738
 ```
 
 ``` r
@@ -1665,22 +1665,22 @@ summary(m20)
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(>|z|)  
-## (Intercept)                   1.3506     0.5722   2.360   0.0183 *
-## genderwoman                  -0.2634     0.6576  -0.401   0.6887  
-## ethnicitywhite                0.5388     0.9155   0.589   0.5561  
-## factor(location)2nd           1.0062     0.7396   1.360   0.1737  
-## factor(location)bessborough   2.2687     1.1003   2.062   0.0392 *
-## factor(location)victoria      1.3687     0.7144   1.916   0.0554 .
-## genderwoman:ethnicitywhite    0.7953     1.2513   0.636   0.5250  
+## (Intercept)                   1.2806     0.5642   2.270   0.0232 *
+## genderwoman                  -0.2600     0.6609  -0.393   0.6940  
+## ethnicitywhite                0.9281     0.8774   1.058   0.2902  
+## factor(location)2nd           1.2199     0.7185   1.698   0.0896 .
+## factor(location)bessborough   2.4766     1.0864   2.280   0.0226 *
+## factor(location)victoria      1.3725     0.7167   1.915   0.0555 .
+## genderwoman:ethnicitywhite    0.4098     1.2265   0.334   0.7383  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 105.44  on 192  degrees of freedom
-## Residual deviance:  94.89  on 186  degrees of freedom
-##   (17 observations deleted due to missingness)
-## AIC: 108.89
+##     Null deviance: 109.379  on 218  degrees of freedom
+## Residual deviance:  96.191  on 212  degrees of freedom
+##   (21 observations deleted due to missingness)
+## AIC: 110.19
 ## 
 ## Number of Fisher Scoring iterations: 6
 ```
@@ -1691,13 +1691,13 @@ exp(coef(m20))
 
 ```
 ##                 (Intercept)                 genderwoman 
-##                    3.859606                    0.768402 
+##                   3.5989542                   0.7710282 
 ##              ethnicitywhite         factor(location)2nd 
-##                    1.714025                    2.735272 
+##                   2.5296422                   3.3867670 
 ## factor(location)bessborough    factor(location)victoria 
-##                    9.666389                    3.930083 
+##                  11.9007476                   3.9450151 
 ##  genderwoman:ethnicitywhite 
-##                    2.215198
+##                   1.5064690
 ```
 
 HISTOGRAMS
@@ -1744,9 +1744,14 @@ data %>%
          fill = ethnicity)) +
   geom_boxplot() +
   labs(
-    x = "Race",
+    x = "Ethnicicty",
     y = "Time to Cross (s)"
   ) +
+  scale_x_discrete(labels = c(
+    "white" = "White",
+    "asian" = "South Asian",
+    "black" = "Black"
+   )) +
   theme_minimal(
   )
 ```
@@ -1765,6 +1770,10 @@ data %>%
     x = "Gender",
     y = "Time to Cross (s)"
   ) + 
+  scale_x_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+   )) +
   theme_minimal()
 ```
 
@@ -1783,6 +1792,10 @@ data %>%
     x = "Time to Cross (s)",
     y = "Gender"
   ) + 
+    scale_y_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+   )) +
   theme_minimal()
 ```
 
@@ -1805,6 +1818,11 @@ data %>%
     x = "Time to Cross (s)",
     y = "Gender"
   ) + 
+    scale_y_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black"
+   )) +
   theme_minimal()
 ```
 
@@ -1850,6 +1868,10 @@ data_19th_rm %>%
     x = "Gender",
     y = "Time to Cross (s)"
   ) + 
+  scale_x_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+  )) +
   theme_minimal()
 ```
 
@@ -1865,7 +1887,7 @@ data%>%
   geom_boxplot() +
   facet_wrap(~location) +
   labs(
-    x = "Race",
+    x = "Ethnicity",
     y = "Time to Cross (s)",
     fill = "Gender"
   ) +
@@ -1883,10 +1905,15 @@ data %>%
              fill = gender)) +
   geom_col() +
   labs (
-    x = "Race",
+    x = "Ethnicity",
     y = "Number of Cars Passed",
     fill = "Gender"
   ) +
+   scale_x_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black"
+   )) + 
   theme_minimal()
 ```
 
@@ -1901,10 +1928,15 @@ data %>%
          ) +
   geom_bar(position = "fill") +
   labs (
-    x = "Race",
+    x = "Ethnicity",
     y = "Proportion",
     fill = "Did the First Car Yield"
   ) +
+   scale_x_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black"
+   )) + 
   theme_minimal()
 ```
 
@@ -1923,6 +1955,10 @@ data %>%
     y = "Proportion",
     fill = "Did the First Car Yield"
   ) +
+  scale_x_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+  )) +
   theme_minimal()
 ```
 
@@ -1944,8 +1980,8 @@ ggplot(or1[-1,], aes(x = estimate,
              colour = "red") +
   scale_x_log10() +
   scale_y_discrete(labels = c(
-    "genderman" = "Male (vs Female)",
-    "genderwoman" = "Female (vs Male)",
+    "genderman" = "Man (vs Woman)",
+    "genderwoman" = "Woman (vs Man)",
     "ethnicityasian" = "South Asian",
     "ethnicityblack" = "Black",
     "ethnicitywhite" = "White",

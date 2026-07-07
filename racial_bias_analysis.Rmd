@@ -466,9 +466,14 @@ data %>%
          fill = ethnicity)) +
   geom_boxplot() +
   labs(
-    x = "Race",
+    x = "Ethnicicty",
     y = "Time to Cross (s)"
   ) +
+  scale_x_discrete(labels = c(
+    "white" = "White",
+    "asian" = "South Asian",
+    "black" = "Black"
+   )) +
   theme_minimal(
   )
 ```
@@ -484,6 +489,10 @@ data %>%
     x = "Gender",
     y = "Time to Cross (s)"
   ) + 
+  scale_x_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+   )) +
   theme_minimal()
 ```
 
@@ -499,6 +508,10 @@ data %>%
     x = "Time to Cross (s)",
     y = "Gender"
   ) + 
+    scale_y_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+   )) +
   theme_minimal()
 ```
 
@@ -514,6 +527,11 @@ data %>%
     x = "Time to Cross (s)",
     y = "Gender"
   ) + 
+    scale_y_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black"
+   )) +
   theme_minimal()
 ```
 
@@ -546,6 +564,10 @@ data_19th_rm %>%
     x = "Gender",
     y = "Time to Cross (s)"
   ) + 
+  scale_x_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+  )) +
   theme_minimal()
 ```
 
@@ -558,7 +580,7 @@ data%>%
   geom_boxplot() +
   facet_wrap(~location) +
   labs(
-    x = "Race",
+    x = "Ethnicity",
     y = "Time to Cross (s)",
     fill = "Gender"
   ) +
@@ -573,10 +595,15 @@ data %>%
              fill = gender)) +
   geom_col() +
   labs (
-    x = "Race",
+    x = "Ethnicity",
     y = "Number of Cars Passed",
     fill = "Gender"
   ) +
+   scale_x_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black"
+   )) + 
   theme_minimal()
 ```
 
@@ -588,10 +615,15 @@ data %>%
          ) +
   geom_bar(position = "fill") +
   labs (
-    x = "Race",
+    x = "Ethnicity",
     y = "Proportion",
     fill = "Did the First Car Yield"
   ) +
+   scale_x_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black"
+   )) + 
   theme_minimal()
 ```
 
@@ -607,6 +639,10 @@ data %>%
     y = "Proportion",
     fill = "Did the First Car Yield"
   ) +
+  scale_x_discrete(labels = c(
+    "man" = "Man",
+    "woman" = "Woman"
+  )) +
   theme_minimal()
 ```
 
@@ -625,8 +661,8 @@ ggplot(or1[-1,], aes(x = estimate,
              colour = "red") +
   scale_x_log10() +
   scale_y_discrete(labels = c(
-    "genderman" = "Male (vs Female)",
-    "genderwoman" = "Female (vs Male)",
+    "genderman" = "Man (vs Woman)",
+    "genderwoman" = "Woman (vs Man)",
     "ethnicityasian" = "South Asian",
     "ethnicityblack" = "Black",
     "ethnicitywhite" = "White",
