@@ -112,6 +112,19 @@ summary(m3)
 exp(coef(m3))
 ```
 
+GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m4 <- glm(first_car_yield ~ gender*ethnicity + factor(location),
+          data = data,
+          family = binomial())
+
+tidy(m4)
+
+summary(m4)
+
+exp(coef(m4))
+```
+
 MEAN NUMBER OF CARS PASS BEFORE YIELD - DESCRIPTIVE STATS
 ```{r}
 data %>% 
@@ -145,17 +158,7 @@ data %>%
 MEAN NUMBER OF CARS PASS BEFORE YIELD - LINEAR REGRESSION
 GENDER - LOCATION FIXED EFFECTS
 ```{r}
-m4 <- lm(num_cars_pass_before_yield ~ gender + factor(location),
-         data = data)
-
-tidy(m4)
-
-summary(m4)
-```
-
-ETHNICITY - LOCATION FIXED EFFECTS
-```{r}
-m5 <- lm(num_cars_pass_before_yield ~ ethnicity + factor(location),
+m5 <- lm(num_cars_pass_before_yield ~ gender + factor(location),
          data = data)
 
 tidy(m5)
@@ -163,14 +166,34 @@ tidy(m5)
 summary(m5)
 ```
 
-GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-m6 <- lm(num_cars_pass_before_yield ~ gender + ethnicity + factor(location),
+m6 <- lm(num_cars_pass_before_yield ~ ethnicity + factor(location),
          data = data)
 
 tidy(m6)
 
 summary(m6)
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m7 <- lm(num_cars_pass_before_yield ~ gender + ethnicity + factor(location),
+         data = data)
+
+tidy(m7)
+
+summary(m7)
+```
+
+GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m8 <- lm(num_cars_pass_before_yield ~ gender*ethnicity + factor(location),
+         data = data)
+
+tidy(m8)
+
+summary(m8)
 ```
 
 TIME TO ENTER INTERSECTION - DESCRIPTIVE STATS
@@ -206,32 +229,42 @@ data %>%
 TIME TO ENTER INTERSECTION - LINEAR REGRESSION
 GENDER - LOCATION FIXED EFFECTS 
 ```{r}
-m7 <- lm(time_to_cross_street ~ gender + factor(location),
-         data = data)
-
-tidy(m7)
-
-summary(m7)
-```
-
-ETHNICITY - LOCATION FIXED EFFECTS
-```{r}
-m8 <- lm(time_to_cross_street ~ ethnicity + factor(location),
-         data = data)
-
-tidy(m8)
-
-summary(m8)
-```
-
-GENDER + ETHNICITY - LOCATION FIXED EFFECTS
-```{r}
-m9 <- lm(time_to_cross_street ~ gender + ethnicity + factor(location),
+m9 <- lm(time_to_cross_street ~ gender + factor(location),
          data = data)
 
 tidy(m9)
 
 summary(m9)
+```
+
+ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m10 <- lm(time_to_cross_street ~ ethnicity + factor(location),
+         data = data)
+
+tidy(m10)
+
+summary(m10)
+```
+
+GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m11 <- lm(time_to_cross_street ~ gender + ethnicity + factor(location),
+         data = data)
+
+tidy(m11)
+
+summary(m11)
+```
+
+GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m12 <- lm(time_to_cross_street ~ gender*ethnicity + factor(location),
+         data = data)
+
+tidy(m12)
+
+summary(m12)
 ```
 
 CAR PROCEED THROUGH INTERSECTION - DESCRIPTIVE STATS
@@ -258,44 +291,58 @@ data %>%
 CAR PROCEED THROUGH INTERSECTION - LOGISTIC REGRESSION 
 GENDER - LOCATION FIXED EFFECTS
 ```{r}
-m10 <- glm(did_car_proceed_before_across ~ gender + factor(location),
+m13 <- glm(did_car_proceed_before_across ~ gender + factor(location),
            data = data,
            family = binomial()
            )
 
-tidy(m10)
+tidy(m13)
 
-summary(m10)
+summary(m13)
 
-exp(coef(m10))
+exp(coef(m13))
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-m11 <- glm(did_car_proceed_before_across ~ ethnicity + factor(location),
+m14 <- glm(did_car_proceed_before_across ~ ethnicity + factor(location),
            data = data,
            family = binomial()
            )
 
-tidy(m11)
+tidy(m14)
 
-summary(m11)
+summary(m14)
 
-exp(coef(m11))
+exp(coef(m14))
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-m12 <- glm(did_car_proceed_before_across ~ gender + ethnicity + factor(location),
+m15 <- glm(did_car_proceed_before_across ~ gender + ethnicity + factor(location),
            data = data,
            family = binomial()
            )
 
-tidy(m12)
+tidy(m15)
 
-summary(m12)
+summary(m15)
 
-exp(coef(m12))
+exp(coef(m15))
+```
+
+GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+```{r}
+m16 <- glm(did_car_proceed_before_across ~ gender*ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m16)
+
+summary(m16)
+
+exp(coef(m16))
 ```
 
 CARS STOP CLOSE OR FAR BINNING
@@ -328,44 +375,87 @@ data %>%
 CARS STOP CLOSE OR FAR - LOGISTIC REGRESSION
 GENDER - LOCATION FIXED EFFECTS
 ```{r}
-m13 <- glm(car_stop_close_or_far_bin ~ gender + factor(location),
+m17 <- glm(car_stop_close_or_far_bin ~ gender + factor(location),
            data = data,
            family = binomial()
 )
 
-tidy(m13)
+tidy(m17)
 
-summary(m13)
+summary(m17)
 
-exp(coef(m13))
+exp(coef(m17))
 ```
 
 ETHNICITY - LOCATION FIXED EFFECTS
 ```{r}
-m14 <- glm(car_stop_close_or_far_bin ~ ethnicity + factor(location),
+m18 <- glm(car_stop_close_or_far_bin ~ ethnicity + factor(location),
            data = data,
            family = binomial()
            )
 
-tidy(m14)
+tidy(m18)
 
-summary(m14)
+summary(m18)
 
-exp(coef(m14))
+exp(coef(m18))
 ```
 
 GENDER + ETHNICITY - LOCATION FIXED EFFECTS 
 ```{r}
-m15 <- glm(car_stop_close_or_far_bin ~ gender + ethnicity + factor(location),
+m19 <- glm(car_stop_close_or_far_bin ~ gender + ethnicity + factor(location),
            data = data,
            family = binomial()
            )
 
-tidy(m15)
+tidy(m19)
 
-summary(m15)
+summary(m19)
 
-exp(coef(m15))
+exp(coef(m19))
+```
+
+GENDER*ETHNICITY - LOCATION FIXED EFFECTS 
+```{r}
+m20 <- glm(car_stop_close_or_far_bin ~ gender*ethnicity + factor(location),
+           data = data,
+           family = binomial()
+           )
+
+tidy(m20)
+
+summary(m20)
+
+exp(coef(m20))
+```
+
+HISTOGRAMS
+ETHNICITY
+```{r}
+data %>% 
+  ggplot(aes(x = time_to_cross_street,
+         fill = ethnicity)) +
+  geom_histogram(binwidth = 0.5) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Count"
+  ) +
+  theme_minimal(
+  )
+```
+
+GENDER
+```{r}
+data %>% 
+  ggplot(aes(x = time_to_cross_street,
+         fill = gender)) +
+  geom_histogram(binwidth = 0.5) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Count"
+  ) +
+  theme_minimal(
+  )
 ```
 
 VISUALIZATIONS TIME BY RACE
@@ -397,6 +487,7 @@ data %>%
   theme_minimal()
 ```
 
+TIME TO CROSS THE STREET - VIOLIN PLOT WITH JITTER OVERLAY - DIVIDED BY GENDER
 ```{r}
 data %>% 
   ggplot(aes(x = time_to_cross_street,
@@ -411,6 +502,7 @@ data %>%
   theme_minimal()
 ```
 
+TIME TO CROSS THE STREET - VIOLIN PLOT WITH JITTER OVERLAY - DIVIDED BY ETHNICITY
 ```{r}
 data %>% 
   ggplot(aes(x = time_to_cross_street,
@@ -425,6 +517,7 @@ data %>%
   theme_minimal()
 ```
 
+TIME TO CROSS - QQPLOT - BY ETHNICITY 
 ```{r}
 data %>% 
   ggplot(aes(sample = time_to_cross_street)) +
@@ -433,6 +526,7 @@ data %>%
   facet_wrap(~ethnicity)
 ```
 
+TIME TO CROSS - QQPLOT - BY GENDER 
 ```{r}
 data %>% 
   ggplot(aes(sample = time_to_cross_street)) +
@@ -518,7 +612,7 @@ data %>%
 
 ODDS FIRST CAR YIELD
 ```{r}
-or1 <- tidy(m3, conf.int = TRUE, exponentiate = TRUE)
+or1 <- tidy(m4, conf.int = TRUE, exponentiate = TRUE)
 
 ggplot(or1[-1,], aes(x = estimate,
                     y = reorder(term, estimate))) +
@@ -536,6 +630,7 @@ ggplot(or1[-1,], aes(x = estimate,
     "ethnicityasian" = "South Asian",
     "ethnicityblack" = "Black",
     "ethnicitywhite" = "White",
+    "genderwoman:ethnicitywhite" = "White & Woman",
     "factor(location)victoria" = "Victoria",
     "factor(location)bessborough" = "Bessborough",
     "factor(location)2nd" = "2nd",
@@ -550,7 +645,7 @@ ggplot(or1[-1,], aes(x = estimate,
 
 ODDS CAR PROCEEDED
 ```{r}
-or2 <- tidy(m12, conf.int = TRUE, exponentiate = TRUE)
+or2 <- tidy(m16, conf.int = TRUE, exponentiate = TRUE)
 
 ggplot(or2[-1,], aes(x = estimate,
                     y = reorder(term, estimate))) +
@@ -571,7 +666,8 @@ ggplot(or2[-1,], aes(x = estimate,
     "factor(location)victoria" = "Victoria",
     "factor(location)bessborough" = "Bessborough",
     "factor(location)2nd" = "2nd",
-    "factor(location)19th" = "19th")) +
+    "factor(location)19th" = "19th",
+    "genderwoman:ethnicitywhite" = "White & Woman")) +
   labs(
     x = "Odds Ratio (95% CI)",
     y = "",
@@ -582,7 +678,7 @@ ggplot(or2[-1,], aes(x = estimate,
 
 ODDS CAR CLOSE//FAR
 ```{r}
-or3 <- tidy(m15, conf.int = TRUE, exponentiate = TRUE)
+or3 <- tidy(m20, conf.int = TRUE, exponentiate = TRUE)
 
 ggplot(or3[-1,], aes(x = estimate,
                     y = reorder(term, estimate))) +
@@ -603,7 +699,8 @@ ggplot(or3[-1,], aes(x = estimate,
     "factor(location)victoria" = "Victoria",
     "factor(location)bessborough" = "Bessborough",
     "factor(location)2nd" = "2nd",
-    "factor(location)19th" = "19th")) +
+    "factor(location)19th" = "19th",
+    "genderwoman:ethnicitywhite" = "White & Woman")) +
   labs(
     x = "Odds Ratio (95% CI)",
     y = "",
