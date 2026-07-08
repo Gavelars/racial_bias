@@ -5,7 +5,7 @@ output:
     keep_md: yes
 ---
 
-LOAD PACKAGES
+# 1. Load Packages
 
 ``` r
 library(tidyverse)
@@ -29,7 +29,7 @@ library(broom)
 library(snakecase)
 ```
 
-LOAD DATA - REMOVE INVALID TRIALS - TRIALS WITH UNAFFILIATED PEDESTRIANS
+# 2. Load data - Remove invalid trials - Trials with unaffiliated pedestrians
 
 ``` r
 data_file <- read_csv("master_file.csv") %>% 
@@ -43,11 +43,11 @@ data_file <- read_csv("master_file.csv") %>%
 ```
 
 ```
-## Rows: 363 Columns: 13
+## Rows: 363 Columns: 15
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
-## chr (9): ethnicity, gender, location, date, time_of_day, first_car_yield, di...
-## dbl (4): order, trial_number, num_cars_pass_before_yield, time_to_cross_street
+## chr (10): ethnicity, gender, location, date, time_of_day, close_side_first_c...
+## dbl  (5): order, trial_number, close_side_num_cars_pass_before_yield, num_ca...
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -59,7 +59,7 @@ data <- data_file %>% drop_na(valid_trial)
 data_19th_rm <- data %>% filter(location != "19th")
 ```
 
-GENERAL DESCRIPTIVE STATS
+# 3. General descriptive statistics
 
 ``` r
 data %>% 
@@ -81,7 +81,7 @@ data %>%
 ## 1   240      5.62    2.72     2.07     22.7     0.617   0.995
 ```
 
-FREQUENCY TABLES
+# 4. Frequency tables 
 
 ``` r
 data %>% count(ethnicity)
@@ -145,8 +145,8 @@ data %>% count(did_car_proceed_before_across)
 ## 2 yes                             199
 ## 3 <NA>                             21
 ```
-
-FIRST CAR YIELD DESCRIPTIVE STATS
+# 5. First car yield
+# 5a. First car yield - Descriptive stats
 
 ``` r
 data %>% 
@@ -214,8 +214,8 @@ data %>%
   .groups = "drop"
 ```
 
-FIRST CAR YIELD - LOGISTIC REGRESSION
-GENDER - LOCATION FIXED EFFECTS
+# 5b. First car yield - Logistic regression 
+# 5b1. Gender - Location fixed effects
 
 ``` r
 m1 <- glm(first_car_yield ~ gender + factor(location),
@@ -278,7 +278,7 @@ exp(coef(m1))
 ##                  14.2781016
 ```
 
-ETHNICITY - LOCATION FIXED EFFECTS
+# 5b2. Ethnicity - Location fixed effects
 
 ``` r
 m2 <- glm(first_car_yield ~ ethnicity + factor(location),
@@ -341,7 +341,7 @@ exp(coef(m2))
 ##                  14.1148880
 ```
 
-GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+# 5b3. Gender + Ethnicity - Location fixed effects
 
 ``` r
 m3 <- glm(first_car_yield ~ gender + ethnicity + factor(location),
@@ -406,7 +406,7 @@ exp(coef(m3))
 ##                   4.3882738                  14.3335038
 ```
 
-GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+# 5b4. Gender*Ethnicity - Location fixed effects
 
 ``` r
 m4 <- glm(first_car_yield ~ gender*ethnicity + factor(location),
@@ -475,7 +475,8 @@ exp(coef(m4))
 ##                  17.8910219
 ```
 
-MEAN NUMBER OF CARS PASS BEFORE YIELD - DESCRIPTIVE STATS
+# 6. Mean umber of cars before yield
+# 6a. Mean number of cars before yield - Descriptive stats
 
 ``` r
 data %>% 
@@ -536,8 +537,8 @@ data %>%
 ## 4 white     woman     60 0.617 1.37
 ```
 
-MEAN NUMBER OF CARS PASS BEFORE YIELD - LINEAR REGRESSION
-GENDER - LOCATION FIXED EFFECTS
+# 6b. Mean number of cars before yield - Linear regression 
+# 6b1. Gender - Location fixed effects
 
 ``` r
 m5 <- lm(num_cars_pass_before_yield ~ gender + factor(location),
@@ -586,7 +587,7 @@ summary(m5)
 ## F-statistic: 13.03 on 4 and 235 DF,  p-value: 1.345e-09
 ```
 
-ETHNICITY - LOCATION FIXED EFFECTS
+# 6b2. Ethnicity - Location fixed effects
 
 ``` r
 m6 <- lm(num_cars_pass_before_yield ~ ethnicity + factor(location),
@@ -635,7 +636,7 @@ summary(m6)
 ## F-statistic: 13.55 on 4 and 235 DF,  p-value: 5.914e-10
 ```
 
-GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+# 6b3. Gender + Ethnicity - Location fixed effects
 
 ``` r
 m7 <- lm(num_cars_pass_before_yield ~ gender + ethnicity + factor(location),
@@ -686,7 +687,7 @@ summary(m7)
 ## F-statistic: 10.87 on 5 and 234 DF,  p-value: 2.026e-09
 ```
 
-GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+# 6b4. Gender*Ethnicity - Location fixed effects
 
 ``` r
 m8 <- lm(num_cars_pass_before_yield ~ gender*ethnicity + factor(location),
@@ -739,7 +740,8 @@ summary(m8)
 ## F-statistic: 9.851 on 6 and 233 DF,  p-value: 1.112e-09
 ```
 
-TIME TO ENTER INTERSECTION - DESCRIPTIVE STATS
+# 7. Mean time to enter intersection
+# 7a. Mean time to enter intersection - Descriptive stats
 
 ``` r
 data %>% 
@@ -800,8 +802,8 @@ data %>%
 ## 4 woman  white        60  6.68 4.40
 ```
 
-TIME TO ENTER INTERSECTION - LINEAR REGRESSION
-GENDER - LOCATION FIXED EFFECTS 
+# 7b. Mean time to enter intersection - Linear regression
+# 7b1. Gender - Location fixed effects
 
 ``` r
 m9 <- lm(time_to_cross_street ~ gender + factor(location),
@@ -850,7 +852,7 @@ summary(m9)
 ## F-statistic: 17.17 on 4 and 235 DF,  p-value: 2.277e-12
 ```
 
-ETHNICITY - LOCATION FIXED EFFECTS
+# 7b2. Ethnicity - Location fixed effects
 
 ``` r
 m10 <- lm(time_to_cross_street ~ ethnicity + factor(location),
@@ -899,7 +901,7 @@ summary(m10)
 ## F-statistic: 26.85 on 4 and 235 DF,  p-value: < 2.2e-16
 ```
 
-GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+# 7b3. Gender + Ethnicity - Location fixed effects
 
 ``` r
 m11 <- lm(time_to_cross_street ~ gender + ethnicity + factor(location),
@@ -950,7 +952,7 @@ summary(m11)
 ## F-statistic: 22.93 on 5 and 234 DF,  p-value: < 2.2e-16
 ```
 
-GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+# 7b4. Gender*Ethnicity - Location fixed effects
 
 ``` r
 m12 <- lm(time_to_cross_street ~ gender*ethnicity + factor(location),
@@ -1003,7 +1005,8 @@ summary(m12)
 ## F-statistic: 19.29 on 6 and 233 DF,  p-value: < 2.2e-16
 ```
 
-CAR PROCEED THROUGH INTERSECTION - DESCRIPTIVE STATS
+# 8. Car proceed through intersection
+# 8a. Car proceed through intersection - Descriptive stats
 
 ``` r
 data %>% 
@@ -1079,8 +1082,8 @@ data %>%
   .groups = "drop"
 ```
 
-CAR PROCEED THROUGH INTERSECTION - LOGISTIC REGRESSION 
-GENDER - LOCATION FIXED EFFECTS
+# 8b. Car proceed through intersection - Logistic regression  
+# 8b1. Gender - Location fixed effects
 
 ``` r
 m13 <- glm(did_car_proceed_before_across ~ gender + factor(location),
@@ -1145,7 +1148,7 @@ exp(coef(m13))
 ##                   1.0285116
 ```
 
-ETHNICITY - LOCATION FIXED EFFECTS
+# 8b2. Ethnicity - Location fixed effects
 
 ``` r
 m14 <- glm(did_car_proceed_before_across ~ ethnicity + factor(location),
@@ -1210,7 +1213,7 @@ exp(coef(m14))
 ##                   1.0469872
 ```
 
-GENDER + ETHNICITY - LOCATION FIXED EFFECTS
+# 8b3. Gender + Ethnicity - Location fixed effects
 
 ``` r
 m15 <- glm(did_car_proceed_before_across ~ gender + ethnicity + factor(location),
@@ -1277,7 +1280,7 @@ exp(coef(m15))
 ##                   3.2628473                   1.0247388
 ```
 
-GENDER*ETHNICITY - LOCATION FIXED EFFECTS
+# 8b4. Gender*Ethnicity - Location fixed effects
 
 ``` r
 m16 <- glm(did_car_proceed_before_across ~ gender*ethnicity + factor(location),
@@ -1348,14 +1351,15 @@ exp(coef(m16))
 ##                   0.4262466
 ```
 
-CARS STOP CLOSE OR FAR BINNING
+# 9. Cars stop close or far 
+# 9a. Cars stop close or far binning
 
 ``` r
 data$car_stop_close_or_far_bin <- ifelse(data$car_stop_close_or_far == "far", 1,
                                   ifelse(data$car_stop_close_or_far == "close", 0, NA))
 ```
 
-CARS STOP CLOSE OR FAR - DESCRIPTIVE STATS
+# 9b. Cars stop close or far - Descritpive stats
 
 ``` r
 data %>% 
@@ -1431,8 +1435,8 @@ data %>%
   .groups = "drop"
 ```
 
-CARS STOP CLOSE OR FAR - LOGISTIC REGRESSION
-GENDER - LOCATION FIXED EFFECTS
+# 9c. Cars stop close or far - Logistic regression 
+# 9c1. Gender - Location fixed effects
 
 ``` r
 m17 <- glm(car_stop_close_or_far_bin ~ gender + factor(location),
@@ -1497,7 +1501,7 @@ exp(coef(m17))
 ##                   3.7936800
 ```
 
-ETHNICITY - LOCATION FIXED EFFECTS
+# 9c2. Ethnicity - Location fixed effects
 
 ``` r
 m18 <- glm(car_stop_close_or_far_bin ~ ethnicity + factor(location),
@@ -1562,7 +1566,7 @@ exp(coef(m18))
 ##                    3.929574
 ```
 
-GENDER + ETHNICITY - LOCATION FIXED EFFECTS 
+# 9c3. Gender + Ethnicity - Location fixed effects
 
 ``` r
 m19 <- glm(car_stop_close_or_far_bin ~ gender + ethnicity + factor(location),
@@ -1629,7 +1633,7 @@ exp(coef(m19))
 ##                  11.8732114                   3.9262930
 ```
 
-GENDER*ETHNICITY - LOCATION FIXED EFFECTS 
+# 9c4. Gender*Ethnicity - Location fixed effects
 
 ``` r
 m20 <- glm(car_stop_close_or_far_bin ~ gender*ethnicity + factor(location),
@@ -1700,15 +1704,16 @@ exp(coef(m20))
 ##                   1.5064690
 ```
 
-HISTOGRAMS
-ETHNICITY
+# 10. Histograms
+# 10a. Ethnicity
 
 ``` r
 data %>% 
   ggplot(aes(x = time_to_cross_street,
          fill = ethnicity)) +
-  geom_histogram(binwidth = 0.5) +
-  labs(
+  geom_histogram((aes(y = after_stat(density))),binwidth = 0.5) +
+  stat_function(fun = dnorm, args = list(mean = mean(data$time_to_cross_street), sd = sd(data$time_to_cross_street)), colour = "red", linewidth = 1) +
+    labs(
     x = "Time to Cross (s)",
     y = "Count"
   ) +
@@ -1716,15 +1721,21 @@ data %>%
   )
 ```
 
+```
+## Warning: Multiple drawing groups in `geom_function()`
+## ℹ Did you use the correct group, colour, or fill aesthetics?
+```
+
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
-GENDER
+# 10b. Gender
 
 ``` r
 data %>% 
   ggplot(aes(x = time_to_cross_street,
          fill = gender)) +
-  geom_histogram(binwidth = 0.5) +
+  geom_histogram((aes(y = after_stat(density))),binwidth = 0.5) +
+  stat_function(fun = dnorm, args = list(mean = mean(data$time_to_cross_street), sd = sd(data$time_to_cross_street)), colour = "red", linewidth = 1) +
   labs(
     x = "Time to Cross (s)",
     y = "Count"
@@ -1733,9 +1744,15 @@ data %>%
   )
 ```
 
+```
+## Warning: Multiple drawing groups in `geom_function()`
+## ℹ Did you use the correct group, colour, or fill aesthetics?
+```
+
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
 
-VISUALIZATIONS TIME BY RACE
+# 11. Visualizations
+# 11a. Time by ethnicity
 
 ``` r
 data %>% 
@@ -1758,7 +1775,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
-TIME BY GENDER
+# 11b. Time by gender
 
 ``` r
 data %>% 
@@ -1779,7 +1796,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
-TIME TO CROSS THE STREET - VIOLIN PLOT WITH JITTER OVERLAY - DIVIDED BY GENDER
+# 11c. Time to enter the street - Violin Plot with Jitter overlay - Facet by gender
 
 ``` r
 data %>% 
@@ -1805,7 +1822,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
-TIME TO CROSS THE STREET - VIOLIN PLOT WITH JITTER OVERLAY - DIVIDED BY ETHNICITY
+# 11d. Time to enter the street - Violin Plot with Jitter overlay - Facet by ethnicity
 
 ``` r
 data %>% 
@@ -1832,7 +1849,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 
-TIME TO CROSS - QQPLOT - BY ETHNICITY 
+# 11e. Time to enter - QQplot - By ethnicity  
 
 ``` r
 data %>% 
@@ -1844,7 +1861,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
 
-TIME TO CROSS - QQPLOT - BY GENDER 
+# 11f. Time to enter - QQplot - By gender 
 
 ``` r
 data %>% 
@@ -1856,7 +1873,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
-19TH REMOVED - TIME TO CROSS BY GENDER
+# 11g. 19th removed - Time to enter - By gender
 
 ``` r
 data_19th_rm %>% 
@@ -1877,7 +1894,7 @@ data_19th_rm %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
 
-TIME BY RACE AND GENDER - GROUPED BY LOCATION
+# 11h. Time by ethnicity and gender - grouped by location 
 
 ``` r
 data%>% 
@@ -1896,7 +1913,7 @@ data%>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
 
-CARS PASSED BY RACE AND GENDER
+# 11i. Cars passed by ethnicity and gender
 
 ``` r
 data %>% 
@@ -1919,7 +1936,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
 
-PROPORTION OF FIRST CAR YIELD RACE VISUAL
+# 11j. Proportion of first car yields - By ethnicity 
 
 ``` r
 data %>% 
@@ -1942,7 +1959,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
-PROPORTION OF FIRST CAR YIELD GENDER VISUAL
+# 11k. Proportion of first car yield - By gender 
 
 ``` r
 data %>% 
@@ -1964,7 +1981,7 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
 
-ODDS FIRST CAR YIELD
+# 11l. Odds first car yield
 
 ``` r
 or1 <- tidy(m4, conf.int = TRUE, exponentiate = TRUE)
@@ -2012,7 +2029,7 @@ ggplot(or1[-1,], aes(x = estimate,
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
-ODDS CAR PROCEEDED
+# 11m. Odds car proceeded
 
 ``` r
 or2 <- tidy(m16, conf.int = TRUE, exponentiate = TRUE)
@@ -2052,7 +2069,7 @@ ggplot(or2[-1,], aes(x = estimate,
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
-ODDS CAR CLOSE//FAR
+# 11n. Odds car stopped close//far 
 
 ``` r
 or3 <- tidy(m20, conf.int = TRUE, exponentiate = TRUE)
