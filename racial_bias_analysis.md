@@ -266,16 +266,20 @@ summary(m1)
 ```
 
 ``` r
-exp(coef(m1))
+exp(cbind(OR = coef(m1), confint(m1)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                   0.4525612                   1.4034791 
-##         factor(location)2nd factor(location)bessborough 
-##                   2.1336757                   4.3771795 
-##    factor(location)victoria 
-##                  14.2781016
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %     97.5 %
+## (Intercept)                  0.4525612 0.2407761  0.8229677
+## genderwoman                  1.4034791 0.7932319  2.4998786
+## factor(location)2nd          2.1336757 1.0282616  4.5071277
+## factor(location)bessborough  4.3771795 2.0600320  9.6355154
+## factor(location)victoria    14.2781016 5.7897250 39.7267017
 ```
 
 # 5b2. Ethnicity - Location fixed effects
@@ -329,16 +333,20 @@ summary(m2)
 ```
 
 ``` r
-exp(coef(m2))
+exp(cbind(OR = coef(m2), confint(m2)))
 ```
 
 ```
-##                 (Intercept)              ethnicitywhite 
-##                   0.5853231                   0.8444752 
-##         factor(location)2nd factor(location)bessborough 
-##                   2.1252318                   4.3441853 
-##    factor(location)victoria 
-##                  14.1148880
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %    97.5 %
+## (Intercept)                  0.5853231 0.3164848  1.056138
+## ethnicitywhite               0.8444752 0.4759717  1.493318
+## factor(location)2nd          2.1252318 1.0261961  4.479527
+## factor(location)bessborough  4.3441853 2.0489757  9.538151
+## factor(location)victoria    14.1148880 5.7372934 39.175898
 ```
 
 # 5b3. Gender + Ethnicity - Location fixed effects
@@ -394,16 +402,21 @@ summary(m3)
 ```
 
 ``` r
-exp(coef(m3))
+exp(cbind(OR = coef(m3), confint(m3)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                   0.4920680                   1.4042115 
-##              ethnicitywhite         factor(location)2nd 
-##                   0.8435989                   2.1365047 
-## factor(location)bessborough    factor(location)victoria 
-##                   4.3882738                  14.3335038
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %     97.5 %
+## (Intercept)                  0.4920680 0.2468425  0.9520808
+## genderwoman                  1.4042115 0.7932971  2.5023564
+## ethnicitywhite               0.8435989 0.4746194  1.4943785
+## factor(location)2nd          2.1365047 1.0289538  4.5163801
+## factor(location)bessborough  4.3882738 2.0637465  9.6682961
+## factor(location)victoria    14.3335038 5.8074735 39.9143688
 ```
 
 # 5b4. Gender*Ethnicity - Location fixed effects
@@ -461,18 +474,22 @@ summary(m4)
 ```
 
 ``` r
-exp(coef(m4))
+exp(cbind(OR = coef(m4), confint(m4)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                   0.9133814                   0.3393063 
-##              ethnicitywhite         factor(location)2nd 
-##                   0.2030472                   2.3513765 
-## factor(location)bessborough    factor(location)victoria 
-##                   5.2821285                  18.9371865 
-##  genderwoman:ethnicitywhite 
-##                  17.8910219
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR      2.5 %     97.5 %
+## (Intercept)                  0.9133814 0.42733272  1.9545370
+## genderwoman                  0.3393063 0.14146329  0.7860240
+## ethnicitywhite               0.2030472 0.08271783  0.4747544
+## factor(location)2nd          2.3513765 1.08154201  5.2356170
+## factor(location)bessborough  5.2821285 2.35559189 12.4086193
+## factor(location)victoria    18.9371865 7.23640896 56.0824742
+## genderwoman:ethnicitywhite  17.8910219 5.25590862 65.0829075
 ```
 
 # 6. Mean umber of cars before yield
@@ -1136,16 +1153,20 @@ summary(m13)
 ```
 
 ``` r
-exp(coef(m13))
+exp(cbind(OR = coef(m13), confint(m13)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                  14.9041495                   0.4048974 
-##         factor(location)2nd factor(location)bessborough 
-##                   0.7526476                   3.2389832 
-##    factor(location)victoria 
-##                   1.0285116
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %    97.5 %
+## (Intercept)                 14.9041495 5.2007204 54.818493
+## genderwoman                  0.4048974 0.1377931  1.060964
+## factor(location)2nd          0.7526476 0.2066743  2.563823
+## factor(location)bessborough  3.2389832 0.6575368 23.514220
+## factor(location)victoria     1.0285116 0.2767083  3.675443
 ```
 
 # 8b2. Ethnicity - Location fixed effects
@@ -1201,16 +1222,20 @@ summary(m14)
 ```
 
 ``` r
-exp(coef(m14))
+exp(cbind(OR = coef(m14), confint(m14)))
 ```
 
 ```
-##                 (Intercept)              ethnicitywhite 
-##                  12.6055692                   0.5090231 
-##         factor(location)2nd factor(location)bessborough 
-##                   0.7665862                   3.2804249 
-##    factor(location)victoria 
-##                   1.0469872
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %    97.5 %
+## (Intercept)                 12.6055692 4.5954919 43.833472
+## ethnicitywhite               0.5090231 0.1833167  1.306561
+## factor(location)2nd          0.7665862 0.2115107  2.599331
+## factor(location)bessborough  3.2804249 0.6682891 23.763271
+## factor(location)victoria     1.0469872 0.2829078  3.726134
 ```
 
 # 8b3. Gender + Ethnicity - Location fixed effects
@@ -1268,16 +1293,21 @@ summary(m15)
 ```
 
 ``` r
-exp(coef(m15))
+exp(cbind(OR = coef(m15), confint(m15)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                  21.2143403                   0.4136137 
-##              ethnicitywhite         factor(location)2nd 
-##                   0.5236280                   0.7590474 
-## factor(location)bessborough    factor(location)victoria 
-##                   3.2628473                   1.0247388
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %    97.5 %
+## (Intercept)                 21.2143403 6.4148763 90.782113
+## genderwoman                  0.4136137 0.1402817  1.089005
+## ethnicitywhite               0.5236280 0.1873490  1.355341
+## factor(location)2nd          0.7590474 0.2071320  2.604681
+## factor(location)bessborough  3.2628473 0.6589395 23.773160
+## factor(location)victoria     1.0247388 0.2740914  3.683563
 ```
 
 # 8b4. Gender*Ethnicity - Location fixed effects
@@ -1337,18 +1367,22 @@ summary(m16)
 ```
 
 ``` r
-exp(coef(m16))
+exp(cbind(OR = coef(m16), confint(m16)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                  15.5043836                   0.6869039 
-##              ethnicitywhite         factor(location)2nd 
-##                   0.9163251                   0.7647626 
-## factor(location)bessborough    factor(location)victoria 
-##                   3.2754325                   1.0172375 
-##  genderwoman:ethnicitywhite 
-##                   0.4262466
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR      2.5 %    97.5 %
+## (Intercept)                 15.5043836 4.34462702 80.414578
+## genderwoman                  0.6869039 0.12886893  3.292783
+## ethnicitywhite               0.9163251 0.16169226  5.191345
+## factor(location)2nd          0.7647626 0.20788930  2.635870
+## factor(location)bessborough  3.2754325 0.65914893 23.925324
+## factor(location)victoria     1.0172375 0.27094598  3.671142
+## genderwoman:ethnicitywhite   0.4262466 0.04990583  3.442809
 ```
 
 # 9. Cars stop close or far 
@@ -1489,16 +1523,20 @@ summary(m17)
 ```
 
 ``` r
-exp(coef(m17))
+exp(cbind(OR = coef(m17), confint(m17)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                   5.2483813                   0.9123412 
-##         factor(location)2nd factor(location)bessborough 
-##                   3.3306221                  11.3818228 
-##    factor(location)victoria 
-##                   3.7936800
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %     97.5 %
+## (Intercept)                  5.2483813 2.1622025  14.928734
+## genderwoman                  0.9123412 0.3021483   2.699599
+## factor(location)2nd          3.3306221 0.8982217  15.961952
+## factor(location)bessborough 11.3818228 1.9769385 215.427482
+## factor(location)victoria     3.7936800 1.0269718  18.135619
 ```
 
 # 9c2. Ethnicity - Location fixed effects
@@ -1554,16 +1592,20 @@ summary(m18)
 ```
 
 ``` r
-exp(coef(m18))
+exp(cbind(OR = coef(m18), confint(m18)))
 ```
 
 ```
-##                 (Intercept)              ethnicitywhite 
-##                    3.148652                    3.123645 
-##         factor(location)2nd factor(location)bessborough 
-##                    3.406303                   11.894337 
-##    factor(location)victoria 
-##                    3.929574
+## Waiting for profiling to be done...
+```
+
+```
+##                                    OR     2.5 %     97.5 %
+## (Intercept)                  3.148652 1.3876832   7.959711
+## ethnicitywhite               3.123645 1.0039833  11.817222
+## factor(location)2nd          3.406303 0.9028614  16.550190
+## factor(location)bessborough 11.894337 2.0367407 226.490055
+## factor(location)victoria     3.929574 1.0464167  19.038902
 ```
 
 # 9c3. Gender + Ethnicity - Location fixed effects
@@ -1621,16 +1663,21 @@ summary(m19)
 ```
 
 ``` r
-exp(coef(m19))
+exp(cbind(OR = coef(m19), confint(m19)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                   3.3842418                   0.8678586 
-##              ethnicitywhite         factor(location)2nd 
-##                   3.1445132                   3.3968473 
-## factor(location)bessborough    factor(location)victoria 
-##                  11.8732114                   3.9262930
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %     97.5 %
+## (Intercept)                  3.3842418 1.2707759  10.289725
+## genderwoman                  0.8678586 0.2828300   2.605283
+## ethnicitywhite               3.1445132 1.0092503  11.912880
+## factor(location)2nd          3.3968473 0.8999814  16.507363
+## factor(location)bessborough 11.8732114 2.0324021 226.116921
+## factor(location)victoria     3.9262930 1.0450692  19.029818
 ```
 
 # 9c4. Gender*Ethnicity - Location fixed effects
@@ -1690,18 +1737,22 @@ summary(m20)
 ```
 
 ``` r
-exp(coef(m20))
+exp(cbind(OR = coef(m20), confint(m20)))
 ```
 
 ```
-##                 (Intercept)                 genderwoman 
-##                   3.5989542                   0.7710282 
-##              ethnicitywhite         factor(location)2nd 
-##                   2.5296422                   3.3867670 
-## factor(location)bessborough    factor(location)victoria 
-##                  11.9007476                   3.9450151 
-##  genderwoman:ethnicitywhite 
-##                   1.5064690
+## Waiting for profiling to be done...
+```
+
+```
+##                                     OR     2.5 %     97.5 %
+## (Intercept)                  3.5989542 1.2752995  12.149752
+## genderwoman                  0.7710282 0.2012320   2.843561
+## ethnicitywhite               2.5296422 0.5004154  18.701087
+## factor(location)2nd          3.3867670 0.8964830  16.467979
+## factor(location)bessborough 11.9007476 2.0359298 226.699991
+## factor(location)victoria     3.9450151 1.0491610  19.135535
+## genderwoman:ethnicitywhite   1.5064690 0.1241437  18.460814
 ```
 
 # 10. Histograms

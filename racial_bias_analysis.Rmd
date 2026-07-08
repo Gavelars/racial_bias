@@ -83,7 +83,7 @@ tidy(m1)
 
 summary(m1)
 
-exp(coef(m1))
+exp(cbind(OR = coef(m1), confint(m1)))
 ```
 
 # 5b2. Ethnicity - Location fixed effects
@@ -96,7 +96,7 @@ tidy(m2)
 
 summary(m2)
 
-exp(coef(m2))
+exp(cbind(OR = coef(m2), confint(m2)))
 ```
 
 # 5b3. Gender + Ethnicity - Location fixed effects
@@ -109,7 +109,7 @@ tidy(m3)
 
 summary(m3)
 
-exp(coef(m3))
+exp(cbind(OR = coef(m3), confint(m3)))
 ```
 
 # 5b4. Gender*Ethnicity - Location fixed effects
@@ -122,7 +122,7 @@ tidy(m4)
 
 summary(m4)
 
-exp(coef(m4))
+exp(cbind(OR = coef(m4), confint(m4)))
 ```
 
 # 6. Mean umber of cars before yield
@@ -303,7 +303,7 @@ tidy(m13)
 
 summary(m13)
 
-exp(coef(m13))
+exp(cbind(OR = coef(m13), confint(m13)))
 ```
 
 # 8b2. Ethnicity - Location fixed effects
@@ -317,7 +317,7 @@ tidy(m14)
 
 summary(m14)
 
-exp(coef(m14))
+exp(cbind(OR = coef(m14), confint(m14)))
 ```
 
 # 8b3. Gender + Ethnicity - Location fixed effects
@@ -331,7 +331,7 @@ tidy(m15)
 
 summary(m15)
 
-exp(coef(m15))
+exp(cbind(OR = coef(m15), confint(m15)))
 ```
 
 # 8b4. Gender*Ethnicity - Location fixed effects
@@ -345,7 +345,7 @@ tidy(m16)
 
 summary(m16)
 
-exp(coef(m16))
+exp(cbind(OR = coef(m16), confint(m16)))
 ```
 
 # 9. Cars stop close or far 
@@ -388,7 +388,7 @@ tidy(m17)
 
 summary(m17)
 
-exp(coef(m17))
+exp(cbind(OR = coef(m17), confint(m17)))
 ```
 
 # 9c2. Ethnicity - Location fixed effects
@@ -402,7 +402,7 @@ tidy(m18)
 
 summary(m18)
 
-exp(coef(m18))
+exp(cbind(OR = coef(m18), confint(m18)))
 ```
 
 # 9c3. Gender + Ethnicity - Location fixed effects
@@ -416,7 +416,7 @@ tidy(m19)
 
 summary(m19)
 
-exp(coef(m19))
+exp(cbind(OR = coef(m19), confint(m19)))
 ```
 
 # 9c4. Gender*Ethnicity - Location fixed effects
@@ -430,7 +430,7 @@ tidy(m20)
 
 summary(m20)
 
-exp(coef(m20))
+exp(cbind(OR = coef(m20), confint(m20)))
 ```
 
 # 10. Histograms
