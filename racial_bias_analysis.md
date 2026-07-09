@@ -27,6 +27,15 @@ library(tidyverse)
 ``` r
 library(broom)
 library(snakecase)
+library(stargazer)
+```
+
+```
+## 
+## Please cite as: 
+## 
+##  Hlavac, Marek (2022). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer
 ```
 
 # 2. Load data - Remove invalid trials - Trials with unaffiliated pedestrians
@@ -282,6 +291,14 @@ exp(cbind(OR = coef(m1), confint(m1)))
 ## factor(location)victoria    14.2781016 5.7897250 39.7267017
 ```
 
+``` r
+ci1 <- exp(confint(m1))
+```
+
+```
+## Waiting for profiling to be done...
+```
+
 # 5b2. Ethnicity - Location fixed effects
 
 ``` r
@@ -347,6 +364,14 @@ exp(cbind(OR = coef(m2), confint(m2)))
 ## factor(location)2nd          2.1252318 1.0261961  4.479527
 ## factor(location)bessborough  4.3441853 2.0489757  9.538151
 ## factor(location)victoria    14.1148880 5.7372934 39.175898
+```
+
+``` r
+ci2 <- exp(confint(m2))
+```
+
+```
+## Waiting for profiling to be done...
 ```
 
 # 5b3. Gender + Ethnicity - Location fixed effects
@@ -417,6 +442,14 @@ exp(cbind(OR = coef(m3), confint(m3)))
 ## factor(location)2nd          2.1365047 1.0289538  4.5163801
 ## factor(location)bessborough  4.3882738 2.0637465  9.6682961
 ## factor(location)victoria    14.3335038 5.8074735 39.9143688
+```
+
+``` r
+ci3 <- exp(confint(m3))
+```
+
+```
+## Waiting for profiling to be done...
 ```
 
 # 5b4. Gender*Ethnicity - Location fixed effects
@@ -492,7 +525,79 @@ exp(cbind(OR = coef(m4), confint(m4)))
 ## genderwoman:ethnicitywhite  17.8910219 5.25590862 65.0829075
 ```
 
-# 6. Mean umber of cars before yield
+``` r
+ci4 <- exp(confint(m4))
+```
+
+```
+## Waiting for profiling to be done...
+```
+# 5c. Combined models - Odd Ratio with 95% CI
+
+``` r
+stargazer(m1, m2, m3, m4,
+          coef = list(exp(coef(m1)),
+                      exp(coef(m2)),
+                      exp(coef(m3)),
+                      exp(coef(m4))),
+          ci = TRUE, 
+          ci.custom = list(ci1, ci2, ci3, ci4),
+          type = "text",
+          title = "First Car Yield Models",
+          column.labels = c("Gender Model",
+                            "Ethnicity Model",
+                            "Gender + Ethnicity Model",
+                            "Gender*Ethnicity Model"),
+          covariate.labels = c("Woman (vs Man)",
+                               "White (vs South Asian)",
+                               "2nd Avenue",
+                               "Bessborough",
+                               "Victoria Avenue",
+                               "White Woman"),
+          dep.var.labels = c("First Car Yield"))
+```
+
+```
+## 
+## First Car Yield Models
+## ======================================================================================================
+##                                                      Dependent variable:                              
+##                        -------------------------------------------------------------------------------
+##                                                        First Car Yield                                
+##                         Gender Model   Ethnicity Model Gender + Ethnicity Model Gender*Ethnicity Model
+##                              (1)             (2)                 (3)                     (4)          
+## ------------------------------------------------------------------------------------------------------
+## Woman (vs Man)            1.403***                             1.404***                 0.339         
+##                        (0.793, 2.500)                       (0.793, 2.502)          (0.141, 0.786)    
+##                                                                                                       
+## White (vs South Asian)                    0.844***             0.844***                 0.203         
+##                                        (0.476, 1.493)       (0.475, 1.494)          (0.083, 0.475)    
+##                                                                                                       
+## 2nd Avenue                2.134***        2.125***             2.137***                2.351***       
+##                        (1.028, 4.507)  (1.026, 4.480)       (1.029, 4.516)          (1.082, 5.236)    
+##                                                                                                       
+## Bessborough               4.377***        4.344***             4.388***                5.282***       
+##                        (2.060, 9.636)  (2.049, 9.538)       (2.064, 9.668)         (2.356, 12.409)    
+##                                                                                                       
+## Victoria Avenue           14.278***       14.115***           14.334***               18.937***       
+##                        (5.790, 39.727) (5.737, 39.176)     (5.807, 39.914)         (7.236, 56.082)    
+##                                                                                                       
+## White Woman                                                                           17.891***       
+##                                                                                    (5.256, 65.083)    
+##                                                                                                       
+## Constant                    0.453          0.585*               0.492                  0.913**        
+##                        (0.241, 0.823)  (0.316, 1.056)       (0.247, 0.952)          (0.427, 1.955)    
+##                                                                                                       
+## ------------------------------------------------------------------------------------------------------
+## Observations                 240             240                 240                     240          
+## Log Likelihood            -137.891        -138.399             -137.721                -126.567       
+## Akaike Inf. Crit.          285.782         286.798             287.442                 267.134        
+## ======================================================================================================
+## Note:                                                                      *p<0.1; **p<0.05; ***p<0.01
+```
+
+
+# 6. Mean number of cars before yield
 # 6a. Mean number of cars before yield - Descriptive stats
 
 ``` r
@@ -755,6 +860,66 @@ summary(m8)
 ## Residual standard error: 0.9002 on 233 degrees of freedom
 ## Multiple R-squared:  0.2023,	Adjusted R-squared:  0.1818 
 ## F-statistic: 9.851 on 6 and 233 DF,  p-value: 1.112e-09
+```
+
+# 6c. Combined models 
+
+``` r
+stargazer(m5, m6, m7, m8,
+          type = "text",
+          title = "Mean Number of Cars that Passed",
+           column.labels = c("Gender Model",
+                            "Ethnicity Model",
+                            "Gender + Ethnicity Model",
+                            "Gender*Ethnicity Model"),
+          covariate.labels = c("Woman (vs Man)",
+                               "White (vs South Asian)",
+                               "2nd Avenue",
+                               "Bessborough",
+                               "Victoria Avenue",
+                               "White Woman"),
+          dep.var.labels = c("Mean Number of Cars that Passed"))
+```
+
+```
+## 
+## Mean Number of Cars that Passed
+## ======================================================================================================================
+##                                                              Dependent variable:                                      
+##                        -----------------------------------------------------------------------------------------------
+##                                                        Mean Number of Cars that Passed                                
+##                             Gender Model           Ethnicity Model     Gender + Ethnicity Model Gender*Ethnicity Model
+##                                  (1)                     (2)                     (3)                     (4)          
+## ----------------------------------------------------------------------------------------------------------------------
+## Woman (vs Man)                  0.067                                           0.067                   0.300*        
+##                                (0.117)                                         (0.117)                 (0.164)        
+##                                                                                                                       
+## White (vs South Asian)                                  0.167                   0.167                  0.400**        
+##                                                        (0.117)                 (0.117)                 (0.164)        
+##                                                                                                                       
+## 2nd Avenue                    -0.667***               -0.667***               -0.667***               -0.667***       
+##                                (0.166)                 (0.165)                 (0.165)                 (0.164)        
+##                                                                                                                       
+## Bessborough                   -0.850***               -0.850***               -0.850***               -0.850***       
+##                                (0.166)                 (0.165)                 (0.165)                 (0.164)        
+##                                                                                                                       
+## Victoria Avenue               -1.150***               -1.150***               -1.150***               -1.150***       
+##                                (0.166)                 (0.165)                 (0.165)                 (0.164)        
+##                                                                                                                       
+## White Woman                                                                                            -0.467**       
+##                                                                                                        (0.232)        
+##                                                                                                                       
+## Constant                      1.250***                1.200***                 1.167***                1.050***       
+##                                (0.131)                 (0.131)                 (0.143)                 (0.154)        
+##                                                                                                                       
+## ----------------------------------------------------------------------------------------------------------------------
+## Observations                     240                     240                     240                     240          
+## R2                              0.181                   0.187                   0.189                   0.202         
+## Adjusted R2                     0.168                   0.174                   0.171                   0.182         
+## Residual Std. Error       0.908 (df = 235)        0.905 (df = 235)         0.906 (df = 234)        0.900 (df = 233)   
+## F Statistic            13.027*** (df = 4; 235) 13.550*** (df = 4; 235) 10.874*** (df = 5; 234)  9.851*** (df = 6; 233)
+## ======================================================================================================================
+## Note:                                                                                      *p<0.1; **p<0.05; ***p<0.01
 ```
 
 # 7. Mean time to enter intersection
@@ -1022,6 +1187,66 @@ summary(m12)
 ## F-statistic: 19.29 on 6 and 233 DF,  p-value: < 2.2e-16
 ```
 
+# 7c. Combined models 
+
+``` r
+stargazer(m9, m10, m11, m12,
+          type = "text",
+          title = "Mean Time to Enter the Intersection",
+           column.labels = c("Gender Model",
+                            "Ethnicity Model",
+                            "Gender + Ethnicity Model",
+                            "Gender*Ethnicity Model"),
+          covariate.labels = c("Woman (vs Man)",
+                               "White (vs South Asian)",
+                               "2nd Avenue",
+                               "Bessborough",
+                               "Victoria Avenue",
+                               "White Woman"),
+          dep.var.labels = c("Mean Time to Enter the Intersection"))
+```
+
+```
+## 
+## Mean Time to Enter the Intersection
+## =======================================================================================================================
+##                                                              Dependent variable:                                       
+##                        ------------------------------------------------------------------------------------------------
+##                                                      Mean Time to Enter the Intersection                               
+##                             Gender Model           Ethnicity Model     Gender + Ethnicity Model Gender*Ethnicity Model 
+##                                  (1)                     (2)                     (3)                      (4)          
+## -----------------------------------------------------------------------------------------------------------------------
+## Woman (vs Man)                 0.669**                                         0.669**                  0.963**        
+##                                (0.311)                                         (0.290)                  (0.411)        
+##                                                                                                                        
+## White (vs South Asian)                                1.739***                 1.739***                2.033***        
+##                                                        (0.293)                 (0.290)                  (0.411)        
+##                                                                                                                        
+## 2nd Avenue                    -2.607***               -2.607***               -2.607***                -2.607***       
+##                                (0.440)                 (0.415)                 (0.411)                  (0.411)        
+##                                                                                                                        
+## Bessborough                   -2.387***               -2.387***               -2.387***                -2.387***       
+##                                (0.440)                 (0.415)                 (0.411)                  (0.411)        
+##                                                                                                                        
+## Victoria Avenue               -3.308***               -3.308***               -3.308***                -3.308***       
+##                                (0.440)                 (0.415)                 (0.411)                  (0.411)        
+##                                                                                                                        
+## White Woman                                                                                             -0.589         
+##                                                                                                         (0.581)        
+##                                                                                                                        
+## Constant                      7.364***                6.829***                 6.495***                6.347***        
+##                                (0.348)                 (0.328)                 (0.356)                  (0.384)        
+##                                                                                                                        
+## -----------------------------------------------------------------------------------------------------------------------
+## Observations                     240                     240                     240                      240          
+## R2                              0.226                   0.314                   0.329                    0.332         
+## Adjusted R2                     0.213                   0.302                   0.315                    0.315         
+## Residual Std. Error       2.411 (df = 235)        2.271 (df = 235)         2.250 (df = 234)        2.250 (df = 233)    
+## F Statistic            17.169*** (df = 4; 235) 26.851*** (df = 4; 235) 22.935*** (df = 5; 234)  19.285*** (df = 6; 233)
+## =======================================================================================================================
+## Note:                                                                                       *p<0.1; **p<0.05; ***p<0.01
+```
+
 # 8. Car proceed through intersection
 # 8a. Car proceed through intersection - Descriptive stats
 
@@ -1169,6 +1394,14 @@ exp(cbind(OR = coef(m13), confint(m13)))
 ## factor(location)victoria     1.0285116 0.2767083  3.675443
 ```
 
+``` r
+ci13 <- exp(confint(m13))
+```
+
+```
+## Waiting for profiling to be done...
+```
+
 # 8b2. Ethnicity - Location fixed effects
 
 ``` r
@@ -1236,6 +1469,14 @@ exp(cbind(OR = coef(m14), confint(m14)))
 ## factor(location)2nd          0.7665862 0.2115107  2.599331
 ## factor(location)bessborough  3.2804249 0.6682891 23.763271
 ## factor(location)victoria     1.0469872 0.2829078  3.726134
+```
+
+``` r
+ci14 <- exp(confint(m14))
+```
+
+```
+## Waiting for profiling to be done...
 ```
 
 # 8b3. Gender + Ethnicity - Location fixed effects
@@ -1308,6 +1549,14 @@ exp(cbind(OR = coef(m15), confint(m15)))
 ## factor(location)2nd          0.7590474 0.2071320  2.604681
 ## factor(location)bessborough  3.2628473 0.6589395 23.773160
 ## factor(location)victoria     1.0247388 0.2740914  3.683563
+```
+
+``` r
+ci15 <- exp(confint(m15))
+```
+
+```
+## Waiting for profiling to be done...
 ```
 
 # 8b4. Gender*Ethnicity - Location fixed effects
@@ -1383,6 +1632,78 @@ exp(cbind(OR = coef(m16), confint(m16)))
 ## factor(location)bessborough  3.2754325 0.65914893 23.925324
 ## factor(location)victoria     1.0172375 0.27094598  3.671142
 ## genderwoman:ethnicitywhite   0.4262466 0.04990583  3.442809
+```
+
+``` r
+ci16 <- exp(confint(m16))
+```
+
+```
+## Waiting for profiling to be done...
+```
+
+# 8c. Combined models - Odd Ratio with 95% CI
+
+``` r
+stargazer(m13, m14, m15, m16,
+          coef = list(exp(coef(m13)),
+                      exp(coef(m14)),
+                      exp(coef(m15)),
+                      exp(coef(m16))),
+          ci = TRUE, 
+          ci.custom = list(ci13, ci14, ci15, ci16),
+          type = "text",
+          title = "Car Proceeded through Intersection",
+          column.labels = c("Gender Model",
+                            "Ethnicity Model",
+                            "Gender + Ethnicity Model",
+                            "Gender*Ethnicity Model"),
+          covariate.labels = c("Woman (vs Man)",
+                               "White (vs South Asian)",
+                               "2nd Avenue",
+                               "Bessborough",
+                               "Victoria Avenue",
+                               "White Woman"),
+          dep.var.labels = c("Car Proceeded through Intersection"))
+```
+
+```
+## 
+## Car Proceeded through Intersection
+## ======================================================================================================
+##                                                      Dependent variable:                              
+##                        -------------------------------------------------------------------------------
+##                                              Car Proceeded through Intersection                       
+##                         Gender Model   Ethnicity Model Gender + Ethnicity Model Gender*Ethnicity Model
+##                              (1)             (2)                 (3)                     (4)          
+## ------------------------------------------------------------------------------------------------------
+## Woman (vs Man)              0.405                               0.414                   0.687         
+##                        (0.138, 1.061)                       (0.140, 1.089)          (0.129, 3.293)    
+##                                                                                                       
+## White (vs South Asian)                      0.509               0.524                   0.916         
+##                                        (0.183, 1.307)       (0.187, 1.355)          (0.162, 5.191)    
+##                                                                                                       
+## 2nd Avenue                  0.753           0.767               0.759                   0.765         
+##                        (0.207, 2.564)  (0.212, 2.599)       (0.207, 2.605)          (0.208, 2.636)    
+##                                                                                                       
+## Bessborough               3.239***        3.280***             3.263***                3.275***       
+##                        (0.658, 23.514) (0.668, 23.763)     (0.659, 23.773)         (0.659, 23.925)    
+##                                                                                                       
+## Victoria Avenue             1.029           1.047               1.025                   1.017         
+##                        (0.277, 3.675)  (0.283, 3.726)       (0.274, 3.684)          (0.271, 3.671)    
+##                                                                                                       
+## White Woman                                                                             0.426         
+##                                                                                     (0.050, 3.443)    
+##                                                                                                       
+## Constant                  14.904***       12.606***           21.214***               15.504***       
+##                        (5.201, 54.818) (4.595, 43.833)     (6.415, 90.782)         (4.345, 80.415)    
+##                                                                                                       
+## ------------------------------------------------------------------------------------------------------
+## Observations                 219             219                 219                     219          
+## Log Likelihood             -63.244         -63.953             -62.364                 -62.036        
+## Akaike Inf. Crit.          136.488         137.907             136.728                 138.071        
+## ======================================================================================================
+## Note:                                                                      *p<0.1; **p<0.05; ***p<0.01
 ```
 
 # 9. Cars stop close or far 
@@ -1539,6 +1860,14 @@ exp(cbind(OR = coef(m17), confint(m17)))
 ## factor(location)victoria     3.7936800 1.0269718  18.135619
 ```
 
+``` r
+ci17 <- exp(confint(m17))
+```
+
+```
+## Waiting for profiling to be done...
+```
+
 # 9c2. Ethnicity - Location fixed effects
 
 ``` r
@@ -1606,6 +1935,14 @@ exp(cbind(OR = coef(m18), confint(m18)))
 ## factor(location)2nd          3.406303 0.9028614  16.550190
 ## factor(location)bessborough 11.894337 2.0367407 226.490055
 ## factor(location)victoria     3.929574 1.0464167  19.038902
+```
+
+``` r
+ci18 <- exp(confint(m18))
+```
+
+```
+## Waiting for profiling to be done...
 ```
 
 # 9c3. Gender + Ethnicity - Location fixed effects
@@ -1678,6 +2015,14 @@ exp(cbind(OR = coef(m19), confint(m19)))
 ## factor(location)2nd          3.3968473 0.8999814  16.507363
 ## factor(location)bessborough 11.8732114 2.0324021 226.116921
 ## factor(location)victoria     3.9262930 1.0450692  19.029818
+```
+
+``` r
+ci19 <- exp(confint(m19))
+```
+
+```
+## Waiting for profiling to be done...
 ```
 
 # 9c4. Gender*Ethnicity - Location fixed effects
@@ -1755,6 +2100,78 @@ exp(cbind(OR = coef(m20), confint(m20)))
 ## genderwoman:ethnicitywhite   1.5064690 0.1241437  18.460814
 ```
 
+``` r
+ci20 <- exp(confint(m20))
+```
+
+```
+## Waiting for profiling to be done...
+```
+
+# 9c. Combined models - Odd Ratio with 95% CI
+
+``` r
+stargazer(m17, m18, m19, m20,
+          coef = list(exp(coef(m17)),
+                      exp(coef(m18)),
+                      exp(coef(m19)),
+                      exp(coef(m20))),
+          ci = TRUE, 
+          ci.custom = list(ci17, ci18, ci19, ci20),
+          type = "text",
+          title = "Car Stopped Close or Far Model",
+          column.labels = c("Gender Model",
+                            "Ethnicity Model",
+                            "Gender + Ethnicity Model",
+                            "Gender*Ethnicity Model"),
+          covariate.labels = c("Woman (vs Man)",
+                               "White (vs South Asian)",
+                               "2nd Avenue",
+                               "Bessborough",
+                               "Victoria Avenue",
+                               "White Woman"),
+          dep.var.labels = c("Car Stopped Close or Far"))
+```
+
+```
+## 
+## Car Stopped Close or Far Model
+## ========================================================================================================
+##                                                       Dependent variable:                               
+##                        ---------------------------------------------------------------------------------
+##                                                    Car Stopped Close or Far                             
+##                          Gender Model   Ethnicity Model  Gender + Ethnicity Model Gender*Ethnicity Model
+##                              (1)              (2)                  (3)                     (4)          
+## --------------------------------------------------------------------------------------------------------
+## Woman (vs Man)              0.912*                                0.868                   0.771         
+##                         (0.302, 2.700)                        (0.283, 2.605)          (0.201, 2.844)    
+##                                                                                                         
+## White (vs South Asian)                      3.124***             3.145***                2.530***       
+##                                         (1.004, 11.817)      (1.009, 11.913)         (0.500, 18.701)    
+##                                                                                                         
+## 2nd Avenue                 3.331***         3.406***             3.397***                3.387***       
+##                        (0.898, 15.962)  (0.903, 16.550)      (0.900, 16.507)         (0.896, 16.468)    
+##                                                                                                         
+## Bessborough               11.382***        11.894***            11.873***               11.901***       
+##                        (1.977, 215.427) (2.037, 226.490)     (2.032, 226.117)        (2.036, 226.700)   
+##                                                                                                         
+## Victoria Avenue            3.794***         3.930***             3.926***                3.945***       
+##                        (1.027, 18.136)  (1.046, 19.039)      (1.045, 19.030)         (1.049, 19.136)    
+##                                                                                                         
+## White Woman                                                                               1.506         
+##                                                                                      (0.124, 18.461)    
+##                                                                                                         
+## Constant                   5.248***         3.149***             3.384***                3.599***       
+##                        (2.162, 14.929)   (1.388, 7.960)      (1.271, 10.290)         (1.275, 12.150)    
+##                                                                                                         
+## --------------------------------------------------------------------------------------------------------
+## Observations                 219              219                  219                     219          
+## Log Likelihood             -50.104          -48.183              -48.151                 -48.095        
+## Akaike Inf. Crit.          110.208          106.367              108.302                 110.191        
+## ========================================================================================================
+## Note:                                                                        *p<0.1; **p<0.05; ***p<0.01
+```
+
 # 10. Histograms
 # 10a. Ethnicity
 
@@ -1777,7 +2194,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
 
 # 10b. Gender
 
@@ -1800,7 +2217,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
 
 # 11. Visualizations
 # 11a. Time by ethnicity
@@ -1824,7 +2241,7 @@ data %>%
   )
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
 # 11b. Time by gender
 
@@ -1845,7 +2262,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
 
 # 11c. Time to enter the street - Violin Plot with Jitter overlay - Facet by gender
 
@@ -1871,7 +2288,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
 
 # 11d. Time to enter the street - Violin Plot with Jitter overlay - Facet by ethnicity
 
@@ -1898,7 +2315,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
 
 # 11e. Time to enter - QQplot - By ethnicity  
 
@@ -1910,7 +2327,7 @@ data %>%
   facet_wrap(~ethnicity)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 # 11f. Time to enter - QQplot - By gender 
 
@@ -1922,7 +2339,7 @@ data %>%
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
 
 # 11g. 19th removed - Time to enter - By gender
 
@@ -1943,7 +2360,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 # 11h. Time by ethnicity and gender - grouped by location 
 
@@ -1962,7 +2379,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
 # 11i. Cars passed by ethnicity and gender
 
@@ -1985,7 +2402,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 
 # 11j. Proportion of first car yields - By ethnicity 
 
@@ -2008,7 +2425,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 # 11k. Proportion of first car yield - By gender 
 
@@ -2030,7 +2447,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
 
 # 11l. Odds first car yield
 
@@ -2078,7 +2495,7 @@ ggplot(or1[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 # 11m. Odds car proceeded
 
@@ -2118,7 +2535,7 @@ ggplot(or2[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 # 11n. Odds car stopped close//far 
 
@@ -2158,4 +2575,4 @@ ggplot(or3[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
