@@ -13,6 +13,7 @@ library(snakecase)
 library(stargazer)
 library(gtsummary)
 library(broom.helpers)
+library(gt)
 ```
 
 # 2. Load data - Remove invalid trials - Trials with unaffiliated pedestrians
@@ -275,7 +276,12 @@ table1 <- tbl_merge(
       select(-row_order)
   )
 
-table1
+as_gt(table1) %>% 
+  gtsave(
+    filename = "table1.png",
+    vwidth = 2200,
+    zoom = 2
+  )
 ```
 
 
