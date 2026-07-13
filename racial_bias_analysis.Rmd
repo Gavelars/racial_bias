@@ -588,7 +588,7 @@ tidy(m12)
 summary(m12)
 ```
 
-# 7c. Combined models 
+# 7c1. Combined models - Stargazer 
 ```{r}
 stargazer(m9, m10, m11, m12,
           type = "text",
@@ -604,6 +604,147 @@ stargazer(m9, m10, m11, m12,
                                "Victoria Avenue",
                                "White Woman"),
           dep.var.labels = c("Mean Time to Enter the Intersection"))
+```
+# 7c2. Combined models - gtsummary
+```{r}
+tbl9 <- tbl_regression(
+  m9,
+  intercept = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location"
+    )
+  )%>%
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl10 <- tbl_regression(
+  m10,
+  intercept = TRUE,
+  label = list(
+    ethnicity ~ "Racialization",
+    "factor(location)" ~ "Intersection Location"
+  )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>%
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl11 <- tbl_regression(
+  m11,
+  intercept = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location",
+    ethnicity ~ "Racialization"
+  )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl12 <- tbl_regression(
+  m12,
+  intercept = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location",
+    ethnicity ~ "Racialization"
+  )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          label == "woman * white" ~ "Women * White",
+          TRUE ~ label)
+    ))
+```
+
+# 7c3. Table 3 - Mean number of cars before yield combined models table
+```{r}
+table3 <- tbl_merge(
+  tbls = list(tbl9, tbl10, tbl11, tbl12),
+  tab_spanner = c(
+    "Gender",
+    "Racialization",
+    "Gender and Racialization",
+    "Gender and Racialization Interaction"
+  )
+) %>%
+  modify_table_body(
+    ~ .x %>% 
+      mutate(
+        row_order = case_when(
+          variable == "(Intercept)" ~ 1,
+          variable == "gender" ~ 2,
+          variable == "ethnicity" ~ 3,
+          variable == "gender:ethnicity" ~ 4,
+          variable == "location" ~ 5,
+          TRUE ~ 99
+        )
+      ) %>% 
+      arrange(row_order, row_type != "label") %>% 
+      select(-row_order)
+  ) %>% 
+  remove_abbreviation("CI = Confidence Interval")
+
+as_gt(table3) %>% 
+  gtsave(
+    filename = "table3.png",
+    vwidth = 2200,
+    zoom = 2
+  )
 ```
 
 # 8. Car proceed through intersection

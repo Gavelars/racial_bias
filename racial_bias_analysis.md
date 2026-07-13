@@ -769,7 +769,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6ZhI7J/file31706f13510b.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpea8DBB/file231ca4710e6.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1251,7 +1251,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6ZhI7J/file317027753f19.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpea8DBB/file231c428c7bcf.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1519,7 +1519,7 @@ summary(m12)
 ## F-statistic: 19.29 on 6 and 233 DF,  p-value: < 2.2e-16
 ```
 
-# 7c. Combined models 
+# 7c1. Combined models - Stargazer 
 
 ``` r
 stargazer(m9, m10, m11, m12,
@@ -1577,6 +1577,162 @@ stargazer(m9, m10, m11, m12,
 ## F Statistic            17.169*** (df = 4; 235) 26.851*** (df = 4; 235) 22.935*** (df = 5; 234)  19.285*** (df = 6; 233)
 ## =======================================================================================================================
 ## Note:                                                                                       *p<0.1; **p<0.05; ***p<0.01
+```
+# 7c2. Combined models - gtsummary
+
+``` r
+tbl9 <- tbl_regression(
+  m9,
+  intercept = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location"
+    )
+  )%>%
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl10 <- tbl_regression(
+  m10,
+  intercept = TRUE,
+  label = list(
+    ethnicity ~ "Racialization",
+    "factor(location)" ~ "Intersection Location"
+  )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>%
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl11 <- tbl_regression(
+  m11,
+  intercept = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location",
+    ethnicity ~ "Racialization"
+  )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl12 <- tbl_regression(
+  m12,
+  intercept = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location",
+    ethnicity ~ "Racialization"
+  )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "(Intercept)" ~ "Constant",
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          label == "woman * white" ~ "Women * White",
+          TRUE ~ label)
+    ))
+```
+
+# 7c3. Table 3 - Mean number of cars before yield combined models table
+
+``` r
+table3 <- tbl_merge(
+  tbls = list(tbl9, tbl10, tbl11, tbl12),
+  tab_spanner = c(
+    "Gender",
+    "Racialization",
+    "Gender and Racialization",
+    "Gender and Racialization Interaction"
+  )
+) %>%
+  modify_table_body(
+    ~ .x %>% 
+      mutate(
+        row_order = case_when(
+          variable == "(Intercept)" ~ 1,
+          variable == "gender" ~ 2,
+          variable == "ethnicity" ~ 3,
+          variable == "gender:ethnicity" ~ 4,
+          variable == "location" ~ 5,
+          TRUE ~ 99
+        )
+      ) %>% 
+      arrange(row_order, row_type != "label") %>% 
+      select(-row_order)
+  ) %>% 
+  remove_abbreviation("CI = Confidence Interval")
+```
+
+```
+## The number rows in the tables to be merged do not match, which may result in
+## rows appearing out of order.
+## ℹ See `tbl_merge()` (`?gtsummary::tbl_merge()`) help file for details. Use
+##   `quiet=TRUE` to silence message.
+```
+
+``` r
+as_gt(table3) %>% 
+  gtsave(
+    filename = "table3.png",
+    vwidth = 2200,
+    zoom = 2
+  )
+```
+
+```
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpea8DBB/file231c12d4541d.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2526,7 +2682,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 # 10b. Gender
 
@@ -2549,7 +2705,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
 
 # 11. Visualizations
 # 11a. Time by ethnicity
@@ -2573,7 +2729,7 @@ data %>%
   )
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 # 11b. Time by gender
 
@@ -2594,7 +2750,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
 # 11c. Time to enter the street - Violin Plot with Jitter overlay - Facet by gender
 
@@ -2620,7 +2776,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 
 # 11d. Time to enter the street - Violin Plot with Jitter overlay - Facet by ethnicity
 
@@ -2647,7 +2803,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 # 11e. Time to enter - QQplot - By ethnicity  
 
@@ -2659,7 +2815,7 @@ data %>%
   facet_wrap(~ethnicity)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
 
 # 11f. Time to enter - QQplot - By gender 
 
@@ -2671,7 +2827,7 @@ data %>%
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 # 11g. 19th removed - Time to enter - By gender
 
@@ -2692,7 +2848,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 # 11h. Time by ethnicity and gender - grouped by location 
 
@@ -2711,7 +2867,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
 # 11i. Cars passed by ethnicity and gender
 
@@ -2734,7 +2890,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
 
 # 11j. Proportion of first car yields - By ethnicity 
 
@@ -2757,7 +2913,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
 
 # 11k. Proportion of first car yield - By gender 
 
@@ -2779,7 +2935,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
 
 # 11l. Odds first car yield
 
@@ -2827,7 +2983,7 @@ ggplot(or1[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
 
 # 11m. Odds car proceeded
 
@@ -2867,7 +3023,7 @@ ggplot(or2[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
 
 # 11n. Odds car stopped close//far 
 
@@ -2907,4 +3063,4 @@ ggplot(or3[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
