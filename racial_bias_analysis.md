@@ -38,6 +38,32 @@ library(stargazer)
 ##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer
 ```
 
+``` r
+library(gtsummary)
+```
+
+```
+## Warning: package 'gtsummary' was built under R version 4.6.1
+```
+
+``` r
+library(broom.helpers)
+```
+
+```
+## Warning: package 'broom.helpers' was built under R version 4.6.1
+```
+
+```
+## 
+## Attaching package: 'broom.helpers'
+## 
+## The following objects are masked from 'package:gtsummary':
+## 
+##     all_categorical, all_continuous, all_contrasts, all_dichotomous,
+##     all_interaction, all_intercepts
+```
+
 # 2. Load data - Remove invalid trials - Trials with unaffiliated pedestrians
 
 ``` r
@@ -532,7 +558,7 @@ ci4 <- exp(confint(m4))
 ```
 ## Waiting for profiling to be done...
 ```
-# 5c. Combined models - Odd Ratio with 95% CI
+# 5c1. Combined models - Odd Ratio with 95% CI - Stargazer
 
 ``` r
 stargazer(m1, m2, m3, m4,
@@ -594,6 +620,801 @@ stargazer(m1, m2, m3, m4,
 ## Akaike Inf. Crit.          285.782         286.798             287.442                 267.134        
 ## ======================================================================================================
 ## Note:                                                                      *p<0.1; **p<0.05; ***p<0.01
+```
+
+# 5c2. Combined models - Odd Ratio with 95% CI - gtsummary
+
+``` r
+tbl1 <- tbl_regression(
+  m1,
+  exponentiate = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location"
+  )) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl2 <- tbl_regression(
+  m2,
+  exponentiate = TRUE,
+  label = list(
+    ethnicity ~ "Racialization",
+    "factor(location)" ~ "Intersection Location"
+  )) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl3 <- tbl_regression(
+  m3,
+  exponentiate = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location",
+    ethnicity ~ "Racialization"
+  )) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          TRUE ~ label)
+    ))
+
+tbl4 <- tbl_regression(
+  m4,
+  exponentiate = TRUE,
+  label = list(
+    gender ~ "Gender",
+    "factor(location)" ~ "Intersection Location",
+    ethnicity ~ "Racialization"
+  )) %>% 
+  modify_table_body(
+    ~.x %>% 
+      mutate(
+        label = case_when(
+          label == "man" ~ "Men",
+          label == "woman" ~ "Women",
+          label == "asian" ~ "South Asian",
+          label == "white" ~ "White",
+          label == "black" ~ "Black",
+          label == "19th" ~ "19th Street",
+          label == "2nd"  ~ "2nd Avenue",
+          label == "bessborough" ~ "Bessborough",
+          label == "victoria" ~ "Victoria Avenue",
+          label == "woman * white" ~ "Women * White",
+          TRUE ~ label)
+    ))
+```
+
+# 5c3. Table 1 - First car yield combined models table
+
+``` r
+table1 <- tbl_merge(
+  tbls = list(tbl1, tbl2, tbl3, tbl4),
+  tab_spanner = c(
+    "Gender",
+    "Racialization",
+    "Gender and Racialization",
+    "Gender and Racialization Interaction"
+  )
+) %>% 
+  modify_table_body(
+    ~ .x %>% 
+      mutate(
+        row_order = case_when(
+          variable == "gender" ~ 1,
+          variable == "ethnicity" ~ 2,
+          variable == "gender:ethnicity" ~ 3,
+          variable == "location" ~ 4,
+          TRUE ~ 99
+        )
+      ) %>% 
+      arrange(row_order, row_type != "label") %>% 
+      select(-row_order)
+  )
+```
+
+```
+## The number rows in the tables to be merged do not match, which may result in
+## rows appearing out of order.
+## ℹ See `tbl_merge()` (`?gtsummary::tbl_merge()`) help file for details. Use
+##   `quiet=TRUE` to silence message.
+```
+
+``` r
+table1
+```
+
+```{=html}
+<div id="gkvyzxcjiv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gkvyzxcjiv table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#gkvyzxcjiv thead, #gkvyzxcjiv tbody, #gkvyzxcjiv tfoot, #gkvyzxcjiv tr, #gkvyzxcjiv td, #gkvyzxcjiv th {
+  border-style: none;
+}
+
+#gkvyzxcjiv p {
+  margin: 0;
+  padding: 0;
+}
+
+#gkvyzxcjiv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#gkvyzxcjiv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gkvyzxcjiv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gkvyzxcjiv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gkvyzxcjiv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gkvyzxcjiv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gkvyzxcjiv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gkvyzxcjiv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gkvyzxcjiv .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#gkvyzxcjiv .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#gkvyzxcjiv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gkvyzxcjiv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gkvyzxcjiv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gkvyzxcjiv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gkvyzxcjiv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gkvyzxcjiv .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gkvyzxcjiv .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gkvyzxcjiv .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#gkvyzxcjiv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gkvyzxcjiv .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gkvyzxcjiv .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gkvyzxcjiv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gkvyzxcjiv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gkvyzxcjiv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gkvyzxcjiv .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gkvyzxcjiv .gt_left {
+  text-align: left;
+}
+
+#gkvyzxcjiv .gt_center {
+  text-align: center;
+}
+
+#gkvyzxcjiv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gkvyzxcjiv .gt_font_normal {
+  font-weight: normal;
+}
+
+#gkvyzxcjiv .gt_font_bold {
+  font-weight: bold;
+}
+
+#gkvyzxcjiv .gt_font_italic {
+  font-style: italic;
+}
+
+#gkvyzxcjiv .gt_super {
+  font-size: 65%;
+}
+
+#gkvyzxcjiv .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#gkvyzxcjiv .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gkvyzxcjiv .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#gkvyzxcjiv .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#gkvyzxcjiv .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#gkvyzxcjiv .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#gkvyzxcjiv .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#gkvyzxcjiv .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#gkvyzxcjiv div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings gt_spanner_row">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="2" colspan="1" scope="col" id="label"><span class='gt_from_md'><strong>Characteristic</strong></span></th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="level 1; estimate_1">
+        <div class="gt_column_spanner"><span class='gt_from_md'>Gender</span></div>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="level 1; estimate_2">
+        <div class="gt_column_spanner"><span class='gt_from_md'>Racialization</span></div>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="level 1; estimate_3">
+        <div class="gt_column_spanner"><span class='gt_from_md'>Gender and Racialization</span></div>
+      </th>
+      <th class="gt_center gt_columns_top_border gt_column_spanner_outer" rowspan="1" colspan="3" scope="colgroup" id="level 1; estimate_4">
+        <div class="gt_column_spanner"><span class='gt_from_md'>Gender and Racialization Interaction</span></div>
+      </th>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="estimate_1"><span class='gt_from_md'><strong>OR</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="conf.low_1"><span class='gt_from_md'><strong>95% CI</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value_1"><span class='gt_from_md'><strong>p-value</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="estimate_2"><span class='gt_from_md'><strong>OR</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="conf.low_2"><span class='gt_from_md'><strong>95% CI</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value_2"><span class='gt_from_md'><strong>p-value</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="estimate_3"><span class='gt_from_md'><strong>OR</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="conf.low_3"><span class='gt_from_md'><strong>95% CI</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value_3"><span class='gt_from_md'><strong>p-value</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="estimate_4"><span class='gt_from_md'><strong>OR</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="conf.low_4"><span class='gt_from_md'><strong>95% CI</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value_4"><span class='gt_from_md'><strong>p-value</strong></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left">Gender</td>
+<td headers="estimate_1" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_1" class="gt_row gt_center"><br /></td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_2" class="gt_row gt_center"><br /></td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_3" class="gt_row gt_center"><br /></td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_4" class="gt_row gt_center"><br /></td>
+<td headers="p.value_4" class="gt_row gt_center"><br /></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Men</td>
+<td headers="estimate_1" class="gt_row gt_center">—</td>
+<td headers="conf.low_1" class="gt_row gt_center">—</td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_2" class="gt_row gt_center"><br /></td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center">—</td>
+<td headers="conf.low_3" class="gt_row gt_center">—</td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center">—</td>
+<td headers="conf.low_4" class="gt_row gt_center">—</td>
+<td headers="p.value_4" class="gt_row gt_center"><br /></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Women</td>
+<td headers="estimate_1" class="gt_row gt_center">1.40</td>
+<td headers="conf.low_1" class="gt_row gt_center">0.79, 2.50</td>
+<td headers="p.value_1" class="gt_row gt_center">0.2</td>
+<td headers="estimate_2" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_2" class="gt_row gt_center"><br /></td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center">1.40</td>
+<td headers="conf.low_3" class="gt_row gt_center">0.79, 2.50</td>
+<td headers="p.value_3" class="gt_row gt_center">0.2</td>
+<td headers="estimate_4" class="gt_row gt_center">0.34</td>
+<td headers="conf.low_4" class="gt_row gt_center">0.14, 0.79</td>
+<td headers="p.value_4" class="gt_row gt_center">0.013</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Racialization</td>
+<td headers="estimate_1" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_1" class="gt_row gt_center"><br /></td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_2" class="gt_row gt_center"><br /></td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_3" class="gt_row gt_center"><br /></td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_4" class="gt_row gt_center"><br /></td>
+<td headers="p.value_4" class="gt_row gt_center"><br /></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    South Asian</td>
+<td headers="estimate_1" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_1" class="gt_row gt_center"><br /></td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center">—</td>
+<td headers="conf.low_2" class="gt_row gt_center">—</td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center">—</td>
+<td headers="conf.low_3" class="gt_row gt_center">—</td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center">—</td>
+<td headers="conf.low_4" class="gt_row gt_center">—</td>
+<td headers="p.value_4" class="gt_row gt_center"><br /></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    White</td>
+<td headers="estimate_1" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_1" class="gt_row gt_center"><br /></td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center">0.84</td>
+<td headers="conf.low_2" class="gt_row gt_center">0.48, 1.49</td>
+<td headers="p.value_2" class="gt_row gt_center">0.6</td>
+<td headers="estimate_3" class="gt_row gt_center">0.84</td>
+<td headers="conf.low_3" class="gt_row gt_center">0.47, 1.49</td>
+<td headers="p.value_3" class="gt_row gt_center">0.6</td>
+<td headers="estimate_4" class="gt_row gt_center">0.20</td>
+<td headers="conf.low_4" class="gt_row gt_center">0.08, 0.47</td>
+<td headers="p.value_4" class="gt_row gt_center"><0.001</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Gender * Racialization</td>
+<td headers="estimate_1" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_1" class="gt_row gt_center"><br /></td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_2" class="gt_row gt_center"><br /></td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_3" class="gt_row gt_center"><br /></td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_4" class="gt_row gt_center"><br /></td>
+<td headers="p.value_4" class="gt_row gt_center"><br /></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Women * White</td>
+<td headers="estimate_1" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_1" class="gt_row gt_center"><br /></td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_2" class="gt_row gt_center"><br /></td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_3" class="gt_row gt_center"><br /></td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center">17.9</td>
+<td headers="conf.low_4" class="gt_row gt_center">5.26, 65.1</td>
+<td headers="p.value_4" class="gt_row gt_center"><0.001</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Intersection Location</td>
+<td headers="estimate_1" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_1" class="gt_row gt_center"><br /></td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_2" class="gt_row gt_center"><br /></td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_3" class="gt_row gt_center"><br /></td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center"><br /></td>
+<td headers="conf.low_4" class="gt_row gt_center"><br /></td>
+<td headers="p.value_4" class="gt_row gt_center"><br /></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    19th Street</td>
+<td headers="estimate_1" class="gt_row gt_center">—</td>
+<td headers="conf.low_1" class="gt_row gt_center">—</td>
+<td headers="p.value_1" class="gt_row gt_center"><br /></td>
+<td headers="estimate_2" class="gt_row gt_center">—</td>
+<td headers="conf.low_2" class="gt_row gt_center">—</td>
+<td headers="p.value_2" class="gt_row gt_center"><br /></td>
+<td headers="estimate_3" class="gt_row gt_center">—</td>
+<td headers="conf.low_3" class="gt_row gt_center">—</td>
+<td headers="p.value_3" class="gt_row gt_center"><br /></td>
+<td headers="estimate_4" class="gt_row gt_center">—</td>
+<td headers="conf.low_4" class="gt_row gt_center">—</td>
+<td headers="p.value_4" class="gt_row gt_center"><br /></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    2nd Avenue</td>
+<td headers="estimate_1" class="gt_row gt_center">2.13</td>
+<td headers="conf.low_1" class="gt_row gt_center">1.03, 4.51</td>
+<td headers="p.value_1" class="gt_row gt_center">0.044</td>
+<td headers="estimate_2" class="gt_row gt_center">2.13</td>
+<td headers="conf.low_2" class="gt_row gt_center">1.03, 4.48</td>
+<td headers="p.value_2" class="gt_row gt_center">0.044</td>
+<td headers="estimate_3" class="gt_row gt_center">2.14</td>
+<td headers="conf.low_3" class="gt_row gt_center">1.03, 4.52</td>
+<td headers="p.value_3" class="gt_row gt_center">0.044</td>
+<td headers="estimate_4" class="gt_row gt_center">2.35</td>
+<td headers="conf.low_4" class="gt_row gt_center">1.08, 5.24</td>
+<td headers="p.value_4" class="gt_row gt_center">0.033</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Bessborough</td>
+<td headers="estimate_1" class="gt_row gt_center">4.38</td>
+<td headers="conf.low_1" class="gt_row gt_center">2.06, 9.64</td>
+<td headers="p.value_1" class="gt_row gt_center"><0.001</td>
+<td headers="estimate_2" class="gt_row gt_center">4.34</td>
+<td headers="conf.low_2" class="gt_row gt_center">2.05, 9.54</td>
+<td headers="p.value_2" class="gt_row gt_center"><0.001</td>
+<td headers="estimate_3" class="gt_row gt_center">4.39</td>
+<td headers="conf.low_3" class="gt_row gt_center">2.06, 9.67</td>
+<td headers="p.value_3" class="gt_row gt_center"><0.001</td>
+<td headers="estimate_4" class="gt_row gt_center">5.28</td>
+<td headers="conf.low_4" class="gt_row gt_center">2.36, 12.4</td>
+<td headers="p.value_4" class="gt_row gt_center"><0.001</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Victoria Avenue</td>
+<td headers="estimate_1" class="gt_row gt_center">14.3</td>
+<td headers="conf.low_1" class="gt_row gt_center">5.79, 39.7</td>
+<td headers="p.value_1" class="gt_row gt_center"><0.001</td>
+<td headers="estimate_2" class="gt_row gt_center">14.1</td>
+<td headers="conf.low_2" class="gt_row gt_center">5.74, 39.2</td>
+<td headers="p.value_2" class="gt_row gt_center"><0.001</td>
+<td headers="estimate_3" class="gt_row gt_center">14.3</td>
+<td headers="conf.low_3" class="gt_row gt_center">5.81, 39.9</td>
+<td headers="p.value_3" class="gt_row gt_center"><0.001</td>
+<td headers="estimate_4" class="gt_row gt_center">18.9</td>
+<td headers="conf.low_4" class="gt_row gt_center">7.24, 56.1</td>
+<td headers="p.value_4" class="gt_row gt_center"><0.001</td></tr>
+  </tbody>
+  <tfoot>
+    <tr class="gt_sourcenotes">
+      <td class="gt_sourcenote" colspan="13"><span class='gt_from_md'>Abbreviations: CI = Confidence Interval, OR = Odds Ratio</span></td>
+    </tr>
+  </tfoot>
+</table>
+</div>
 ```
 
 
@@ -2194,7 +3015,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
 # 10b. Gender
 
@@ -2217,7 +3038,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
 
 # 11. Visualizations
 # 11a. Time by ethnicity
@@ -2241,7 +3062,7 @@ data %>%
   )
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
 
 # 11b. Time by gender
 
@@ -2262,7 +3083,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
 
 # 11c. Time to enter the street - Violin Plot with Jitter overlay - Facet by gender
 
@@ -2288,7 +3109,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 
 # 11d. Time to enter the street - Violin Plot with Jitter overlay - Facet by ethnicity
 
@@ -2315,7 +3136,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
 
 # 11e. Time to enter - QQplot - By ethnicity  
 
@@ -2327,7 +3148,7 @@ data %>%
   facet_wrap(~ethnicity)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 # 11f. Time to enter - QQplot - By gender 
 
@@ -2339,7 +3160,7 @@ data %>%
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
 # 11g. 19th removed - Time to enter - By gender
 
@@ -2360,7 +3181,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 
 # 11h. Time by ethnicity and gender - grouped by location 
 
@@ -2379,7 +3200,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 # 11i. Cars passed by ethnicity and gender
 
@@ -2402,7 +3223,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
 
 # 11j. Proportion of first car yields - By ethnicity 
 
@@ -2425,7 +3246,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 # 11k. Proportion of first car yield - By gender 
 
@@ -2447,7 +3268,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 # 11l. Odds first car yield
 
@@ -2495,7 +3316,7 @@ ggplot(or1[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
 # 11m. Odds car proceeded
 
@@ -2535,7 +3356,7 @@ ggplot(or2[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
 
 # 11n. Odds car stopped close//far 
 
@@ -2575,4 +3396,4 @@ ggplot(or3[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
