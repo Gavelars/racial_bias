@@ -769,7 +769,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpKifJTs/file46038d45e3b.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6ZhI7J/file31706f13510b.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1102,14 +1102,19 @@ stargazer(m5, m6, m7, m8,
 ``` r
 tbl5 <- tbl_regression(
   m5,
+  intercept = TRUE,
   label = list(
     gender ~ "Gender",
     "factor(location)" ~ "Intersection Location"
-  )) %>% 
+    )
+  )%>%
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
   modify_table_body(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "man" ~ "Men",
           label == "woman" ~ "Women",
           label == "19th" ~ "19th Street",
@@ -1121,14 +1126,18 @@ tbl5 <- tbl_regression(
 
 tbl6 <- tbl_regression(
   m6,
+  intercept = TRUE,
   label = list(
     ethnicity ~ "Racialization",
     "factor(location)" ~ "Intersection Location"
   )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "asian" ~ "South Asian",
           label == "white" ~ "White",
           label == "black" ~ "Black",
@@ -1141,15 +1150,19 @@ tbl6 <- tbl_regression(
 
 tbl7 <- tbl_regression(
   m7,
+  intercept = TRUE,
   label = list(
     gender ~ "Gender",
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
   modify_table_body(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "man" ~ "Men",
           label == "woman" ~ "Women",
           label == "asian" ~ "South Asian",
@@ -1164,15 +1177,19 @@ tbl7 <- tbl_regression(
 
 tbl8 <- tbl_regression(
   m8,
+  intercept = TRUE,
   label = list(
     gender ~ "Gender",
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_unhide(columns = std.error) %>% 
+  modify_column_hide(columns = conf.low) %>% 
   modify_table_body(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "man" ~ "Men",
           label == "woman" ~ "Women",
           label == "asian" ~ "South Asian",
@@ -1198,21 +1215,23 @@ table2 <- tbl_merge(
     "Gender and Racialization",
     "Gender and Racialization Interaction"
   )
-) %>% 
+) %>%
   modify_table_body(
     ~ .x %>% 
       mutate(
         row_order = case_when(
-          variable == "gender" ~ 1,
-          variable == "ethnicity" ~ 2,
-          variable == "gender:ethnicity" ~ 3,
-          variable == "location" ~ 4,
+          variable == "(Intercept)" ~ 1,
+          variable == "gender" ~ 2,
+          variable == "ethnicity" ~ 3,
+          variable == "gender:ethnicity" ~ 4,
+          variable == "location" ~ 5,
           TRUE ~ 99
         )
       ) %>% 
       arrange(row_order, row_type != "label") %>% 
       select(-row_order)
-  )
+  ) %>% 
+  remove_abbreviation("CI = Confidence Interval")
 ```
 
 ```
@@ -1232,7 +1251,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpKifJTs/file4603b0e37db.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6ZhI7J/file317027753f19.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection

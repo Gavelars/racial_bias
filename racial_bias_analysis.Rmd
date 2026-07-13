@@ -390,6 +390,7 @@ tbl5 <- tbl_regression(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "man" ~ "Men",
           label == "woman" ~ "Women",
           label == "19th" ~ "19th Street",
@@ -412,6 +413,7 @@ tbl6 <- tbl_regression(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "asian" ~ "South Asian",
           label == "white" ~ "White",
           label == "black" ~ "Black",
@@ -436,6 +438,7 @@ tbl7 <- tbl_regression(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "man" ~ "Men",
           label == "woman" ~ "Women",
           label == "asian" ~ "South Asian",
@@ -462,6 +465,7 @@ tbl8 <- tbl_regression(
     ~.x %>% 
       mutate(
         label = case_when(
+          label == "(Intercept)" ~ "Constant",
           label == "man" ~ "Men",
           label == "woman" ~ "Women",
           label == "asian" ~ "South Asian",
@@ -491,10 +495,11 @@ table2 <- tbl_merge(
     ~ .x %>% 
       mutate(
         row_order = case_when(
-          variable == "gender" ~ 1,
-          variable == "ethnicity" ~ 2,
-          variable == "gender:ethnicity" ~ 3,
-          variable == "location" ~ 4,
+          variable == "(Intercept)" ~ 1,
+          variable == "gender" ~ 2,
+          variable == "ethnicity" ~ 3,
+          variable == "gender:ethnicity" ~ 4,
+          variable == "location" ~ 5,
           TRUE ~ 99
         )
       ) %>% 
