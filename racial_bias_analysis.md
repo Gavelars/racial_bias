@@ -769,7 +769,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6J9woT/file1ff8123e2656.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpoLt7fX/file26686b675e66.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1251,7 +1251,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6J9woT/file1ff8585937dc.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpoLt7fX/file26686e0f6561.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1685,7 +1685,7 @@ tbl12 <- tbl_regression(
     ))
 ```
 
-# 7c3. Table 3 - Mean number of cars before yield combined models table
+# 7c3. Table 3 - Mean time before entering intersection combined models table
 
 ``` r
 table3 <- tbl_merge(
@@ -1732,7 +1732,7 @@ as_gt(table3) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6J9woT/file1ff8495c5f8c.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpoLt7fX/file266822583acb.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2333,7 +2333,7 @@ as_gt(table4) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6J9woT/file1ff8291938f4.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpoLt7fX/file26683ef35626.html screenshot completed
 ```
 
 # 9. Cars stop close or far 
@@ -2896,7 +2896,7 @@ tbl20 <- tbl_regression(
     ))
 ```
 
-# 9c3. Table 4 - Car Proceed combined models table
+# 9c3. Table 5 - Car yield close//far combined models table
 
 ``` r
 table5 <- tbl_merge(
@@ -2941,7 +2941,7 @@ as_gt(table5) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6J9woT/file1ff81c0f7db2.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpoLt7fX/file266840651b21.html screenshot completed
 ```
 
 # 10. Histograms

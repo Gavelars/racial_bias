@@ -711,7 +711,7 @@ tbl12 <- tbl_regression(
     ))
 ```
 
-# 7c3. Table 3 - Mean number of cars before yield combined models table
+# 7c3. Table 3 - Mean time before entering intersection combined models table
 ```{r}
 table3 <- tbl_merge(
   tbls = list(tbl9, tbl10, tbl11, tbl12),
@@ -1189,7 +1189,7 @@ tbl20 <- tbl_regression(
     ))
 ```
 
-# 9c3. Table 4 - Car Proceed combined models table
+# 9c3. Table 5 - Car yield close//far combined models table
 ```{r}
 table5 <- tbl_merge(
   tbls = list(tbl17, tbl18, tbl19, tbl20),
