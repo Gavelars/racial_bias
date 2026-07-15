@@ -10,7 +10,6 @@ output:
 library(tidyverse)
 library(broom)
 library(snakecase)
-library(stargazer)
 library(gtsummary)
 library(broom.helpers)
 library(gt)
@@ -132,32 +131,8 @@ summary(m4)
 exp(cbind(OR = coef(m4), confint(m4)))
 ci4 <- exp(confint(m4))
 ```
-# 5c1. Combined models - Odd Ratio with 95% CI - Stargazer
-```{r}
-stargazer(m1, m2, m3, m4,
-          coef = list(exp(coef(m1)),
-                      exp(coef(m2)),
-                      exp(coef(m3)),
-                      exp(coef(m4))),
-          ci = TRUE, 
-          ci.custom = list(ci1, ci2, ci3, ci4),
-          type = "text",
-          title = "First Car Yield Models",
-          column.labels = c("Gender Model",
-                            "Ethnicity Model",
-                            "Gender + Ethnicity Model",
-                            "Gender*Ethnicity Model"),
-          covariate.labels = c("Woman (vs Man)",
-                               "White (vs South Asian)",
-                               "2nd Avenue",
-                               "Bessborough",
-                               "Victoria Avenue",
-                               "White Woman"),
-          dep.var.labels = c("First Car Yield"))
 
-```
-
-# 5c2. Combined models - Odd Ratio with 95% CI - gtsummary
+# 5c1. Combined models - Odd Ratio with 95% CI - gtsummary
 ```{r}
 tbl1 <- tbl_regression(
   m1,
@@ -246,11 +221,12 @@ tbl4 <- tbl_regression(
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
           label == "woman * white" ~ "Women * White",
+          label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
 ```
 
-# 5c3. Table 1 - First car yield combined models table
+# 5c2. Table 1 - First car yield combined models table
 ```{r}
 table1 <- tbl_merge(
   tbls = list(tbl1, tbl2, tbl3, tbl4),
@@ -356,25 +332,7 @@ tidy(m8)
 summary(m8)
 ```
 
-# 6c1. Combined models - Stargazer
-```{r}
-stargazer(m5, m6, m7, m8,
-          type = "text",
-          title = "Mean Number of Cars that Passed",
-           column.labels = c("Gender Model",
-                            "Ethnicity Model",
-                            "Gender + Ethnicity Model",
-                            "Gender*Ethnicity Model"),
-          covariate.labels = c("Woman (vs Man)",
-                               "White (vs South Asian)",
-                               "2nd Avenue",
-                               "Bessborough",
-                               "Victoria Avenue",
-                               "White Woman"),
-          dep.var.labels = c("Mean Number of Cars that Passed"))
-```
-
-# 6c2. Combined models - gtsummary
+# 6c1. Combined models - gtsummary
 ```{r}
 tbl5 <- tbl_regression(
   m5,
@@ -476,11 +434,12 @@ tbl8 <- tbl_regression(
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
           label == "woman * white" ~ "Women * White",
+          label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
 ```
 
-# 6c3. Table 2 - Mean number of cars before yield combined models table
+# 6c2. Table 2 - Mean number of cars before yield combined models table
 ```{r}
 table2 <- tbl_merge(
   tbls = list(tbl5, tbl6, tbl7, tbl8),
@@ -588,24 +547,7 @@ tidy(m12)
 summary(m12)
 ```
 
-# 7c1. Combined models - Stargazer 
-```{r}
-stargazer(m9, m10, m11, m12,
-          type = "text",
-          title = "Mean Time to Enter the Intersection",
-           column.labels = c("Gender Model",
-                            "Ethnicity Model",
-                            "Gender + Ethnicity Model",
-                            "Gender*Ethnicity Model"),
-          covariate.labels = c("Woman (vs Man)",
-                               "White (vs South Asian)",
-                               "2nd Avenue",
-                               "Bessborough",
-                               "Victoria Avenue",
-                               "White Woman"),
-          dep.var.labels = c("Mean Time to Enter the Intersection"))
-```
-# 7c2. Combined models - gtsummary
+# 7c1. Combined models - gtsummary
 ```{r}
 tbl9 <- tbl_regression(
   m9,
@@ -707,11 +649,12 @@ tbl12 <- tbl_regression(
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
           label == "woman * white" ~ "Women * White",
+          label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
 ```
 
-# 7c3. Table 3 - Mean time before entering intersection combined models table
+# 7c2. Table 3 - Mean time before entering intersection combined models table
 ```{r}
 table3 <- tbl_merge(
   tbls = list(tbl9, tbl10, tbl11, tbl12),
@@ -830,32 +773,7 @@ exp(cbind(OR = coef(m16), confint(m16)))
 ci16 <- exp(confint(m16))
 ```
 
-# 8c1. Combined models - Odd Ratio with 95% CI - Stargazer
-```{r}
-stargazer(m13, m14, m15, m16,
-          coef = list(exp(coef(m13)),
-                      exp(coef(m14)),
-                      exp(coef(m15)),
-                      exp(coef(m16))),
-          ci = TRUE, 
-          ci.custom = list(ci13, ci14, ci15, ci16),
-          type = "text",
-          title = "Car Proceeded through Intersection",
-          column.labels = c("Gender Model",
-                            "Ethnicity Model",
-                            "Gender + Ethnicity Model",
-                            "Gender*Ethnicity Model"),
-          covariate.labels = c("Woman (vs Man)",
-                               "White (vs South Asian)",
-                               "2nd Avenue",
-                               "Bessborough",
-                               "Victoria Avenue",
-                               "White Woman"),
-          dep.var.labels = c("Car Proceeded through Intersection"))
-
-```
-
-# 8c2. Combined models - Odd Ratio with 95% CI - gtsummary
+# 8c1. Combined models - Odd Ratio with 95% CI - gtsummary
 ```{r}
 tbl13 <- tbl_regression(
   m13,
@@ -944,11 +862,12 @@ tbl16 <- tbl_regression(
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
           label == "woman * white" ~ "Women * White",
+          label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
 ```
 
-# 8c3. Table 4 - Car Proceed combined models table
+# 8c2. Table 4 - Car Proceed combined models table
 ```{r}
 table4 <- tbl_merge(
   tbls = list(tbl13, tbl14, tbl15, tbl16),
@@ -1071,32 +990,7 @@ exp(cbind(OR = coef(m20), confint(m20)))
 ci20 <- exp(confint(m20))
 ```
 
-# 9c1. Combined models - Odd Ratio with 95% CI - Stargazer
-```{r}
-stargazer(m17, m18, m19, m20,
-          coef = list(exp(coef(m17)),
-                      exp(coef(m18)),
-                      exp(coef(m19)),
-                      exp(coef(m20))),
-          ci = TRUE, 
-          ci.custom = list(ci17, ci18, ci19, ci20),
-          type = "text",
-          title = "Car Stopped Close or Far Model",
-          column.labels = c("Gender Model",
-                            "Ethnicity Model",
-                            "Gender + Ethnicity Model",
-                            "Gender*Ethnicity Model"),
-          covariate.labels = c("Woman (vs Man)",
-                               "White (vs South Asian)",
-                               "2nd Avenue",
-                               "Bessborough",
-                               "Victoria Avenue",
-                               "White Woman"),
-          dep.var.labels = c("Car Stopped Close or Far"))
-
-```
-
-# 9c2. Combined models - Odd Ratio with 95% CI - gtsummary
+# 9c1. Combined models - Odd Ratio with 95% CI - gtsummary
 ```{r}
 tbl17 <- tbl_regression(
   m17,
@@ -1185,11 +1079,12 @@ tbl20 <- tbl_regression(
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
           label == "woman * white" ~ "Women * White",
+          label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
 ```
 
-# 9c3. Table 5 - Car yield close//far combined models table
+# 9c2. Table 5 - Car yield close//far combined models table
 ```{r}
 table5 <- tbl_merge(
   tbls = list(tbl17, tbl18, tbl19, tbl20),
