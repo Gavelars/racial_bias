@@ -712,7 +712,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpkha94j/file3fb4517265a.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpOmqr6m/file4284fc3b59.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1145,7 +1145,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpkha94j/file3fb43dc2785d.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpOmqr6m/file428493d70f8.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1578,7 +1578,7 @@ as_gt(table3) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpkha94j/file3fb446f470fe.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpOmqr6m/file4285fb06e36.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2132,7 +2132,7 @@ as_gt(table4) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpkha94j/file3fb428f933ca.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpOmqr6m/file428422f30dd.html screenshot completed
 ```
 
 # 9. Cars stop close or far 
@@ -2693,11 +2693,12 @@ as_gt(table5) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmpkha94j/file3fb466c5751.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpOmqr6m/file4281288391e.html screenshot completed
 ```
 
 # 10. Histograms
 # 10a. Ethnicity
+
 
 ``` r
 data %>% 
@@ -2720,6 +2721,45 @@ data %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
 
+
+``` r
+params_eth <- data %>%
+  group_by(ethnicity) %>%
+  summarise(
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street)
+  )
+
+curve_data_eth <- params_eth %>%
+  rowwise() %>%
+  do({
+    tibble(
+      ethnicity = .$ethnicity,
+      x = seq(min(data$time_to_cross_street),
+              max(data$time_to_cross_street),
+              length.out = 200),
+      y = dnorm(x, .$mean, .$sd)
+    )
+  })
+
+ggplot(data, aes(time_to_cross_street, fill = ethnicity)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 0.5) +
+  geom_line(data = curve_data_eth,
+            aes(x = x, y = y),
+            colour = "red",
+            linewidth = 1,
+            inherit.aes = FALSE) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Count"
+  ) +
+  theme_minimal(
+  ) +
+  facet_wrap(~ethnicity)
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+
 # 10b. Gender
 
 ``` r
@@ -2741,7 +2781,47 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+
+
+
+``` r
+params_gen <- data %>%
+  group_by(gender) %>%
+  summarise(
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street)
+  )
+
+curve_data_gen <- params_gen %>%
+  rowwise() %>%
+  do({
+    tibble(
+      gender = .$gender,
+      x = seq(min(data$time_to_cross_street),
+              max(data$time_to_cross_street),
+              length.out = 200),
+      y = dnorm(x, .$mean, .$sd)
+    )
+  })
+
+ggplot(data, aes(time_to_cross_street, fill = gender)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 0.5) +
+  geom_line(data = curve_data_gen,
+            aes(x = x, y = y),
+            colour = "red",
+            linewidth = 1,
+            inherit.aes = FALSE) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Count"
+  ) +
+  theme_minimal(
+  ) +
+  facet_wrap(~gender)
+```
+
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 # 11. Visualizations
 # 11a. Time by ethnicity
@@ -2765,7 +2845,7 @@ data %>%
   )
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
 # 11b. Time by gender
 
@@ -2786,7 +2866,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 
 # 11c. Time to enter the street - Violin Plot with Jitter overlay - Facet by gender
 
@@ -2812,7 +2892,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 # 11d. Time to enter the street - Violin Plot with Jitter overlay - Facet by ethnicity
 
@@ -2839,7 +2919,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
 
 # 11e. Time to enter - QQplot - By ethnicity  
 
@@ -2851,7 +2931,7 @@ data %>%
   facet_wrap(~ethnicity)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 # 11f. Time to enter - QQplot - By gender 
 
@@ -2863,7 +2943,7 @@ data %>%
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
 
 # 11g. 19th removed - Time to enter - By gender
 
@@ -2884,7 +2964,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
 # 11h. Time by ethnicity and gender - grouped by location 
 
@@ -2903,7 +2983,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
 
 # 11i. Cars passed by ethnicity and gender
 
@@ -2926,7 +3006,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
 
 # 11j. Proportion of first car yields - By ethnicity 
 
@@ -2949,7 +3029,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
 
 # 11k. Proportion of first car yield - By gender 
 
@@ -2971,7 +3051,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
 
 # 11l. Odds first car yield
 
@@ -3024,7 +3104,7 @@ ggplot(or1[-1,], aes(x = estimate,
 ## (`geom_point()`).
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
 
 # 11m. Odds car proceeded
 
@@ -3069,7 +3149,7 @@ ggplot(or2[-1,], aes(x = estimate,
 ## (`geom_point()`).
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
 
 # 11n. Odds car stopped close//far 
 
@@ -3114,4 +3194,4 @@ ggplot(or3[-1,], aes(x = estimate,
 ## (`geom_point()`).
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-58-1.png)<!-- -->

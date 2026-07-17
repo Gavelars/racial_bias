@@ -1120,6 +1120,7 @@ as_gt(table5) %>%
 
 # 10. Histograms
 # 10a. Ethnicity
+
 ```{r}
 data %>% 
   ggplot(aes(x = time_to_cross_street,
@@ -1132,6 +1133,42 @@ data %>%
   ) +
   theme_minimal(
   )
+```
+
+```{r}
+params_eth <- data %>%
+  group_by(ethnicity) %>%
+  summarise(
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street)
+  )
+
+curve_data_eth <- params_eth %>%
+  rowwise() %>%
+  do({
+    tibble(
+      ethnicity = .$ethnicity,
+      x = seq(min(data$time_to_cross_street),
+              max(data$time_to_cross_street),
+              length.out = 200),
+      y = dnorm(x, .$mean, .$sd)
+    )
+  })
+
+ggplot(data, aes(time_to_cross_street, fill = ethnicity)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 0.5) +
+  geom_line(data = curve_data_eth,
+            aes(x = x, y = y),
+            colour = "red",
+            linewidth = 1,
+            inherit.aes = FALSE) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Count"
+  ) +
+  theme_minimal(
+  ) +
+  facet_wrap(~ethnicity)
 ```
 
 # 10b. Gender
@@ -1147,6 +1184,43 @@ data %>%
   ) +
   theme_minimal(
   )
+```
+
+
+```{r}
+params_gen <- data %>%
+  group_by(gender) %>%
+  summarise(
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street)
+  )
+
+curve_data_gen <- params_gen %>%
+  rowwise() %>%
+  do({
+    tibble(
+      gender = .$gender,
+      x = seq(min(data$time_to_cross_street),
+              max(data$time_to_cross_street),
+              length.out = 200),
+      y = dnorm(x, .$mean, .$sd)
+    )
+  })
+
+ggplot(data, aes(time_to_cross_street, fill = gender)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 0.5) +
+  geom_line(data = curve_data_gen,
+            aes(x = x, y = y),
+            colour = "red",
+            linewidth = 1,
+            inherit.aes = FALSE) +
+  labs(
+    x = "Time to Cross (s)",
+    y = "Count"
+  ) +
+  theme_minimal(
+  ) +
+  facet_wrap(~gender)
 ```
 
 # 11. Visualizations
