@@ -13,6 +13,8 @@ library(snakecase)
 library(gtsummary)
 library(broom.helpers)
 library(gt)
+library(cowplot)
+library(magick)
 ```
 
 # 2. Load data - Remove invalid trials - Trials with unaffiliated pedestrians
@@ -1526,3 +1528,28 @@ ggplot(or3[-1,], aes(x = estimate,
   ) +
   theme_minimal()
 ```
+
+# 11o. Intersection Plots
+```{r}
+p1 <- ggdraw() + draw_image("VicRender.png")
+p2 <- ggdraw() + draw_image("2ndRender.png")
+p3 <- ggdraw() + draw_image("19thRender.png")
+p4 <- ggdraw() + draw_image("BesRender.png")
+
+final_plot <- plot_grid(p1,p2, p3, p4,
+          labels = c("A", "B", "C", "D")) +
+  theme( 
+    plot.background = element_blank(),
+    panel.background = element_blank()
+    )
+
+ggsave(
+  filename = "figure1.png",
+  plot = final_plot,
+  width = 10,
+  height = 6,
+  dpi = 300,
+  bg = "transparent"
+  )
+```
+

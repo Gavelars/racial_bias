@@ -60,6 +60,41 @@ library(gt)
 ## Warning: package 'gt' was built under R version 4.6.1
 ```
 
+``` r
+library(cowplot)
+```
+
+```
+## Warning: package 'cowplot' was built under R version 4.6.1
+```
+
+```
+## 
+## Attaching package: 'cowplot'
+## 
+## The following object is masked from 'package:gt':
+## 
+##     as_gtable
+## 
+## The following object is masked from 'package:lubridate':
+## 
+##     stamp
+```
+
+``` r
+library(magick)
+```
+
+```
+## Warning: package 'magick' was built under R version 4.6.1
+```
+
+```
+## Linking to ImageMagick 6.9.13.29
+## Enabled features: cairo, freetype, fftw, ghostscript, heic, lcms, pango, raw, rsvg, webp
+## Disabled features: fontconfig, x11
+```
+
 # 2. Load data - Remove invalid trials - Trials with unaffiliated pedestrians
 
 ``` r
@@ -714,7 +749,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b442a2641.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6JGElk/file297417531e91.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1148,7 +1183,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b431e6298e.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6JGElk/file29745c51c62.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1582,7 +1617,7 @@ as_gt(table3) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b45ef75777.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6JGElk/file29741d6f401e.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2140,7 +2175,7 @@ as_gt(table4) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b47a3c38bd.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6JGElk/file2974fcf691a.html screenshot completed
 ```
 
 # 9. Cars stop close or far 
@@ -2705,7 +2740,7 @@ as_gt(table5) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b44bdfdb1.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp6JGElk/file2974693f4359.html screenshot completed
 ```
 
 # 10. Histograms
@@ -3209,3 +3244,29 @@ ggplot(or3[-1,], aes(x = estimate,
 ```
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+
+# 11o. Intersection Plots
+
+``` r
+p1 <- ggdraw() + draw_image("VicRender.png")
+p2 <- ggdraw() + draw_image("2ndRender.png")
+p3 <- ggdraw() + draw_image("19thRender.png")
+p4 <- ggdraw() + draw_image("BesRender.png")
+
+final_plot <- plot_grid(p1,p2, p3, p4,
+          labels = c("A", "B", "C", "D")) +
+  theme( 
+    plot.background = element_blank(),
+    panel.background = element_blank()
+    )
+
+ggsave(
+  filename = "figure1.png",
+  plot = final_plot,
+  width = 10,
+  height = 6,
+  dpi = 300,
+  bg = "transparent"
+  )
+```
+
