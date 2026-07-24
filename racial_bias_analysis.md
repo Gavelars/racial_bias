@@ -714,7 +714,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpKYF5jM/file290462fb2fd8.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b442a2641.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1148,7 +1148,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpKYF5jM/file290468db1223.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b431e6298e.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1582,7 +1582,7 @@ as_gt(table3) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpKYF5jM/file290441f84e70.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b45ef75777.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2140,7 +2140,7 @@ as_gt(table4) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpKYF5jM/file290413d73c16.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b47a3c38bd.html screenshot completed
 ```
 
 # 9. Cars stop close or far 
@@ -2705,7 +2705,7 @@ as_gt(table5) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpKYF5jM/file290450cd3ea0.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpW6swup/file12b44bdfdb1.html screenshot completed
 ```
 
 # 10. Histograms
@@ -2978,6 +2978,15 @@ data_19th_rm %>%
 
 ![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 
+# Facet Labels
+
+``` r
+my_labels <- c("19th" = "19th Street",
+               "2nd" = "2nd Avenue",
+               "bessborough" = "Bessborough Hotel",
+               "victoria" = "Victoria Avenue")
+```
+
 # 11h. Time by ethnicity and gender - grouped by location 
 
 ``` r
@@ -2986,16 +2995,24 @@ data%>%
              y = time_to_cross_street,
                fill = gender)) +
   geom_boxplot() +
-  facet_wrap(~location) +
+  facet_wrap(~location, labeller = labeller(location = my_labels)) +
   labs(
     x = "Ethnicity",
     y = "Time to Cross (s)",
     fill = "Gender"
   ) +
+  scale_x_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black")
+    ) +
+  scale_fill_discrete(labels = c("Man",
+                                 "Woman")
+    ) +
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
 
 # 11i. Cars passed by ethnicity and gender
 
@@ -3018,7 +3035,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
 
 # 11j. Proportion of first car yields - By ethnicity 
 
@@ -3041,7 +3058,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
 
 # 11k. Proportion of first car yield - By gender 
 
@@ -3063,7 +3080,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
 
 # 11l. Odds first car yield
 
@@ -3111,7 +3128,7 @@ ggplot(or1[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
 
 # 11m. Odds car proceeded
 
@@ -3151,7 +3168,7 @@ ggplot(or2[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
 
 # 11n. Odds car stopped close//far 
 
@@ -3191,4 +3208,4 @@ ggplot(or3[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-59-1.png)<!-- -->

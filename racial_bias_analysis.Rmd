@@ -1337,6 +1337,14 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
+# Facet Labels
+```{r}
+my_labels <- c("19th" = "19th Street",
+               "2nd" = "2nd Avenue",
+               "bessborough" = "Bessborough Hotel",
+               "victoria" = "Victoria Avenue")
+```
+
 # 11h. Time by ethnicity and gender - grouped by location 
 ```{r}
 data%>% 
@@ -1344,12 +1352,20 @@ data%>%
              y = time_to_cross_street,
                fill = gender)) +
   geom_boxplot() +
-  facet_wrap(~location) +
+  facet_wrap(~location, labeller = labeller(location = my_labels)) +
   labs(
     x = "Ethnicity",
     y = "Time to Cross (s)",
     fill = "Gender"
   ) +
+  scale_x_discrete(labels = c(
+    "asian" = "South Asian",
+    "white" = "White",
+    "black" = "Black")
+    ) +
+  scale_fill_discrete(labels = c("Man",
+                                 "Woman")
+    ) +
   theme_minimal()
 ```
 
