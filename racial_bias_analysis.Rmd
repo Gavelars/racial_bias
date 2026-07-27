@@ -223,7 +223,7 @@ tbl4 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -436,7 +436,7 @@ tbl8 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -658,7 +658,7 @@ tbl12 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -871,7 +871,7 @@ tbl16 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -1088,7 +1088,7 @@ tbl20 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))

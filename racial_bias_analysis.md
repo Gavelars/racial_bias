@@ -699,7 +699,7 @@ tbl4 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -750,7 +750,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpWuo6Qe/file315064306741.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35646d6a56ab.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1131,7 +1131,7 @@ tbl8 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -1184,7 +1184,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpWuo6Qe/file31504f413ba.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35644dcfafc.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1581,7 +1581,7 @@ tbl12 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -1634,7 +1634,7 @@ as_gt(table3) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpWuo6Qe/file315060635374.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file3564576a53ea.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2142,7 +2142,7 @@ tbl16 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -2193,7 +2193,7 @@ as_gt(table4) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpWuo6Qe/file31507d542e81.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35642e4978fa.html screenshot completed
 ```
 
 # 9. Cars stop close or far 
@@ -2708,7 +2708,7 @@ tbl20 <- tbl_regression(
           label == "2nd"  ~ "2nd Avenue",
           label == "bessborough" ~ "Bessborough",
           label == "victoria" ~ "Victoria Avenue",
-          label == "woman * white" ~ "Women * White",
+          label == "woman * asian" ~ "Women * South Asian",
           label == "woman * black" ~ "Women * Black",
           TRUE ~ label)
     ))
@@ -2759,7 +2759,7 @@ as_gt(table5) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpWuo6Qe/file3150498331bc.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35642e1c589e.html screenshot completed
 ```
 
 # 10. Histograms
