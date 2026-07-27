@@ -749,7 +749,7 @@ as_gt(table1) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpElcwPG/file317079753332.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp8milhu/filed9c769457e.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1183,7 +1183,7 @@ as_gt(table2) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpElcwPG/file31701ad243b4.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp8milhu/filed9c17c145a7.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1249,6 +1249,22 @@ data %>%
 ## 4 woman  asian        60  5.24 1.26 
 ## 5 woman  black        60  5.84 2.40 
 ## 6 woman  white        60  6.68 4.40
+```
+
+``` r
+data %>% 
+  summarise(
+    n = n(),
+    mean = mean(time_to_cross_street),
+    sd = sd(time_to_cross_street)
+  )
+```
+
+```
+## # A tibble: 1 × 3
+##       n  mean    sd
+##   <int> <dbl> <dbl>
+## 1   360  5.75  2.71
 ```
 
 # 7b. Mean time to enter intersection - Linear regression
@@ -1617,7 +1633,7 @@ as_gt(table3) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpElcwPG/file3170e046a4d.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp8milhu/filed9c7951933.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2176,7 +2192,7 @@ as_gt(table4) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpElcwPG/file3170474271d4.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp8milhu/filed9c255a5556.html screenshot completed
 ```
 
 # 9. Cars stop close or far 
@@ -2742,7 +2758,7 @@ as_gt(table5) %>%
 ```
 
 ```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpElcwPG/file3170e262646.html screenshot completed
+## file:///C:/Users/KADEGA~1/AppData/Local/Temp/Rtmp8milhu/filed9c6f0b4372.html screenshot completed
 ```
 
 # 10. Histograms
@@ -3034,7 +3050,7 @@ data%>%
   geom_boxplot() +
   facet_wrap(~location, labeller = labeller(location = my_labels)) +
   labs(
-    x = "Ethnicity",
+    x = "Racialization",
     y = "Time to Cross (s)",
     fill = "Gender"
   ) +
