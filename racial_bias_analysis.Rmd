@@ -25,7 +25,8 @@ data_file <- read_csv("master_file.csv") %>%
     gender = as.factor(gender),
     location = as.factor(location),
     first_car_yield = as.factor(first_car_yield),
-    did_car_proceed_before_across = as.factor(did_car_proceed_before_across)
+    did_car_proceed_before_across = as.factor(did_car_proceed_before_across),
+    ethnicity = fct_relevel(ethnicity, "white")
   )
 
 data <- data_file %>% drop_na(valid_trial)
