@@ -620,6 +620,7 @@ tbl1 <- tbl_regression(
     gender ~ "Gender",
     "factor(location)" ~ "Intersection Location"
   )) %>% 
+  modify_column_hide(columns = p.value) %>% 
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -639,7 +640,8 @@ tbl2 <- tbl_regression(
   label = list(
     ethnicity ~ "Racialization",
     "factor(location)" ~ "Intersection Location"
-  )) %>% 
+  )) %>%
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -662,6 +664,7 @@ tbl3 <- tbl_regression(
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -686,6 +689,7 @@ tbl4 <- tbl_regression(
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1038,6 +1042,7 @@ tbl5 <- tbl_regression(
   )%>%
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1061,6 +1066,7 @@ tbl6 <- tbl_regression(
   )) %>% 
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>%
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1086,6 +1092,7 @@ tbl7 <- tbl_regression(
   )) %>% 
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1113,6 +1120,7 @@ tbl8 <- tbl_regression(
   )) %>% 
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1484,6 +1492,7 @@ tbl9 <- tbl_regression(
   )%>%
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1507,6 +1516,7 @@ tbl10 <- tbl_regression(
   )) %>% 
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>%
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1532,6 +1542,7 @@ tbl11 <- tbl_regression(
   )) %>% 
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -1559,6 +1570,7 @@ tbl12 <- tbl_regression(
   )) %>% 
   modify_column_unhide(columns = std.error) %>% 
   modify_column_hide(columns = conf.low) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2051,6 +2063,7 @@ tbl13 <- tbl_regression(
     gender ~ "Gender",
     "factor(location)" ~ "Intersection Location"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2071,6 +2084,7 @@ tbl14 <- tbl_regression(
     ethnicity ~ "Racialization",
     "factor(location)" ~ "Intersection Location"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2093,6 +2107,7 @@ tbl15 <- tbl_regression(
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2117,6 +2132,7 @@ tbl16 <- tbl_regression(
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2612,7 +2628,8 @@ tbl17 <- tbl_regression(
   label = list(
     gender ~ "Gender",
     "factor(location)" ~ "Intersection Location"
-  )) %>% 
+  )) %>%
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2632,7 +2649,8 @@ tbl18 <- tbl_regression(
   label = list(
     ethnicity ~ "Racialization",
     "factor(location)" ~ "Intersection Location"
-  )) %>% 
+  )) %>%
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2655,6 +2673,7 @@ tbl19 <- tbl_regression(
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -2679,6 +2698,7 @@ tbl20 <- tbl_regression(
     "factor(location)" ~ "Intersection Location",
     ethnicity ~ "Racialization"
   )) %>% 
+  modify_column_hide(columns = p.value) %>%
   modify_table_body(
     ~.x %>% 
       mutate(
@@ -3247,12 +3267,12 @@ ggplot(or3[-1,], aes(x = estimate,
 # 11o. Intersection Plots
 
 ``` r
-p1 <- ggdraw() + draw_image("VicRender.png")
-p2 <- ggdraw() + draw_image("2ndRender.png")
-p3 <- ggdraw() + draw_image("19thRender.png")
-p4 <- ggdraw() + draw_image("BesRender.png")
+p1 <- ggdraw() + draw_image("2nd.png")
+p2 <- ggdraw() + draw_image("Vic.png")
+p4 <- ggdraw() + draw_image("19th.png")
+p3 <- ggdraw() + draw_image("Bess.png")
 
-final_plot <- plot_grid(p1,p2, p3, p4,
+final_plot <- plot_grid(p1, p2, p3, p4,
           labels = c("A", "B", "C", "D")) +
   theme( 
     plot.background = element_blank(),
