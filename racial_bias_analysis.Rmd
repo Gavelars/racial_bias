@@ -257,7 +257,7 @@ table1 <- tbl_merge(
 
 as_gt(table1) %>% 
   gtsave(
-    filename = "table1.png",
+    filename = "table1.docx",
     vwidth = 2200,
     zoom = 2
   )
@@ -472,7 +472,7 @@ table2 <- tbl_merge(
 
 as_gt(table2) %>% 
   gtsave(
-    filename = "table2.png",
+    filename = "table2.docx",
     vwidth = 2200,
     zoom = 2
   )
@@ -694,7 +694,7 @@ table3 <- tbl_merge(
 
 as_gt(table3) %>% 
   gtsave(
-    filename = "table3.png",
+    filename = "table3.docx",
     vwidth = 2200,
     zoom = 2
   )
@@ -905,7 +905,7 @@ table4 <- tbl_merge(
 
 as_gt(table4) %>% 
   gtsave(
-    filename = "table4.png",
+    filename = "table4.docx",
     vwidth = 2200,
     zoom = 2
   )
@@ -1122,7 +1122,7 @@ table5 <- tbl_merge(
 
 as_gt(table5) %>% 
   gtsave(
-    filename = "table5.png",
+    filename = "table5.docx",
     vwidth = 2200,
     zoom = 2
   )
