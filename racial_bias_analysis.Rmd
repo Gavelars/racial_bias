@@ -1539,12 +1539,12 @@ ggplot(or3[-1,], aes(x = estimate,
 
 # 11o. Intersection Plots
 ```{r}
-p1 <- ggdraw() + draw_image("VicRender.png")
-p2 <- ggdraw() + draw_image("2ndRender.png")
-p3 <- ggdraw() + draw_image("19thRender.png")
-p4 <- ggdraw() + draw_image("BesRender.png")
+p1 <- ggdraw() + draw_image("2nd.png")
+p2 <- ggdraw() + draw_image("Vic.png")
+p4 <- ggdraw() + draw_image("19th.png")
+p3 <- ggdraw() + draw_image("Bess.png")
 
-final_plot <- plot_grid(p1,p2, p3, p4,
+final_plot <- plot_grid(p1, p2, p3, p4,
           labels = c("A", "B", "C", "D")) +
   theme( 
     plot.background = element_blank(),
