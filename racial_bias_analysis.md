@@ -743,14 +743,10 @@ table1 <- tbl_merge(
 ``` r
 as_gt(table1) %>% 
   gtsave(
-    filename = "table1.png",
+    filename = "table1.docx",
     vwidth = 2200,
     zoom = 2
   )
-```
-
-```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35646d6a56ab.html screenshot completed
 ```
 
 # 6. Mean number of cars before yield
@@ -1177,14 +1173,10 @@ table2 <- tbl_merge(
 ``` r
 as_gt(table2) %>% 
   gtsave(
-    filename = "table2.png",
+    filename = "table2.docx",
     vwidth = 2200,
     zoom = 2
   )
-```
-
-```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35644dcfafc.html screenshot completed
 ```
 
 # 7. Mean time to enter intersection
@@ -1627,14 +1619,10 @@ table3 <- tbl_merge(
 ``` r
 as_gt(table3) %>% 
   gtsave(
-    filename = "table3.png",
+    filename = "table3.docx",
     vwidth = 2200,
     zoom = 2
   )
-```
-
-```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file3564576a53ea.html screenshot completed
 ```
 
 # 8. Car proceed through intersection
@@ -2186,14 +2174,10 @@ table4 <- tbl_merge(
 ``` r
 as_gt(table4) %>% 
   gtsave(
-    filename = "table4.png",
+    filename = "table4.docx",
     vwidth = 2200,
     zoom = 2
   )
-```
-
-```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35642e4978fa.html screenshot completed
 ```
 
 # 9. Cars stop close or far 
@@ -2752,14 +2736,10 @@ table5 <- tbl_merge(
 ``` r
 as_gt(table5) %>% 
   gtsave(
-    filename = "table5.png",
+    filename = "table5.docx",
     vwidth = 2200,
     zoom = 2
   )
-```
-
-```
-## file:///C:/Users/KADEGA~1/AppData/Local/Temp/RtmpiC1o55/file35642e1c589e.html screenshot completed
 ```
 
 # 10. Histograms
