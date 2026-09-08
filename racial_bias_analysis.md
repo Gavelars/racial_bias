@@ -8,16 +8,40 @@ output:
 # 1. Load Packages
 
 ``` r
+library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+``` r
+library(purrr)
 library(tidyverse)
 ```
 
 ```
 ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-## ✔ dplyr     1.2.1     ✔ readr     2.2.0
-## ✔ forcats   1.0.1     ✔ stringr   1.6.0
-## ✔ ggplot2   4.0.3     ✔ tibble    3.3.1
-## ✔ lubridate 1.9.5     ✔ tidyr     1.3.2
-## ✔ purrr     1.2.2     
+## ✔ forcats   1.0.0     ✔ stringr   1.5.2
+## ✔ ggplot2   4.0.0     ✔ tibble    3.3.0
+## ✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+## ✔ readr     2.1.5
+```
+
+```
 ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
@@ -28,18 +52,7 @@ library(tidyverse)
 library(broom)
 library(snakecase)
 library(gtsummary)
-```
-
-```
-## Warning: package 'gtsummary' was built under R version 4.6.1
-```
-
-``` r
 library(broom.helpers)
-```
-
-```
-## Warning: package 'broom.helpers' was built under R version 4.6.1
 ```
 
 ```
@@ -54,18 +67,7 @@ library(broom.helpers)
 
 ``` r
 library(gt)
-```
-
-```
-## Warning: package 'gt' was built under R version 4.6.1
-```
-
-``` r
 library(cowplot)
-```
-
-```
-## Warning: package 'cowplot' was built under R version 4.6.1
 ```
 
 ```
@@ -86,13 +88,13 @@ library(magick)
 ```
 
 ```
-## Warning: package 'magick' was built under R version 4.6.1
+## Warning: package 'magick' was built under R version 4.5.2
 ```
 
 ```
 ## Linking to ImageMagick 6.9.13.29
-## Enabled features: cairo, freetype, fftw, ghostscript, heic, lcms, pango, raw, rsvg, webp
-## Disabled features: fontconfig, x11
+## Enabled features: cairo, fontconfig, freetype, heic, lcms, pango, raw, rsvg, webp
+## Disabled features: fftw, ghostscript, x11
 ```
 
 # 2. Load data - Remove invalid trials - Trials with unaffiliated pedestrians
@@ -213,8 +215,11 @@ data %>% count(did_car_proceed_before_across)
 ## 2 yes                             301
 ## 3 <NA>                             27
 ```
+
 # 5. First car yield
+
 # 5a. First car yield - Descriptive stats
+
 
 ``` r
 data %>% 
@@ -364,6 +369,91 @@ ci1 <- exp(confint(m1))
 ## Waiting for profiling to be done...
 ```
 
+# 5b1b. Gender - Location fixed effects (Bootstrap)
+
+
+``` r
+B <- 5000
+
+boot_coefs_m1 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ gender + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m1 <- boot_coefs_m1 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m1)
+```
+
+```
+## 
+## Call:
+## glm(formula = first_car_yield ~ gender + factor(location), family = binomial(), 
+##     data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  -0.7380     0.2511  -2.939  0.00329 ** 
+## genderwoman                   0.6442     0.2345   2.747  0.00601 ** 
+## factor(location)2nd           0.5529     0.3056   1.810  0.07036 .  
+## factor(location)bessborough   1.2841     0.3194   4.020 5.82e-05 ***
+## factor(location)victoria      2.0598     0.3601   5.721 1.06e-08 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 479.28  on 359  degrees of freedom
+## Residual deviance: 428.88  on 355  degrees of freedom
+## AIC: 438.88
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+``` r
+## Bootstrap model
+boot_summary_m1
+```
+
+```
+## # A tibble: 5 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                        -0.743   0.276  -1.31     -0.234
+## 2 factor(location)2nd                 0.558   0.314  -0.0522    1.19 
+## 3 factor(location)bessborough         1.30    0.328   0.667     1.95 
+## 4 factor(location)victoria            2.09    0.392   1.37      2.93 
+## 5 genderwoman                         0.650   0.240   0.180     1.13
+```
+
 # 5b2. Ethnicity - Location fixed effects
 
 ``` r
@@ -440,6 +530,91 @@ ci2 <- exp(confint(m2))
 
 ```
 ## Waiting for profiling to be done...
+```
+
+# 5b2b. Ethnicity - Location fixed effects (Bootstrap)
+
+
+``` r
+boot_coefs_m2 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m2 <- boot_coefs_m2 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m2)
+```
+
+```
+## 
+## Call:
+## glm(formula = first_car_yield ~ ethnicity + factor(location), 
+##     family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                 -0.48533    0.27048  -1.794   0.0728 .  
+## ethnicityasian               0.15925    0.28236   0.564   0.5727    
+## ethnicityblack               0.07908    0.28125   0.281   0.7786    
+## factor(location)2nd          0.53956    0.30172   1.788   0.0737 .  
+## factor(location)bessborough  1.25403    0.31515   3.979 6.92e-05 ***
+## factor(location)victoria     2.01673    0.35557   5.672 1.41e-08 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 479.28  on 359  degrees of freedom
+## Residual deviance: 436.25  on 354  degrees of freedom
+## AIC: 448.25
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+``` r
+## Bootstrap model
+boot_summary_m2
+```
+
+```
+## # A tibble: 6 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                       -0.491    0.275  -1.02     0.0298
+## 2 ethnicityasian                     0.160    0.280  -0.384    0.709 
+## 3 ethnicityblack                     0.0831   0.294  -0.482    0.661 
+## 4 factor(location)2nd                0.545    0.309  -0.0532   1.16  
+## 5 factor(location)bessborough        1.28     0.325   0.665    1.94  
+## 6 factor(location)victoria           2.06     0.373   1.38     2.83
 ```
 
 # 5b3. Gender + Ethnicity - Location fixed effects
@@ -521,6 +696,93 @@ ci3 <- exp(confint(m3))
 
 ```
 ## Waiting for profiling to be done...
+```
+
+# 5b3b. Gender + Ethnicity - Location fixed effects (Bootstrap)
+
+
+``` r
+boot_coefs_m3 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ gender + ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m3 <- boot_coefs_m3 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m3)
+```
+
+```
+## 
+## Call:
+## glm(formula = first_car_yield ~ gender + ethnicity + factor(location), 
+##     family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                 -0.82001    0.30144  -2.720  0.00652 ** 
+## genderwoman                  0.64481    0.23460   2.749  0.00598 ** 
+## ethnicityasian               0.16286    0.28555   0.570  0.56844    
+## ethnicityblack               0.08087    0.28443   0.284  0.77615    
+## factor(location)2nd          0.55352    0.30572   1.811  0.07021 .  
+## factor(location)bessborough  1.28538    0.31962   4.022 5.78e-05 ***
+## factor(location)victoria     2.06177    0.36027   5.723 1.05e-08 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 479.28  on 359  degrees of freedom
+## Residual deviance: 428.55  on 353  degrees of freedom
+## AIC: 442.55
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+``` r
+## Bootstrap model
+boot_summary_m3
+```
+
+```
+## # A tibble: 7 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                       -0.842    0.335  -1.53     -0.218
+## 2 ethnicityasian                     0.161    0.289  -0.404     0.725
+## 3 ethnicityblack                     0.0755   0.286  -0.487     0.663
+## 4 factor(location)2nd                0.569    0.323  -0.0429    1.23 
+## 5 factor(location)bessborough        1.32     0.340   0.668     2.00 
+## 6 factor(location)victoria           2.12     0.397   1.39      2.96 
+## 7 genderwoman                        0.658    0.244   0.196     1.14
 ```
 
 # 5b4. Gender*Ethnicity - Location fixed effects
@@ -608,6 +870,97 @@ ci4 <- exp(confint(m4))
 
 ```
 ## Waiting for profiling to be done...
+```
+
+# 5b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+
+``` r
+boot_coefs_m4 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ gender*ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m4 <- boot_coefs_m4 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m4)
+```
+
+```
+## 
+## Call:
+## glm(formula = first_car_yield ~ gender * ethnicity + factor(location), 
+##     family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  -1.3628     0.3585  -3.802 0.000144 ***
+## genderwoman                   1.6780     0.4328   3.878 0.000105 ***
+## ethnicityasian                1.4796     0.4228   3.499 0.000466 ***
+## ethnicityblack                0.2363     0.3974   0.595 0.552028    
+## factor(location)2nd           0.6031     0.3196   1.887 0.059169 .  
+## factor(location)bessborough   1.3972     0.3355   4.165 3.12e-05 ***
+## factor(location)victoria      2.2206     0.3769   5.892 3.81e-09 ***
+## genderwoman:ethnicityasian   -2.6868     0.6066  -4.429 9.46e-06 ***
+## genderwoman:ethnicityblack   -0.3375     0.6003  -0.562 0.574009    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 479.28  on 359  degrees of freedom
+## Residual deviance: 403.64  on 351  degrees of freedom
+## AIC: 421.64
+## 
+## Number of Fisher Scoring iterations: 4
+```
+
+``` r
+## Bootstrap model
+boot_summary_m4
+```
+
+```
+## # A tibble: 9 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                        -1.41    0.418 -2.30      -0.662
+## 2 ethnicityasian                      1.53    0.465  0.639      2.47 
+## 3 ethnicityblack                      0.244   0.427 -0.583      1.07 
+## 4 factor(location)2nd                 0.627   0.337  0.00199    1.32 
+## 5 factor(location)bessborough         1.45    0.356  0.796      2.17 
+## 6 factor(location)victoria            2.30    0.430  1.52       3.20 
+## 7 genderwoman                         1.74    0.449  0.903      2.66 
+## 8 genderwoman:ethnicityasian         -2.78    0.624 -4.05      -1.58 
+## 9 genderwoman:ethnicityblack         -0.354   0.637 -1.61       0.910
 ```
 
 # 5c1. Combined models - Odd Ratio with 95% CI - gtsummary
@@ -735,16 +1088,7 @@ table1 <- tbl_merge(
       arrange(row_order, row_type != "label") %>% 
       select(-row_order)
   )
-```
 
-```
-## The number rows in the tables to be merged do not match, which may result in
-## rows appearing out of order.
-## ℹ See `tbl_merge()` (`?gtsummary::tbl_merge()`) help file for details. Use
-##   `quiet=TRUE` to silence message.
-```
-
-``` r
 as_gt(table1) %>% 
   gtsave(
     filename = "table1.docx",
@@ -974,6 +1318,7 @@ summary(m7)
 
 # 6b4. Gender*Ethnicity - Location fixed effects
 
+
 ``` r
 m8 <- lm(num_cars_pass_before_yield ~ gender*ethnicity + factor(location),
          data = data)
@@ -1028,6 +1373,97 @@ summary(m8)
 ## Multiple R-squared:  0.1915,	Adjusted R-squared:  0.173 
 ## F-statistic: 10.39 on 8 and 351 DF,  p-value: 4.449e-13
 ```
+
+# 6b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+
+``` r
+boot_coefs_m8 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    lm(
+      num_cars_pass_before_yield ~ gender*ethnicity + factor(location),
+      data = sample_data
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m8 <- boot_coefs_m8 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m8)
+```
+
+```
+## 
+## Call:
+## lm(formula = num_cars_pass_before_yield ~ gender * ethnicity + 
+##     factor(location), data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.6278 -0.4778 -0.1778  0.3125  7.3722 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                   1.4778     0.1559   9.478  < 2e-16 ***
+## genderwoman                  -0.1667     0.1800  -0.926   0.3552    
+## ethnicityasian               -0.4000     0.1800  -2.222   0.0269 *  
+## ethnicityblack                0.1500     0.1800   0.833   0.4053    
+## factor(location)2nd          -0.7111     0.1470  -4.838 1.97e-06 ***
+## factor(location)bessborough  -0.9333     0.1470  -6.349 6.69e-10 ***
+## factor(location)victoria     -1.1333     0.1470  -7.710 1.31e-13 ***
+## genderwoman:ethnicityasian    0.4667     0.2546   1.833   0.0677 .  
+## genderwoman:ethnicityblack   -0.4000     0.2546  -1.571   0.1171    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.9861 on 351 degrees of freedom
+## Multiple R-squared:  0.1915,	Adjusted R-squared:  0.173 
+## F-statistic: 10.39 on 8 and 351 DF,  p-value: 4.449e-13
+```
+
+``` r
+## Bootstrap model
+boot_summary_m8
+```
+
+```
+## # A tibble: 9 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                         1.47    0.177   1.14      1.83 
+## 2 ethnicityasian                     -0.398   0.148  -0.680    -0.108
+## 3 ethnicityblack                      0.156   0.220  -0.246     0.619
+## 4 factor(location)2nd                -0.706   0.186  -1.09     -0.349
+## 5 factor(location)bessborough        -0.929   0.186  -1.31     -0.570
+## 6 factor(location)victoria           -1.13    0.179  -1.50     -0.793
+## 7 genderwoman                        -0.167   0.184  -0.507     0.213
+## 8 genderwoman:ethnicityasian          0.469   0.231   0.0166    0.903
+## 9 genderwoman:ethnicityblack         -0.404   0.284  -0.993     0.128
+```
+
 
 # 6c1. Combined models - gtsummary
 
@@ -1169,16 +1605,7 @@ table2 <- tbl_merge(
       select(-row_order)
   ) %>% 
   remove_abbreviation("CI = Confidence Interval")
-```
 
-```
-## The number rows in the tables to be merged do not match, which may result in
-## rows appearing out of order.
-## ℹ See `tbl_merge()` (`?gtsummary::tbl_merge()`) help file for details. Use
-##   `quiet=TRUE` to silence message.
-```
-
-``` r
 as_gt(table2) %>% 
   gtsave(
     filename = "table2.docx",
@@ -1479,6 +1906,96 @@ summary(m12)
 ## F-statistic: 19.33 on 8 and 351 DF,  p-value: < 2.2e-16
 ```
 
+# 7b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+
+``` r
+boot_coefs_m12 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    lm(
+      time_to_cross_street ~ gender*ethnicity + factor(location),
+      data = sample_data
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m12 <- boot_coefs_m12 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m12)
+```
+
+```
+## 
+## Call:
+## lm(formula = time_to_cross_street ~ gender * ethnicity + factor(location), 
+##     data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.3361 -1.3108 -0.0861  0.8916 13.9292 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                   8.3761     0.3617  23.158  < 2e-16 ***
+## genderwoman                   0.3747     0.4177   0.897    0.370    
+## ethnicityasian               -2.0328     0.4177  -4.867 1.71e-06 ***
+## ethnicityblack               -0.1173     0.4177  -0.281    0.779    
+## factor(location)2nd          -2.6616     0.3410  -7.805 6.91e-14 ***
+## factor(location)bessborough  -2.2156     0.3410  -6.497 2.81e-10 ***
+## factor(location)victoria     -3.4080     0.3410  -9.994  < 2e-16 ***
+## genderwoman:ethnicityasian    0.5885     0.5907   0.996    0.320    
+## genderwoman:ethnicityblack   -0.7235     0.5907  -1.225    0.221    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.288 on 351 degrees of freedom
+## Multiple R-squared:  0.3059,	Adjusted R-squared:  0.2901 
+## F-statistic: 19.33 on 8 and 351 DF,  p-value: < 2.2e-16
+```
+
+``` r
+## Bootstrap model
+boot_summary_m12
+```
+
+```
+## # A tibble: 9 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                         8.37    0.426    7.58     9.23 
+## 2 ethnicityasian                     -2.03    0.286   -2.60    -1.47 
+## 3 ethnicityblack                     -0.126   0.399   -0.883    0.687
+## 4 factor(location)2nd                -2.66    0.441   -3.54    -1.82 
+## 5 factor(location)bessborough        -2.21    0.448   -3.11    -1.34 
+## 6 factor(location)victoria           -3.40    0.432   -4.27    -2.58 
+## 7 genderwoman                         0.372   0.526   -0.628    1.48 
+## 8 genderwoman:ethnicityasian          0.588   0.581   -0.628    1.68 
+## 9 genderwoman:ethnicityblack         -0.715   0.686   -2.14     0.600
+```
+
 # 7c1. Combined models - gtsummary
 
 ``` r
@@ -1619,16 +2136,7 @@ table3 <- tbl_merge(
       select(-row_order)
   ) %>% 
   remove_abbreviation("CI = Confidence Interval")
-```
 
-```
-## The number rows in the tables to be merged do not match, which may result in
-## rows appearing out of order.
-## ℹ See `tbl_merge()` (`?gtsummary::tbl_merge()`) help file for details. Use
-##   `quiet=TRUE` to silence message.
-```
-
-``` r
 as_gt(table3) %>% 
   gtsave(
     filename = "table3.docx",
@@ -2053,6 +2561,106 @@ ci16 <- exp(confint(m16))
 ## Waiting for profiling to be done...
 ```
 
+# 8b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+
+``` r
+boot_coefs_m16 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      did_car_proceed_before_across ~ gender*ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+```
+
+```
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+```
+
+``` r
+boot_summary_m16 <- boot_coefs_m16 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m16)
+```
+
+```
+## 
+## Call:
+## glm(formula = did_car_proceed_before_across ~ gender * ethnicity + 
+##     factor(location), family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                  2.65993    0.68279   3.896 9.79e-05 ***
+## genderwoman                 -1.21140    0.69122  -1.753   0.0797 .  
+## ethnicityasian               0.09227    0.84218   0.110   0.9128    
+## ethnicityblack              -0.22991    0.79165  -0.290   0.7715    
+## factor(location)2nd         -0.25074    0.50200  -0.499   0.6174    
+## factor(location)bessborough  0.48240    0.57083   0.845   0.3981    
+## factor(location)victoria     0.33975    0.54924   0.619   0.5362    
+## genderwoman:ethnicityasian   0.83261    1.05064   0.792   0.4281    
+## genderwoman:ethnicityblack   0.51896    0.94607   0.549   0.5833    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 210.74  on 332  degrees of freedom
+## Residual deviance: 201.14  on 324  degrees of freedom
+##   (27 observations deleted due to missingness)
+## AIC: 219.14
+## 
+## Number of Fisher Scoring iterations: 5
+```
+
+``` r
+## Bootstrap model
+boot_summary_m16
+```
+
+```
+## # A tibble: 9 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                         3.54    3.48     1.58   18.7   
+## 2 ethnicityasian                      0.112   4.90   -15.8    16.2   
+## 3 ethnicityblack                     -0.716   3.98   -16.0     1.72  
+## 4 factor(location)2nd                -0.266   0.557   -1.39    0.805 
+## 5 factor(location)bessborough         0.548   0.926   -0.700   1.93  
+## 6 factor(location)victoria            0.372   0.667   -0.873   1.65  
+## 7 genderwoman                        -2.00    3.44   -17.1     0.0267
+## 8 genderwoman:ethnicityasian          1.16    5.33   -15.1    17.2   
+## 9 genderwoman:ethnicityblack          1.03    4.03    -1.83   16.3
+```
+
+
 # 8c1. Combined models - Odd Ratio with 95% CI - gtsummary
 
 ``` r
@@ -2178,16 +2786,7 @@ table4 <- tbl_merge(
       arrange(row_order, row_type != "label") %>% 
       select(-row_order)
   )
-```
 
-```
-## The number rows in the tables to be merged do not match, which may result in
-## rows appearing out of order.
-## ℹ See `tbl_merge()` (`?gtsummary::tbl_merge()`) help file for details. Use
-##   `quiet=TRUE` to silence message.
-```
-
-``` r
 as_gt(table4) %>% 
   gtsave(
     filename = "table4.docx",
@@ -2532,6 +3131,7 @@ ci19 <- exp(confint(m19))
 
 # 9c4. Gender*Ethnicity - Location fixed effects
 
+
 ``` r
 m20 <- glm(car_stop_close_or_far_bin ~ gender*ethnicity + factor(location),
            data = data,
@@ -2618,6 +3218,535 @@ ci20 <- exp(confint(m20))
 ```
 ## Waiting for profiling to be done...
 ```
+
+# 9c4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+
+``` r
+boot_coefs_m20 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      car_stop_close_or_far_bin ~ gender*ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+```
+
+```
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
+```
+
+``` r
+boot_summary_m20 <- boot_coefs_m20 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+
+``` r
+## Regular model
+summary(m20)
+```
+
+```
+## 
+## Call:
+## glm(formula = car_stop_close_or_far_bin ~ gender * ethnicity + 
+##     factor(location), family = binomial(), data = data)
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(>|z|)   
+## (Intercept)                   2.2394     0.7652   2.926  0.00343 **
+## genderwoman                   0.1464     1.0313   0.142  0.88709   
+## ethnicityasian               -0.9241     0.8752  -1.056  0.29102   
+## ethnicityblack               -0.6766     0.9032  -0.749  0.45377   
+## factor(location)2nd           1.2470     0.6146   2.029  0.04247 * 
+## factor(location)bessborough   2.0506     0.7920   2.589  0.00962 **
+## factor(location)victoria      1.3698     0.6139   2.231  0.02566 * 
+## genderwoman:ethnicityasian   -0.4047     1.2234  -0.331  0.74081   
+## genderwoman:ethnicityblack    0.7203     1.3692   0.526  0.59884   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 156.72  on 332  degrees of freedom
+## Residual deviance: 140.56  on 324  degrees of freedom
+##   (27 observations deleted due to missingness)
+## AIC: 158.56
+## 
+## Number of Fisher Scoring iterations: 6
+```
+
+``` r
+## Bootstrap model
+boot_summary_m20
+```
+
+```
+## # A tibble: 9 × 5
+##   term                        mean_estimate boot_se ci_lower ci_upper
+##   <chr>                               <dbl>   <dbl>    <dbl>    <dbl>
+## 1 (Intercept)                        4.55      5.82   1.02     19.5  
+## 2 ethnicityasian                    -3.02      5.94 -18.1       0.830
+## 3 ethnicityblack                    -2.60      6.19 -17.7       1.36 
+## 4 factor(location)2nd                1.64      2.38   0.0986    3.14 
+## 5 factor(location)bessborough        4.28      5.69   0.702    19.1  
+## 6 factor(location)victoria           1.73      2.19   0.246     3.20 
+## 7 genderwoman                        0.0598    8.15 -16.8      17.5  
+## 8 genderwoman:ethnicityasian        -0.424     8.31 -18.0      16.8  
+## 9 genderwoman:ethnicityblack         2.66     10.2  -17.1      18.7
+```
+
 
 # 9c1. Combined models - Odd Ratio with 95% CI - gtsummary
 
@@ -2744,16 +3873,7 @@ table5 <- tbl_merge(
       arrange(row_order, row_type != "label") %>% 
       select(-row_order)
   )
-```
 
-```
-## The number rows in the tables to be merged do not match, which may result in
-## rows appearing out of order.
-## ℹ See `tbl_merge()` (`?gtsummary::tbl_merge()`) help file for details. Use
-##   `quiet=TRUE` to silence message.
-```
-
-``` r
 as_gt(table5) %>% 
   gtsave(
     filename = "table5.docx",
@@ -2785,7 +3905,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
 
 
 ``` r
@@ -2824,7 +3944,7 @@ ggplot(data, aes(time_to_cross_street, fill = ethnicity)) +
   facet_wrap(~ethnicity)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
 
 # 10b. Gender
 
@@ -2847,7 +3967,7 @@ data %>%
 ## ℹ Did you use the correct group, colour, or fill aesthetics?
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
 
 
 
@@ -2887,7 +4007,7 @@ ggplot(data, aes(time_to_cross_street, fill = gender)) +
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-60-1.png)<!-- -->
 
 # 11. Visualizations
 # 11a. Time by ethnicity
@@ -2911,7 +4031,7 @@ data %>%
   )
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-61-1.png)<!-- -->
 
 # 11b. Time by gender
 
@@ -2932,7 +4052,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-62-1.png)<!-- -->
 
 # 11c. Time to enter the street - Violin Plot with Jitter overlay - Facet by gender
 
@@ -2958,7 +4078,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-63-1.png)<!-- -->
 
 # 11d. Time to enter the street - Violin Plot with Jitter overlay - Facet by ethnicity
 
@@ -2985,7 +4105,7 @@ data %>%
 ## `geom_smooth()` using formula = 'y ~ x'
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-64-1.png)<!-- -->
 
 # 11e. Time to enter - QQplot - By ethnicity  
 
@@ -2997,7 +4117,7 @@ data %>%
   facet_wrap(~ethnicity)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-65-1.png)<!-- -->
 
 # 11f. Time to enter - QQplot - By gender 
 
@@ -3009,7 +4129,7 @@ data %>%
   facet_wrap(~gender)
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-66-1.png)<!-- -->
 
 # 11g. 19th removed - Time to enter - By gender
 
@@ -3030,7 +4150,7 @@ data_19th_rm %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-67-1.png)<!-- -->
 
 # Facet Labels
 
@@ -3066,7 +4186,7 @@ data%>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-69-1.png)<!-- -->
 
 # 11i. Cars passed by ethnicity and gender
 
@@ -3089,7 +4209,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-70-1.png)<!-- -->
 
 # 11j. Proportion of first car yields - By ethnicity 
 
@@ -3112,7 +4232,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-71-1.png)<!-- -->
 
 # 11k. Proportion of first car yield - By gender 
 
@@ -3134,7 +4254,7 @@ data %>%
   theme_minimal()
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-72-1.png)<!-- -->
 
 # 11l. Odds first car yield
 
@@ -3171,9 +4291,9 @@ ggplot(or1[-1,], aes(x = estimate,
 ```
 
 ```
-## Warning: `geom_errorbarh()` was deprecated in ggplot2 4.0.0.
+## Warning: `geom_errobarh()` was deprecated in ggplot2 4.0.0.
 ## ℹ Please use the `orientation` argument of `geom_errorbar()` instead.
-## This warning is displayed once per session.
+## This warning is displayed once every 8 hours.
 ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 ## generated.
 ```
@@ -3182,7 +4302,7 @@ ggplot(or1[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-73-1.png)<!-- -->
 
 # 11m. Odds car proceeded
 
@@ -3222,7 +4342,7 @@ ggplot(or2[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-74-1.png)<!-- -->
 
 # 11n. Odds car stopped close//far 
 
@@ -3262,11 +4382,10 @@ ggplot(or3[-1,], aes(x = estimate,
 ## `height` was translated to `width`.
 ```
 
-![](racial_bias_analysis_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+![](racial_bias_analysis_files/figure-html/unnamed-chunk-75-1.png)<!-- -->
 
 # 11o. Intersection Plots
-
-``` r
+```{}
 p1 <- ggdraw() + draw_image("2nd.png")
 p2 <- ggdraw() + draw_image("Vic.png")
 p4 <- ggdraw() + draw_image("19th.png")
