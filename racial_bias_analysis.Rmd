@@ -7,6 +7,8 @@ output:
 
 # 1. Load Packages
 ```{r}
+library(dplyr)
+library(purrr)
 library(tidyverse)
 library(broom)
 library(snakecase)
@@ -56,8 +58,11 @@ data %>% count(location)
 data %>% count(first_car_yield)
 data %>% count(did_car_proceed_before_across)
 ```
+
 # 5. First car yield
+
 # 5a. First car yield - Descriptive stats
+
 ```{r}
 data %>% 
   group_by(gender) %>% 
@@ -93,6 +98,51 @@ exp(cbind(OR = coef(m1), confint(m1)))
 ci1 <- exp(confint(m1))
 ```
 
+# 5b1b. Gender - Location fixed effects (Bootstrap)
+
+```{r}
+B <- 5000
+
+boot_coefs_m1 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ gender + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m1 <- boot_coefs_m1 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m1)
+
+## Bootstrap model
+boot_summary_m1
+```
+
 # 5b2. Ethnicity - Location fixed effects
 ```{r}
 m2 <- glm(first_car_yield ~ ethnicity + factor(location),
@@ -105,6 +155,49 @@ summary(m2)
 
 exp(cbind(OR = coef(m2), confint(m2)))
 ci2 <- exp(confint(m2))
+```
+
+# 5b2b. Ethnicity - Location fixed effects (Bootstrap)
+
+```{r}
+boot_coefs_m2 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m2 <- boot_coefs_m2 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m2)
+
+## Bootstrap model
+boot_summary_m2
 ```
 
 # 5b3. Gender + Ethnicity - Location fixed effects
@@ -121,6 +214,49 @@ exp(cbind(OR = coef(m3), confint(m3)))
 ci3 <- exp(confint(m3))
 ```
 
+# 5b3b. Gender + Ethnicity - Location fixed effects (Bootstrap)
+
+```{r}
+boot_coefs_m3 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ gender + ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m3 <- boot_coefs_m3 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m3)
+
+## Bootstrap model
+boot_summary_m3
+```
+
 # 5b4. Gender*Ethnicity - Location fixed effects
 ```{r}
 m4 <- glm(first_car_yield ~ gender*ethnicity + factor(location),
@@ -133,6 +269,49 @@ summary(m4)
 
 exp(cbind(OR = coef(m4), confint(m4)))
 ci4 <- exp(confint(m4))
+```
+
+# 5b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+```{r}
+boot_coefs_m4 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      first_car_yield ~ gender*ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m4 <- boot_coefs_m4 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m4)
+
+## Bootstrap model
+boot_summary_m4
 ```
 
 # 5c1. Combined models - Odd Ratio with 95% CI - gtsummary
@@ -330,6 +509,7 @@ summary(m7)
 ```
 
 # 6b4. Gender*Ethnicity - Location fixed effects
+
 ```{r}
 m8 <- lm(num_cars_pass_before_yield ~ gender*ethnicity + factor(location),
          data = data)
@@ -338,6 +518,49 @@ tidy(m8)
 
 summary(m8)
 ```
+
+# 6b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+```{r}
+boot_coefs_m8 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    lm(
+      num_cars_pass_before_yield ~ gender*ethnicity + factor(location),
+      data = sample_data
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m8 <- boot_coefs_m8 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m8)
+
+## Bootstrap model
+boot_summary_m8
+```
+
 
 # 6c1. Combined models - gtsummary
 ```{r}
@@ -563,6 +786,48 @@ m12 <- lm(time_to_cross_street ~ gender*ethnicity + factor(location),
 tidy(m12)
 
 summary(m12)
+```
+
+# 7b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+```{r}
+boot_coefs_m12 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    lm(
+      time_to_cross_street ~ gender*ethnicity + factor(location),
+      data = sample_data
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m12 <- boot_coefs_m12 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m12)
+
+## Bootstrap model
+boot_summary_m12
 ```
 
 # 7c1. Combined models - gtsummary
@@ -795,6 +1060,50 @@ exp(cbind(OR = coef(m16), confint(m16)))
 ci16 <- exp(confint(m16))
 ```
 
+# 8b4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+```{r}
+boot_coefs_m16 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      did_car_proceed_before_across ~ gender*ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m16 <- boot_coefs_m16 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m16)
+
+## Bootstrap model
+boot_summary_m16
+```
+
+
 # 8c1. Combined models - Odd Ratio with 95% CI - gtsummary
 ```{r}
 tbl13 <- tbl_regression(
@@ -1002,6 +1311,7 @@ ci19 <- exp(confint(m19))
 ```
 
 # 9c4. Gender*Ethnicity - Location fixed effects
+
 ```{r}
 m20 <- glm(car_stop_close_or_far_bin ~ gender*ethnicity + factor(location),
            data = data,
@@ -1015,6 +1325,50 @@ summary(m20)
 exp(cbind(OR = coef(m20), confint(m20)))
 ci20 <- exp(confint(m20))
 ```
+
+# 9c4b. Gender*Ethnicity - Location fixed effects (Bootstrap)
+
+```{r}
+boot_coefs_m20 <- map_dfr(
+  seq_len(B),
+  function(i) {
+
+    sample_data <- data %>%
+      slice_sample(
+        n = nrow(data),
+        replace = TRUE
+      )
+
+    glm(
+      car_stop_close_or_far_bin ~ gender*ethnicity + factor(location),
+      data = sample_data,
+      family = binomial()
+    ) %>%
+      tidy() %>%
+      mutate(iteration = i)
+
+  }
+)
+
+
+boot_summary_m20 <- boot_coefs_m20 %>%
+  group_by(term) %>%
+  summarise(
+    mean_estimate = mean(estimate),
+    boot_se = sd(estimate),
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.975)
+  )
+```
+
+```{r}
+## Regular model
+summary(m20)
+
+## Bootstrap model
+boot_summary_m20
+```
+
 
 # 9c1. Combined models - Odd Ratio with 95% CI - gtsummary
 ```{r}
@@ -1558,7 +1912,7 @@ ggplot(or3[-1,], aes(x = estimate,
 ```
 
 # 11o. Intersection Plots
-```{r}
+```{}
 p1 <- ggdraw() + draw_image("2nd.png")
 p2 <- ggdraw() + draw_image("Vic.png")
 p4 <- ggdraw() + draw_image("19th.png")
